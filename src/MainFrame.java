@@ -7,17 +7,13 @@ public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    boolean done;
-
-    private static int WIDTH = 800;
-    private static int HEIGHT = 800;
-
+    boolean done = false;
     MainPanel panel;
     BufferStrategy bufferStrategy;
 
     public MainFrame() {
         super("Tutorial");
-        getContentPane().setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        getContentPane().setPreferredSize(new Dimension(800, 800));
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -25,6 +21,11 @@ public class MainFrame extends JFrame {
         setIgnoreRepaint(true);
         panel = new MainPanel();
         add(panel);
+    }
+
+    public void printSize() {
+        System.out.println("Width: " + getSize().width);
+        System.out.println("Height: " + getSize().height);
     }
 
     public void draw(Graphics g) {
@@ -35,7 +36,7 @@ public class MainFrame extends JFrame {
     public void myRenderingLoop() {
         createBufferStrategy(2);
         bufferStrategy = getBufferStrategy();
-        while (true) {
+        while (!done) {
             Graphics g = bufferStrategy.getDrawGraphics();
             draw(g);
             g.dispose();

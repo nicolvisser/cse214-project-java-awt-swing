@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.event.*;
+import java.awt.font.*;
 
 public class MainPanel extends JPanel {
 
@@ -16,15 +18,9 @@ public class MainPanel extends JPanel {
 
     public MainPanel() {
         setLayout(null);
-        setBackground(Color.GRAY);
         setIgnoreRepaint(true);
 
         lastNanoTime = System.nanoTime();
-
-        fpsLabel = new JLabel();
-        fpsLabel.setBounds(0, 0, 100, 10);
-        fpsLabel.setText("FPS: 60");
-        add(fpsLabel);
 
         circular = new DefaultCritter(DefaultCritter.BoundingShape.ELLIPSE, 0, 0, 100, 100);
         circular.velocity = new Vector2D(2000, 2000);
@@ -37,10 +33,14 @@ public class MainPanel extends JPanel {
     }
 
     public void draw(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, 300, 200);
+
+        g.setColor(Color.GRAY);
+        g.fillRect(5, 5, getSize().width - 10, getSize().height - 10);
+
         circular.draw(g);
         rectangular.draw(g);
+
+        g.drawString("FPS: ", 10, 10);
     }
 
     private void render(double dt) {

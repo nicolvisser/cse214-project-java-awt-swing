@@ -68,10 +68,10 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     public RectangularShape getBoundingShape() {
         switch (boundingShape) {
             case RECTANGLE:
-                return new Rectangle2D.Double(position.x, position.y, width, height);
+                return new Rectangle2D.Double(position.x - width / 2, position.y - height / 2, width, height);
 
             case ELLIPSE:
-                return new Ellipse2D.Double(position.x, position.y, width, height);
+                return new Ellipse2D.Double(position.x - width / 2, position.y - height / 2, width, height);
 
             default:
                 return null;
@@ -133,15 +133,15 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
 
         Shape s = getBoundingShape();
 
-        g2.rotate(orientation, position.x + width / 2, position.y + height / 2);
+        g2.rotate(orientation, position.x, position.y);
         g2.draw(s);
 
-        Vector2D lineStart = new Vector2D(position.x + width / 2, position.y + height / 2); // center of object
+        Vector2D lineStart = new Vector2D(position.x, position.y); // center of object
         Vector2D lineEnd = lineStart.add(new Vector2D(width / 2, 0));
         Shape line = new Line2D.Double(lineStart.toPoint(), lineEnd.toPoint());
         g2.draw(line);
 
-        g2.rotate(-orientation, position.x + width / 2, position.y + height / 2);
+        g2.rotate(-orientation, position.x, position.y);
     }
 
     @Override

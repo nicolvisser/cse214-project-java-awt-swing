@@ -18,11 +18,11 @@ public class Shooter extends DefaultCritter {
     private static final int DEFAULT_WIDTH = vmin * 5 / 100;
     private static final int DEFAULT_HEIGHT = vmin * 5 / 100;
 
-    private static final int DEFAULT_POSITION_X = vw * 50 / 100 - DEFAULT_WIDTH / 2;
-    private static final int DEFAULT_POSITION_Y = vh * 90 / 100 - DEFAULT_HEIGHT / 2;
+    private static final int DEFAULT_POSITION_X = vw * 50 / 100;
+    private static final int DEFAULT_POSITION_Y = vh * 90 / 100;
 
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
-    private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100 - DEFAULT_WIDTH;
+    private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
 
     private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5;
 

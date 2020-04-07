@@ -1,8 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;
-import java.awt.event.*;
-import java.awt.font.*;
 
 public class MainPanel extends JPanel {
 
@@ -21,10 +18,10 @@ public class MainPanel extends JPanel {
         lastNanoTime = System.nanoTime();
 
         circular = new DefaultCritter(DefaultCritter.BoundingShape.ELLIPSE, 0, 0, 100, 100);
-        circular.velocity = new Vector2D(1000, 1000);
+        circular.velocity = new Vector2D(1, 1);
 
         rectangular = new DefaultCritter(DefaultCritter.BoundingShape.RECTANGLE, 500, 500, 100, 50);
-        rectangular.velocity = new Vector2D(-1000, 1000);
+        rectangular.velocity = new Vector2D(-1, 1);
 
     }
 
@@ -37,9 +34,9 @@ public class MainPanel extends JPanel {
         rectangular.draw(g);
     }
 
-    public void update(double dt) {
-        circular.update(dt);
-        rectangular.update(dt);
+    public void update() {
+        circular.update();
+        rectangular.update();
     }
 
 }

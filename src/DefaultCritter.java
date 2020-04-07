@@ -48,9 +48,9 @@ public class DefaultCritter implements Updatable, Drawable {
     }
 
     @Override
-    public void update(double dt) {
-        velocity = velocity.add(acceleration.scale(dt));
-        position = position.add(velocity.scale(dt * dt / 2));
+    public void update() {
+        velocity = velocity.add(acceleration);
+        position = position.add(velocity);
     }
 
 }

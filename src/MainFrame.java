@@ -6,14 +6,14 @@ import javax.swing.*;
 public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private final int TARGET_FPS = 60;
-    private final long TARGET_NANO_TIME = 1000000000 / TARGET_FPS;
-    private final double TARGET_DELTA = TARGET_NANO_TIME / 1e9;
-    private final double MAX_DELTA = 2 * TARGET_NANO_TIME / 1e9;
 
-    private int currentFPS;
+    private int TARGET_FPS = 60;
+    private int TARGET_TIME_PER_FRAME = 1000000000 / TARGET_FPS;
+    private int fpsCounter = 0;
+    private int fps = 60;
 
-    private boolean done = false;
+    private boolean running = true;
+
     private MainPanel panel;
     private BufferStrategy bufferStrategy;
 
@@ -37,67 +37,60 @@ public class MainFrame extends JFrame {
 
     public void draw(Graphics g) {
         panel.draw(g);
-        g.drawString("FPS: " + currentFPS, 10, 10);
+        g.drawString("FPS: " + fps, 10, 10);
     }
 
-    public void update(double dt) {
-        panel.update(dt);
+    public void update() {
+        panel.update();
     }
 
     // Tutorial at
     // https://docs.oracle.com/javase/tutorial/extra/fullscreen/rendering.html
     // Also some credit to http://www.java-gaming.org/index.php?topic=24220.0
-    public void myRenderingLoop() {
+    public void gameLoop() {
         createBufferStrategy(2);
         bufferStrategy = getBufferStrategy();
 
-        long lastNanoTimestamp = System.nanoTime();
-        long nanoTimer = 0;
-        int frameCounter = 0;
+        long timer = 0;
 
-        while (!done) {
+        while (running) {
 
-            long currentNanoTimestamp = System.nanoTime();
-            long frameNanoTime = currentNanoTimestamp - lastNanoTimestamp;
-            nanoTimer += frameNanoTime;
-            frameCounter++;
+            long startTime = System.nanoTime();
 
-            double delta = TARGET_DELTA;
+            // UPDATE GAME
+            update();
 
-            if (frameNanoTime < TARGET_NANO_TIME) {
-                System.out.println("under");
-                long sleepNanoTime = TARGET_NANO_TIME - frameNanoTime;
-                try {
-                    Thread.sleep(sleepNanoTime / 1000000);
-                    // Thread.sleep(sleepNanoTime / 1000000, (int) (sleepNanoTime % 1000000));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (frameNanoTime > TARGET_NANO_TIME) {
-                System.out.println("over");
-                long catchUpNanoTime = frameNanoTime - TARGET_NANO_TIME;
-                delta = Math.min(MAX_DELTA, TARGET_DELTA + catchUpNanoTime / 1e9);
-            }
-            // TODO put max delta in here, where game should rather start to lag real time.
-            // (instead of taking very large steps)
-
-            if (nanoTimer >= 1000000000) {
-                currentFPS = frameCounter;
-                System.out.println("FPS:      " + currentFPS);
-                nanoTimer = 0;
-                frameCounter = 0;
-            }
-
-            lastNanoTimestamp = currentNanoTimestamp;
-
+            // DRAW FRAME
             Graphics g = bufferStrategy.getDrawGraphics();
             draw(g);
-            update(delta);
             g.dispose();
-
             bufferStrategy.show();
+            fpsCounter++;
+
+            long afterWorkTime = System.nanoTime();
+
+            long remainingTime = TARGET_TIME_PER_FRAME - (afterWorkTime - startTime);
+
+            if (remainingTime > 0) {
+                try {
+                    Thread.sleep(remainingTime / 1000000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            long endTime = System.nanoTime();
+
+            timer += endTime - startTime;
+
+            if (timer > 1000000000) {
+                fps = fpsCounter;
+                fpsCounter = 0;
+                timer = 0;
+            }
 
         }
+
     }
 
     public static void main(String[] args) {
@@ -108,27 +101,17 @@ public class MainFrame extends JFrame {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
 
-        // Tutorial at
-        // https://docs.oracle.com/javase/tutorial/extra/fullscreen/displaymode.html
-        // TODO <--- READ MORE: can also change display mode... e.g to lower resolution
-        // while in full screen for better performance
-        //// DisplayMode displayMode = defaultScreen.getDisplayMode();
-        //// int displayWidth = displayMode.getWidth();
-        //// int displayHeight = displayMode.getHeight();
-        //// int refreshRate = displayMode.getRefreshRate();
-
         MainFrame frame = new MainFrame();
 
         if (defaultScreen.isFullScreenSupported()) {
             try {
                 // RUN IN FULL SCREEN MODE:
                 defaultScreen.setFullScreenWindow(frame);
-                frame.myRenderingLoop();
+                frame.gameLoop();
 
             } catch (Exception e) {
-                // RUN IN WINDOWED MODE:
-                defaultScreen.setFullScreenWindow(null);
-                frame.myRenderingLoop();
+                // COULD NOT RUN FULL SCREEN
+                e.printStackTrace();
 
             } finally {
                 defaultScreen.setFullScreenWindow(null);

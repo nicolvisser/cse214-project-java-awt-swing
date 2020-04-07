@@ -1,3 +1,5 @@
+import java.awt.geom.*;
+
 public class Vector2D {
 
     public double x, y;
@@ -10,6 +12,10 @@ public class Vector2D {
     @Override
     public String toString() {
         return "Vector2D(" + x + ", " + y + ")";
+    }
+
+    public Point2D toPoint() {
+        return new Point2D.Double(x,y);
     }
 
     public double magnitude() {

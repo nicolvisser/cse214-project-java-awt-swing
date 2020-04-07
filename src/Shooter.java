@@ -34,7 +34,7 @@ public class Shooter extends DefaultCritter {
     private boolean isRotatingLeft = false;
     private boolean isRotatingRight = false;
 
-    private static final int DEFAULT_RELOAD_TIME = 30; // in number of frames as unit
+    private static final int DEFAULT_RELOAD_TIME = 15; // in number of frames as unit
     private int reloadTimer = DEFAULT_RELOAD_TIME; // ready to shoot from start
 
     private ArrayList<Missile> missiles = new ArrayList<>();
@@ -54,6 +54,7 @@ public class Shooter extends DefaultCritter {
         if (reloadTimer >= DEFAULT_RELOAD_TIME) {
             Missile missile = new Missile(position, lookVector(), this);
             missiles.add(missile);
+            reloadTimer = 0;
         }
     }
 

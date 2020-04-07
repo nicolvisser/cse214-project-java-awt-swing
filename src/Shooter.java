@@ -25,6 +25,11 @@ public class Shooter extends DefaultCritter {
     private boolean isLeftThrusterActive = false;
     private boolean isRightThrusterActive = false;
 
+    private double DEFAULT_ANGULAR_ACCELERATION = 0.005;
+
+    private boolean isRotatingLeft = false;
+    private boolean isRotatingRight = false;
+
     public Shooter() {
         this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
@@ -50,8 +55,23 @@ public class Shooter extends DefaultCritter {
 
         // if almost no 'thrust' applied or thrust applied in opposite direction than
         // movement, then slow down shooter for fast stopping or turning
-        if (velocity.x * acceleration.x < 0.001) {
+        if (velocity.x * acceleration.x < 0.00001) {
             velocity.x = 0.8 * velocity.x;
+        }
+
+        // set acceleration from thruster statuses
+        if (isRotatingLeft && !isRotatingRight) {
+            angularAcceleration = -DEFAULT_ANGULAR_ACCELERATION;
+        } else if (!isRotatingLeft && isRotatingRight) {
+            angularAcceleration = DEFAULT_ANGULAR_ACCELERATION;
+        } else {
+            angularAcceleration = 0;
+        }
+
+        // if almost no 'thrust' applied or thrust applied in opposite direction than
+        // movement, then slow down shooter for fast stopping or turning
+        if (angularVelocity * angularAcceleration < 0.00001) {
+            angularVelocity = 0.8 * angularVelocity;
         }
 
         // update movement via super class
@@ -66,6 +86,17 @@ public class Shooter extends DefaultCritter {
             position.x = MOVEMENT_BOUNDARY_XMIN;
             velocity.x = 0;
             acceleration.x = 0;
+        }
+
+        // keep orientation in [-PI, 0] interval
+        if (orientation > 0) {
+            orientation = 0;
+            angularVelocity = 0;
+            angularAcceleration = 0;
+        } else if (orientation < -Math.PI) {
+            orientation = -Math.PI;
+            angularVelocity = 0;
+            angularAcceleration = 0;
         }
     }
 
@@ -122,6 +153,52 @@ public class Shooter extends DefaultCritter {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isRightThrusterActive = false;
+            }
+        });
+
+        KeyStroke rotateLeftKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false);
+        inputMap.put(rotateLeftKeyPress, "rotateLeftKeyPress");
+        actionMap.put("rotateLeftKeyPress", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isRotatingLeft = true;
+            }
+
+        });
+
+        KeyStroke rotateLeftKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true);
+        inputMap.put(rotateLeftKeyRelease, "rotateLeftKeyRelease");
+        actionMap.put("rotateLeftKeyRelease", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isRotatingLeft = false;
+            }
+
+        });
+
+        KeyStroke rotateRightKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false);
+        inputMap.put(rotateRightKeyPress, "rotateRightKeyPress");
+        actionMap.put("rotateRightKeyPress", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isRotatingRight = true;
+            }
+        });
+
+        KeyStroke rotateRightKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true);
+        inputMap.put(rotateRightKeyRelease, "rotateRightKeyRelease");
+        actionMap.put("rotateRightKeyRelease", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isRotatingRight = false;
             }
         });
     }

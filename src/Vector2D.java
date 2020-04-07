@@ -15,7 +15,7 @@ public class Vector2D {
     }
 
     public Point2D toPoint() {
-        return new Point2D.Double(x,y);
+        return new Point2D.Double(x, y);
     }
 
     public double magnitude() {

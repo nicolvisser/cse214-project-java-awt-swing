@@ -124,13 +124,20 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     @Override
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
+
         g2.setColor(Color.BLACK);
-        g2.draw(getBoundingShape());
+
+        Shape s = getBoundingShape();
+
+        g2.rotate(orientation, position.x + width / 2, position.y + height / 2);
+        g2.draw(s);
 
         Vector2D lineStart = new Vector2D(position.x + width / 2, position.y + height / 2); // center of object
-        Vector2D lineEnd = lineStart.add(lookVector().scale(height / 2));
+        Vector2D lineEnd = lineStart.add(new Vector2D(width / 2, 0));
         Shape line = new Line2D.Double(lineStart.toPoint(), lineEnd.toPoint());
         g2.draw(line);
+
+        g2.rotate(-orientation, position.x + width / 2, position.y + height / 2);
     }
 
     @Override

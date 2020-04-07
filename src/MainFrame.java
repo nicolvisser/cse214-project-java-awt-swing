@@ -25,9 +25,12 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setIgnoreRepaint(true);
+        setVisible(true);
+    }
+
+    public void addGamePanel() {
         panel = new MainPanel();
         add(panel);
-        setVisible(true);
     }
 
     public void printSize() {
@@ -107,6 +110,11 @@ public class MainFrame extends JFrame {
             try {
                 // RUN IN FULL SCREEN MODE:
                 defaultScreen.setFullScreenWindow(frame);
+
+                DefaultCritter.setCanvasSize(frame.getSize().width, frame.getSize().height);
+
+                frame.addGamePanel();
+
                 frame.gameLoop();
 
             } catch (Exception e) {

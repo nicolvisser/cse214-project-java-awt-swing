@@ -1,7 +1,22 @@
 import java.awt.*;
 import java.awt.geom.*;
+import javax.swing.JComponent;
 
-public class DefaultCritter implements Updatable, Drawable {
+public class DefaultCritter extends JComponent implements Updatable, Drawable {
+
+    private static final long serialVersionUID = 1L;
+
+    protected static int vw = 800; // viewport width
+    protected static int vh = 800; // viewport width
+    protected static int vmin = 800; // viewport min dimension
+    protected static int vmax = 800; // viewport max dimension
+
+    public static void setCanvasSize(int w, int h) {
+        vw = w;
+        vh = h;
+        vmin = Math.min(w, h);
+        vmax = Math.max(w, h);
+    }
 
     private static final int DEFAULT_WIDTH = 50;
     private static final int DEFAULT_HEIGHT = 50;
@@ -16,6 +31,7 @@ public class DefaultCritter implements Updatable, Drawable {
 
     public DefaultCritter() {
         this(BoundingShape.RECTANGLE, 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        setIgnoreRepaint(true);
     }
 
     public DefaultCritter(BoundingShape boundingShape, double x, double y, double width, double height) {
@@ -42,6 +58,10 @@ public class DefaultCritter implements Updatable, Drawable {
 
     @Override
     public void draw(Graphics g) {
+
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, vw, vh);
+
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.BLACK);
         g2.draw(getBoundingShape());

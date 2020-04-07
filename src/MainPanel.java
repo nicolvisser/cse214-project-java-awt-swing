@@ -6,18 +6,12 @@ public class MainPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    long lastNanoTime;
-
-    JLabel fpsLabel;
-
     public ArrayList<Drawable> drawableChildren = new ArrayList<>();
     public ArrayList<Updatable> updatableChildren = new ArrayList<>();
 
     public MainPanel() {
         setLayout(null);
         setIgnoreRepaint(true);
-
-        lastNanoTime = System.nanoTime();
 
         DefaultCritter circ = new DefaultCritter(DefaultCritter.BoundingShape.ELLIPSE, 0, 0, 100, 100);
         circ.velocity = new Vector2D(1, 1);
@@ -27,11 +21,20 @@ public class MainPanel extends JPanel {
         rect.velocity = new Vector2D(-1, 1);
         add(rect);
 
+        Shooter shooter = new Shooter();
+        add(shooter);
+
     }
 
-    public void add(DefaultCritter c) {
-        drawableChildren.add(c);
-        updatableChildren.add(c);
+    @Override
+    public Component add(Component comp) {
+        if (comp instanceof Drawable) {
+            drawableChildren.add((Drawable) comp);
+        }
+        if (comp instanceof Updatable) {
+            updatableChildren.add((Updatable) comp);
+        }
+        return super.add(comp);
     }
 
     public void draw(Graphics g) {

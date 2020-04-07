@@ -4,8 +4,12 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 public class Shooter extends DefaultCritter {
 
@@ -20,15 +24,20 @@ public class Shooter extends DefaultCritter {
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100 - DEFAULT_WIDTH;
 
-    private double DEFAULT_THRUSTER_ACCELERATION = 0.5;
+    private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5;
 
     private boolean isLeftThrusterActive = false;
     private boolean isRightThrusterActive = false;
 
-    private double DEFAULT_ANGULAR_ACCELERATION = 0.005;
+    private static final double DEFAULT_ANGULAR_ACCELERATION = 0.005;
 
     private boolean isRotatingLeft = false;
     private boolean isRotatingRight = false;
+
+    private static final int DEFAULT_RELOAD_TIME = 30; // in number of frames as unit
+    private int reloadTimer = DEFAULT_RELOAD_TIME; // ready to shoot from start
+
+    private ArrayList<Missile> missiles = new ArrayList<>();
 
     public Shooter() {
         this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -39,6 +48,22 @@ public class Shooter extends DefaultCritter {
 
         setKeyBindings();
 
+    }
+
+    public void shootMissile() {
+        if (reloadTimer >= DEFAULT_RELOAD_TIME) {
+            Missile missile = new Missile(position, lookVector(), this);
+            missiles.add(missile);
+        }
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        super.draw(g);
+
+        for (Missile missile : missiles) {
+            missile.draw(g);
+        }
     }
 
     @Override
@@ -98,6 +123,27 @@ public class Shooter extends DefaultCritter {
             angularVelocity = 0;
             angularAcceleration = 0;
         }
+
+        reloadTimer++;
+
+        for (Missile missile : missiles) {
+            missile.update();
+        }
+
+        MainFrame.numMissiles = missiles.size(); // DEBUG
+        try {
+            Iterator<Missile> missileIter = missiles.iterator();
+            while (missileIter.hasNext()) {
+                Missile missile = missileIter.next();
+                missile.update();
+                if (missile.state == Missile.MissileState.DEAD) {
+                    missileIter.remove();
+                }
+            }
+        } catch (ConcurrentModificationException e) {
+            // skip this update
+        }
+
     }
 
     private void setKeyBindings() {
@@ -199,6 +245,17 @@ public class Shooter extends DefaultCritter {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isRotatingRight = false;
+            }
+        });
+
+        KeyStroke shootKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, true);
+        inputMap.put(shootKeyRelease, "shootKeyRelease");
+        actionMap.put("shootKeyRelease", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                shootMissile();
             }
         });
     }

@@ -1,11 +1,15 @@
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-//import java.awt.event.*;
 import javax.swing.*;
+
+
+
 
 public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
+
+    public static int numMissiles = 0;
 
     private int TARGET_FPS = 60;
     private int TARGET_TIME_PER_FRAME = 1000000000 / TARGET_FPS;
@@ -41,6 +45,7 @@ public class MainFrame extends JFrame {
     public void draw(Graphics g) {
         panel.draw(g);
         g.drawString("FPS: " + fps, 10, 10);
+        g.drawString("Num Missiles: " + numMissiles, 10, 20);
     }
 
     public void update() {
@@ -95,6 +100,8 @@ public class MainFrame extends JFrame {
         }
 
     }
+
+    
 
     public static void main(String[] args) {
 

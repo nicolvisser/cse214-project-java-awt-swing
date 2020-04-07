@@ -12,11 +12,15 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     protected static int vmin = 800; // viewport min dimension
     protected static int vmax = 800; // viewport max dimension
 
-    public static void setCanvasSize(int w, int h) {
+    protected static void setCanvasSize(int w, int h) {
         vw = w;
         vh = h;
         vmin = Math.min(w, h);
         vmax = Math.max(w, h);
+    }
+
+    protected static Rectangle getCanvasRect() {
+        return new Rectangle(0, 0, vw, vh);
     }
 
     private static final int DEFAULT_WIDTH = 50;

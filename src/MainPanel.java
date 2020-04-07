@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.awt.event.*;
 
 public class MainPanel extends JPanel {
 
@@ -12,6 +13,7 @@ public class MainPanel extends JPanel {
     public MainPanel() {
         setLayout(null);
         setIgnoreRepaint(true);
+        setKeyBindings();
 
         DefaultCritter circ = new DefaultCritter(DefaultCritter.BoundingShape.ELLIPSE, 0, 0, 100, 100);
         circ.velocity = new Vector2D(1, 1);
@@ -51,6 +53,29 @@ public class MainPanel extends JPanel {
         for (Updatable updatableChild : updatableChildren) {
             updatableChild.update();
         }
+    }
+
+    private void setKeyBindings() {
+        // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
+        // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
+        // https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/InputMap.html
+        // https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/KeyStroke.html
+        // https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/ActionMap.html
+
+        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        KeyStroke quitKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0, false);
+        inputMap.put(quitKeyPress, "quitKeyPress");
+        actionMap.put("quitKeyPress", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+
+        });
     }
 
 }

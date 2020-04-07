@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class MainPanel extends JPanel {
 
@@ -9,7 +10,8 @@ public class MainPanel extends JPanel {
 
     JLabel fpsLabel;
 
-    DefaultCritter circular, rectangular;
+    public ArrayList<Drawable> drawableChildren = new ArrayList<>();
+    public ArrayList<Updatable> updatableChildren = new ArrayList<>();
 
     public MainPanel() {
         setLayout(null);
@@ -17,12 +19,19 @@ public class MainPanel extends JPanel {
 
         lastNanoTime = System.nanoTime();
 
-        circular = new DefaultCritter(DefaultCritter.BoundingShape.ELLIPSE, 0, 0, 100, 100);
-        circular.velocity = new Vector2D(1, 1);
+        DefaultCritter circ = new DefaultCritter(DefaultCritter.BoundingShape.ELLIPSE, 0, 0, 100, 100);
+        circ.velocity = new Vector2D(1, 1);
+        add(circ);
 
-        rectangular = new DefaultCritter(DefaultCritter.BoundingShape.RECTANGLE, 500, 500, 100, 50);
-        rectangular.velocity = new Vector2D(-1, 1);
+        DefaultCritter rect = new DefaultCritter(DefaultCritter.BoundingShape.RECTANGLE, 500, 500, 100, 50);
+        rect.velocity = new Vector2D(-1, 1);
+        add(rect);
 
+    }
+
+    public void add(DefaultCritter c) {
+        drawableChildren.add(c);
+        updatableChildren.add(c);
     }
 
     public void draw(Graphics g) {
@@ -30,13 +39,15 @@ public class MainPanel extends JPanel {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, getSize().width, getSize().height);
 
-        circular.draw(g);
-        rectangular.draw(g);
+        for (Drawable drawableChild : drawableChildren) {
+            drawableChild.draw(g);
+        }
     }
 
     public void update() {
-        circular.update();
-        rectangular.update();
+        for (Updatable updatableChild : updatableChildren) {
+            updatableChild.update();
+        }
     }
 
 }

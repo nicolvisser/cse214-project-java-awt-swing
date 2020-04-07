@@ -1,10 +1,7 @@
 import java.awt.*;
 import java.awt.geom.*;
-import javax.swing.*;
 
-public class DefaultCritter extends JComponent {
-
-    private static final long serialVersionUID = 1L;
+public class DefaultCritter implements Updatable, Drawable {
 
     private static final int DEFAULT_WIDTH = 50;
     private static final int DEFAULT_HEIGHT = 50;
@@ -28,8 +25,6 @@ public class DefaultCritter extends JComponent {
         position = new Vector2D(x, y);
         velocity = Vector2D.zero();
         acceleration = Vector2D.zero();
-
-        setIgnoreRepaint(true);
     }
 
     public RectangularShape getBoundingShape() {
@@ -45,13 +40,15 @@ public class DefaultCritter extends JComponent {
         }
     }
 
+    @Override
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.BLACK);
         g2.draw(getBoundingShape());
     }
 
-    public void render(double dt) {
+    @Override
+    public void update(double dt) {
         velocity = velocity.add(acceleration.scale(dt));
         position = position.add(velocity.scale(dt * dt / 2));
     }

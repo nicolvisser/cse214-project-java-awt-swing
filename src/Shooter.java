@@ -61,9 +61,14 @@ public class Shooter extends DefaultCritter {
     public void draw(Graphics g) {
         super.draw(g);
 
-        for (Missile missile : missiles) {
-            missile.draw(g);
+        try {
+            for (Missile missile : missiles) {
+                missile.draw(g);
+            }
+        } catch (ConcurrentModificationException e) {
+            // skip missiles in this frame
         }
+
     }
 
     @Override

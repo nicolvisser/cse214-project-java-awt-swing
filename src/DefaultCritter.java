@@ -1,7 +1,14 @@
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
+
 import javax.swing.JComponent;
+
+import geom.*;
 
 public class DefaultCritter extends JComponent implements Updatable, Drawable {
 
@@ -12,7 +19,7 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     protected static int vmin = 800; // viewport min dimension
     protected static int vmax = 800; // viewport max dimension
 
-    protected static void setCanvasSize(int w, int h) {
+    protected static void setCanvasSize(final int w, final int h) {
         vw = w;
         vh = h;
         vmin = Math.min(w, h);
@@ -20,7 +27,7 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     }
 
     protected static Rectangle getCanvasRect() {
-        return new Rectangle(0, 0, vw, vh);
+        return new Rectangle(vw / 2, vh / 2, vw, vh);
     }
 
     private static final int DEFAULT_WIDTH = 50;
@@ -28,25 +35,26 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
 
     private static final double DEFAULT_ORIENTATION = -Math.PI / 2; // upwards
 
-    enum BoundingShape {
-        RECTANGLE, ELLIPSE
+    enum CollisionShape {
+        RECTANGLE, CIRCLE
     }
 
-    private final BoundingShape boundingShape;
-    public double width, height;
+    private final CollisionShape boundingShape;
+    public final double width, height;
     public Vector2D position, velocity, acceleration;
     public double orientation, angularVelocity, angularAcceleration;
 
-    public DefaultCritter() {
-        this(BoundingShape.RECTANGLE, 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-
+    // creates rectangular critter
+    public DefaultCritter(double x, double y, double width, double height, double orientation) {
+        this(CollisionShape.RECTANGLE, x, y, width, height, orientation);
     }
 
-    public DefaultCritter(BoundingShape boundingShape, double x, double y, double width, double height) {
-        this(boundingShape, x, y, width, height, DEFAULT_ORIENTATION);
+    // creates circular critter
+    public DefaultCritter(double x, double y, double radius, double orientation) {
+        this(CollisionShape.CIRCLE, x, y, 2 * radius, 2 * radius, orientation);
     }
 
-    public DefaultCritter(BoundingShape boundingShape, double x, double y, double width, double height,
+    private DefaultCritter(CollisionShape boundingShape, double x, double y, double width, double height,
             double orientation) {
 
         this.boundingShape = boundingShape;
@@ -65,13 +73,13 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
         setIgnoreRepaint(true);
     }
 
-    public RectangularShape getBoundingShape() {
+    public Shape getCollisionShape() {
         switch (boundingShape) {
             case RECTANGLE:
-                return new Rectangle2D.Double(position.x - width / 2, position.y - height / 2, width, height);
+                return new Rectangle(position.x, position.y, width, height);
 
-            case ELLIPSE:
-                return new Ellipse2D.Double(position.x - width / 2, position.y - height / 2, width, height);
+            case CIRCLE:
+                return new Circle(position.x, position.y, width / 2);
 
             default:
                 return null;
@@ -128,18 +136,17 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     @Override
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
+        g2.rotate(orientation, position.x, position.y);
 
         g2.setColor(Color.BLACK);
-
-        Shape s = getBoundingShape();
-
-        g2.rotate(orientation, position.x, position.y);
-        g2.draw(s);
+        Shape s = getCollisionShape();
+        s.draw(g);
 
         Vector2D lineStart = new Vector2D(position.x, position.y); // center of object
         Vector2D lineEnd = lineStart.add(new Vector2D(width / 2, 0));
-        Shape line = new Line2D.Double(lineStart.toPoint(), lineEnd.toPoint());
-        g2.draw(line);
+
+        LineSegment line = new LineSegment(lineStart, lineEnd);
+        line.draw(g);
 
         g2.rotate(-orientation, position.x, position.y);
     }

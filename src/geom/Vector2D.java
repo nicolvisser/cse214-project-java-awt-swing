@@ -1,4 +1,6 @@
-import java.awt.geom.*;
+package geom;
+
+import java.awt.geom.Point2D;
 
 public class Vector2D {
 

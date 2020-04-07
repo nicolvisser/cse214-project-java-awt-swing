@@ -37,14 +37,14 @@ public class Shooter extends DefaultCritter {
     private static final int DEFAULT_RELOAD_TIME = 15; // in number of frames as unit
     private int reloadTimer = DEFAULT_RELOAD_TIME; // ready to shoot from start
 
-    private ArrayList<Missile> missiles = new ArrayList<>();
+    public ArrayList<Missile> missiles = new ArrayList<>();
 
     public Shooter() {
         this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
     public Shooter(double x, double y, double width, double height) {
-        super(BoundingShape.RECTANGLE, x, y, width, height);
+        super(x, y, width, height, 0);
 
         setKeyBindings();
 

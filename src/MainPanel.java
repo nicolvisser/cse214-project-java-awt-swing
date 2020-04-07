@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.awt.event.*;
 
 public class MainPanel extends JPanel {
@@ -10,21 +11,19 @@ public class MainPanel extends JPanel {
     public ArrayList<Drawable> drawableChildren = new ArrayList<>();
     public ArrayList<Updatable> updatableChildren = new ArrayList<>();
 
+    Shooter shooter;
+    EnemyGroup enemyGroup;
+
     public MainPanel() {
         setLayout(null);
         setIgnoreRepaint(true);
         setKeyBindings();
 
-        DefaultCritter circ = new DefaultCritter(DefaultCritter.BoundingShape.ELLIPSE, 0, 0, 100, 100);
-        circ.velocity = new Vector2D(1, 1);
-        add(circ);
-
-        DefaultCritter rect = new DefaultCritter(DefaultCritter.BoundingShape.RECTANGLE, 500, 500, 100, 50);
-        rect.velocity = new Vector2D(-1, 1);
-        add(rect);
-
-        Shooter shooter = new Shooter();
+        shooter = new Shooter();
         add(shooter);
+
+        enemyGroup = new EnemyGroup(500, 500, 400, 200, 6, 3);
+        add(enemyGroup);
 
     }
 
@@ -52,6 +51,22 @@ public class MainPanel extends JPanel {
     public void update() {
         for (Updatable updatableChild : updatableChildren) {
             updatableChild.update();
+        }
+
+        Iterator<Missile> shooterMissileIterator = shooter.missiles.iterator();
+        while (shooterMissileIterator.hasNext()) {
+            Missile shooterMissile = shooterMissileIterator.next();
+            if (shooterMissile.getCollisionShape().intersects(enemyGroup.getCollisionShape())) {
+                Iterator<DefaultCritter> enemyIterator = enemyGroup.enemies.iterator();
+                while (enemyIterator.hasNext()) {
+                    DefaultCritter enemy = enemyIterator.next();
+                    if (shooterMissile.getCollisionShape().intersects(enemy.getCollisionShape())) {
+                        shooterMissileIterator.remove();
+                        enemyIterator.remove();
+                        break;
+                    }
+                }
+            }
         }
     }
 

@@ -1,11 +1,11 @@
 import java.awt.Graphics;
+import geom.*;
 
 public class Missile extends DefaultCritter {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int DEFAULT_WIDTH = vmin / 100;
-    private static final int DEFAULT_HEIGHT = vmin / 100;
+    private static final int DEFAULT_RADIUS = vmin / 100;
 
     private static final int DEFAULT_SPEED = 10;
 
@@ -18,7 +18,7 @@ public class Missile extends DefaultCritter {
     public final DefaultCritter owner;
 
     public Missile(Vector2D position, Vector2D direction, DefaultCritter owner) {
-        super(BoundingShape.ELLIPSE, position.x, position.y, DEFAULT_WIDTH, DEFAULT_HEIGHT, direction.getPolarAngle());
+        super(position.x, position.y, DEFAULT_RADIUS, direction.getPolarAngle());
         velocity = direction.normalize().scale(DEFAULT_SPEED);
         this.owner = owner;
     }
@@ -27,7 +27,7 @@ public class Missile extends DefaultCritter {
     public void draw(Graphics g) {
         switch (state) {
             case ALIVE:
-                if (getBoundingShape().intersects(getCanvasRect())) {
+                if (getCollisionShape().intersects(getCanvasRect())) {
                     super.draw(g);
                 } else {
                     state = MissileState.DEAD;

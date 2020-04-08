@@ -1,14 +1,14 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 
 import javax.swing.JComponent;
 
-import geom.*;
+import geom.Circle;
+import geom.LineSegment;
+import geom.Rectangle;
+import geom.Shape;
+import geom.Vector2D;
 
 public class DefaultCritter extends JComponent implements Updatable, Drawable {
 
@@ -30,26 +30,30 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
         return new Rectangle(vw / 2, vh / 2, vw, vh);
     }
 
-    private static final int DEFAULT_WIDTH = 50;
-    private static final int DEFAULT_HEIGHT = 50;
-
-    private static final double DEFAULT_ORIENTATION = -Math.PI / 2; // upwards
-
     enum CollisionShape {
         RECTANGLE, CIRCLE
     }
 
     private final CollisionShape boundingShape;
     public final double width, height;
+
+    // positive x to right, positive y to bottom (as with swing frame)
     public Vector2D position, velocity, acceleration;
+
+    // orientation correspods to bearing in radians
+    // i.e. radians clockwise from north, where north is at top of screen
     public double orientation, angularVelocity, angularAcceleration;
 
-    // creates rectangular critter
+    /**
+     * Creates rectangular critter
+     */
     public DefaultCritter(double x, double y, double width, double height, double orientation) {
         this(CollisionShape.RECTANGLE, x, y, width, height, orientation);
     }
 
-    // creates circular critter
+    /**
+     * Creates circular critter
+     */
     public DefaultCritter(double x, double y, double radius, double orientation) {
         this(CollisionShape.CIRCLE, x, y, 2 * radius, 2 * radius, orientation);
     }
@@ -111,16 +115,16 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     }
 
     public Vector2D lookVector() {
-        return new Vector2D(Math.cos(orientation), Math.sin(orientation));
+        return new Vector2D(Math.sin(orientation), -Math.cos(orientation));
     }
 
     public void lookAt(DefaultCritter other) {
-        orientation = this.positionRelativeTo(other).getPolarAngle();
+        orientation = this.positionRelativeTo(other).getBearing();
     }
 
     public void lookAt(double x, double y) {
         Vector2D relativeVector = new Vector2D(x - position.x, y - position.y);
-        orientation = relativeVector.getPolarAngle();
+        orientation = relativeVector.getBearing();
     }
 
     public void updateRotation() {
@@ -136,19 +140,20 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     @Override
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        g2.rotate(orientation, position.x, position.y);
 
         g2.setColor(Color.BLACK);
-        Shape s = getCollisionShape();
-        s.draw(g);
 
-        Vector2D lineStart = new Vector2D(position.x, position.y); // center of object
-        Vector2D lineEnd = lineStart.add(new Vector2D(width / 2, 0));
-
-        LineSegment line = new LineSegment(lineStart, lineEnd);
-        line.draw(g);
-
+        // Draw body (rotated)
+        g2.rotate(orientation, position.x, position.y);
+        {
+            getCollisionShape().draw(g2);
+        }
         g2.rotate(-orientation, position.x, position.y);
+
+        // Draw lookvector line
+        Vector2D lineEnd = position.add(lookVector().scale(height / 2));
+        LineSegment line = new LineSegment(position, lineEnd);
+        line.draw(g2);
     }
 
     @Override

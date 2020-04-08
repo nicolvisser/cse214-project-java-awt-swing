@@ -119,13 +119,13 @@ public class Shooter extends DefaultCritter {
             acceleration.x = 0;
         }
 
-        // keep orientation in [-PI, 0] interval
-        if (orientation > 0) {
-            orientation = 0;
+        // keep orientation in [-PI/2, PI/2] interval
+        if (orientation > Math.PI / 2) {
+            orientation = Math.PI / 2;
             angularVelocity = 0;
             angularAcceleration = 0;
-        } else if (orientation < -Math.PI) {
-            orientation = -Math.PI;
+        } else if (orientation < -Math.PI / 2) {
+            orientation = -Math.PI / 2;
             angularVelocity = 0;
             angularAcceleration = 0;
         }

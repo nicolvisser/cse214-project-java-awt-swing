@@ -49,6 +49,15 @@ public class Vector2D {
         return this.x * other.x + this.y * other.y;
     }
 
+    /**
+     * Returns angle in radians as measured from negative y axis.
+     * 
+     * Useful in a swing frame to get angle with North / upwards axis.
+     */
+    public Double getBearing() {
+        return Math.PI / 2 + Math.atan2(y, x);
+    }
+
     public Double getPolarAngle() {
         return Math.atan2(y, x);
     }

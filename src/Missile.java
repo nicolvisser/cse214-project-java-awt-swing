@@ -18,7 +18,7 @@ public class Missile extends DefaultCritter {
     public final DefaultCritter owner;
 
     public Missile(Vector2D position, Vector2D direction, DefaultCritter owner) {
-        super(position.x, position.y, DEFAULT_RADIUS, direction.getPolarAngle());
+        super(position.x, position.y, DEFAULT_RADIUS, direction.getBearing());
         velocity = direction.normalize().scale(DEFAULT_SPEED);
         this.owner = owner;
     }

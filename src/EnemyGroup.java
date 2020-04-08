@@ -10,7 +10,7 @@ public class EnemyGroup extends DefaultCritter {
     public ArrayList<DefaultCritter> enemies = new ArrayList<>();
 
     public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol) {
-        super(x, y, width, height, 0);
+        super(x, y, width, height, Math.PI);
 
         double xmin = x - width / 2;
         double xmax = x + width / 2;
@@ -24,7 +24,7 @@ public class EnemyGroup extends DefaultCritter {
 
         for (double eX = xmin + r; eX < xmax; eX += xSpacing + 2 * r) {
             for (double eY = ymin + r; eY < ymax; eY += ySpacing + 2 * r) {
-                enemies.add(new DefaultCritter(eX, eY, r, 0));
+                enemies.add(new DefaultCritter(eX, eY, r, Math.PI));
             }
         }
 

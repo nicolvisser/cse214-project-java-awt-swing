@@ -3,6 +3,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.awt.event.*;
+import geom.Vector2D;
 
 public class MainPanel extends JPanel {
 
@@ -22,7 +23,7 @@ public class MainPanel extends JPanel {
         shooter = new Shooter();
         add(shooter);
 
-        enemyGroup = new EnemyGroup(500, 500, 400, 200, 6, 3);
+        enemyGroup = new EnemyGroup(300, 200, 600, 400, 10, 5);
         add(enemyGroup);
 
     }

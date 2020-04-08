@@ -1,4 +1,4 @@
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -19,7 +19,7 @@ public class Shooter extends DefaultCritter {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int DEFAULT_SIZE = vmin * 8 / 100;
+    private static final int DEFAULT_SIZE = vmin * 6 / 100;
 
     private static final int DEFAULT_POSITION_X = vw * 50 / 100;
     private static final int DEFAULT_POSITION_Y = vh * 90 / 100;
@@ -72,7 +72,7 @@ public class Shooter extends DefaultCritter {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
 
         // fine tune image position and size to fit collisionShape
         int w = (int) (width * 1.5);

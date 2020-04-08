@@ -1,6 +1,5 @@
 package geom;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 
@@ -61,9 +60,8 @@ public class Circle implements BoundingShape {
     }
 
     @Override
-    public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.draw(toEllipse2D());
+    public void draw(Graphics2D g) {
+        g.draw(toEllipse2D());
     }
 
     // ===== Methods related to BoundedShape interface =====>

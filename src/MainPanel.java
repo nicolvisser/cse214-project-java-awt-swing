@@ -44,14 +44,15 @@ public class MainPanel extends JPanel {
     }
 
     public void draw(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
 
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getSize().width, getSize().height);
+        g2.setColor(Color.BLACK);
+        g2.fillRect(0, 0, getSize().width, getSize().height);
 
-        starfield.draw(g);
+        starfield.draw(g2);
 
         for (Drawable drawableChild : drawableChildren) {
-            drawableChild.draw(g);
+            drawableChild.draw(g2);
         }
     }
 

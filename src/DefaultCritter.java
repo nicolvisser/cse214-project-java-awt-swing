@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JComponent;
@@ -138,22 +137,21 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     // ===== METHODS ASSOCIATED WITH DRAWABLE AND UPDATABLE INTERFACES ===== >>>
 
     @Override
-    public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
+    public void draw(Graphics2D g) {
 
-        g2.setColor(Color.RED);
+        g.setColor(Color.RED);
 
         // Draw body (rotated)
-        g2.rotate(orientation, position.x, position.y);
+        g.rotate(orientation, position.x, position.y);
         {
-            getCollisionShape().draw(g2);
+            getCollisionShape().draw(g);
         }
-        g2.rotate(-orientation, position.x, position.y);
+        g.rotate(-orientation, position.x, position.y);
 
         // Draw lookvector line
         Vector2D lineEnd = position.add(lookVector().scale(height / 2));
         LineSegment line = new LineSegment(position, lineEnd);
-        line.draw(g2);
+        line.draw(g);
     }
 
     @Override

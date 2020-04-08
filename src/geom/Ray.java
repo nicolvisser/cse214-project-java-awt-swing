@@ -1,6 +1,5 @@
 package geom;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
@@ -114,11 +113,10 @@ public class Ray implements Shape {
     }
 
     @Override
-    public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
+    public void draw(Graphics2D g) {
         Vector2D end = start.add(direction.scale(999999));
         Line2D line2D = new Line2D.Double(start.x, start.y, end.x, end.y);
-        g2.draw(line2D);
+        g.draw(line2D);
     }
 
 }

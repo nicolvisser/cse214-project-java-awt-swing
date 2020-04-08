@@ -1,4 +1,4 @@
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import geom.*;
 
 public class Missile extends DefaultCritter {
@@ -24,7 +24,7 @@ public class Missile extends DefaultCritter {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
         switch (state) {
             case ALIVE:
                 if (getCollisionShape().intersects(getCanvasRect())) {

@@ -1,4 +1,4 @@
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import geom.Vector2D;
@@ -53,7 +53,7 @@ public class EnemyGroup extends DefaultCritter {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
         super.draw(g);
         for (DefaultCritter enemy : enemies) {
             enemy.draw(g);

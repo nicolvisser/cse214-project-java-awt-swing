@@ -1,6 +1,5 @@
 package geom;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
@@ -38,9 +37,8 @@ public class LineSegment implements Shape {
     }
 
     @Override
-    public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.draw(toLine2D());
+    public void draw(Graphics2D g) {
+        g.draw(toLine2D());
     }
 
 }

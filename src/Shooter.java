@@ -74,12 +74,16 @@ public class Shooter extends DefaultCritter {
     @Override
     public void draw(Graphics2D g) {
 
+        g.rotate(orientation, position.x, position.y);
+
         // fine tune image position and size to fit collisionShape
         int w = (int) (width * 1.5);
         int h = (int) (height * 1.5);
         int x = (int) (position.x - w / 2);
         int y = (int) (position.y - h / 2 - h / 8);
         g.drawImage(img, x, y, w, h, null);
+
+        g.rotate(-orientation, position.x, position.y);
 
         // if image not available or debugging on, draw collisionShape
         if (img == null || MainFrame.DEBUG) {

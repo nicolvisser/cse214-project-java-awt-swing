@@ -5,3 +5,5 @@ KeyBindings:
                 https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/KeyStroke.html
                 https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/ActionMap.html
 
+Images:
+    Tutorial:   https://docs.oracle.com/javase/tutorial/2d/images/index.html

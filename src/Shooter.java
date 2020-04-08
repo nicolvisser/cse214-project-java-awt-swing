@@ -1,22 +1,25 @@
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-
 public class Shooter extends DefaultCritter {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int DEFAULT_WIDTH = vmin * 5 / 100;
-    private static final int DEFAULT_HEIGHT = vmin * 5 / 100;
+    private static final int DEFAULT_SIZE = vmin * 8 / 100;
 
     private static final int DEFAULT_POSITION_X = vw * 50 / 100;
     private static final int DEFAULT_POSITION_Y = vh * 90 / 100;
@@ -25,6 +28,16 @@ public class Shooter extends DefaultCritter {
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
 
     private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5;
+
+    private static BufferedImage img = null;
+
+    static {
+        try {
+            img = ImageIO.read(new File("shooter.png"));
+        } catch (IOException e) {
+            // TODO handle
+        }
+    }
 
     private boolean isLeftThrusterActive = false;
     private boolean isRightThrusterActive = false;
@@ -40,11 +53,11 @@ public class Shooter extends DefaultCritter {
     public ArrayList<Missile> missiles = new ArrayList<>();
 
     public Shooter() {
-        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_SIZE / 2);
     }
 
-    public Shooter(double x, double y, double width, double height) {
-        super(x, y, width, height, 0);
+    public Shooter(double x, double y, double radius) {
+        super(x, y, radius, 0);
 
         setKeyBindings();
 
@@ -60,7 +73,18 @@ public class Shooter extends DefaultCritter {
 
     @Override
     public void draw(Graphics g) {
-        super.draw(g);
+
+        // fine tune image position and size to fit collisionShape
+        int w = (int) (width * 1.5);
+        int h = (int) (height * 1.5);
+        int x = (int) (position.x - w / 2);
+        int y = (int) (position.y - h / 2 - h / 8);
+        g.drawImage(img, x, y, w, h, null);
+
+        // if image not available or debugging on, draw collisionShape
+        if (img == null || MainFrame.DEBUG) {
+            super.draw(g);
+        }
 
         try {
             for (Missile missile : missiles) {

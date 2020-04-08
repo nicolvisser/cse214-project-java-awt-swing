@@ -9,7 +9,13 @@ public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    // stuff for debugging: ----------->>>>>
+
+    public static final boolean DEBUG = true;
+
     public static int numMissiles = 0;
+
+    // <<<<<--------------------------------
 
     private int TARGET_FPS = 60;
     private int TARGET_TIME_PER_FRAME = 1000000000 / TARGET_FPS;

@@ -2,8 +2,8 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import javax.swing.*;
 
-
-
+import geom.Rectangle;
+import geom.Vector2D;
 
 public class MainFrame extends JFrame {
 
@@ -33,7 +33,8 @@ public class MainFrame extends JFrame {
     }
 
     public void addGamePanel() {
-        panel = new MainPanel();
+        panel = new MainPanel(new Rectangle(new Vector2D(getSize().width / 2, getSize().height / 2), getSize().width,
+                getSize().height));
         add(panel);
     }
 
@@ -44,6 +45,7 @@ public class MainFrame extends JFrame {
 
     public void draw(Graphics g) {
         panel.draw(g);
+        g.setColor(Color.GREEN);
         g.drawString("FPS: " + fps, 10, 10);
         g.drawString("Num Missiles: " + numMissiles, 10, 20);
     }
@@ -100,8 +102,6 @@ public class MainFrame extends JFrame {
         }
 
     }
-
-    
 
     public static void main(String[] args) {
 

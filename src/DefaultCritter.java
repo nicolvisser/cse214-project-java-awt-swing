@@ -141,7 +141,7 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.setColor(Color.BLACK);
+        g2.setColor(Color.RED);
 
         // Draw body (rotated)
         g2.rotate(orientation, position.x, position.y);

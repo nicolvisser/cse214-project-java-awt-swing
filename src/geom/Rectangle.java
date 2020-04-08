@@ -18,8 +18,7 @@ public class Rectangle implements BoundingShape {
     }
 
     public Rectangle(Vector2D center, double width, double height) {
-        this.center.x = center.x;
-        this.center.y = center.y;
+        this.center = new Vector2D(center.x, center.y);
         this.width = width;
         this.height = height;
     }

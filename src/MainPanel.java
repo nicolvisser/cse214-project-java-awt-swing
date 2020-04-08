@@ -3,6 +3,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.awt.event.*;
+import geom.Rectangle;
 import geom.Vector2D;
 
 public class MainPanel extends JPanel {
@@ -12,13 +13,16 @@ public class MainPanel extends JPanel {
     public ArrayList<Drawable> drawableChildren = new ArrayList<>();
     public ArrayList<Updatable> updatableChildren = new ArrayList<>();
 
+    Starfield starfield;
     Shooter shooter;
     EnemyGroup enemyGroup;
 
-    public MainPanel() {
+    public MainPanel(Rectangle viewRect) {
         setLayout(null);
         setIgnoreRepaint(true);
         setKeyBindings();
+
+        starfield = new Starfield(viewRect);
 
         shooter = new Shooter();
         add(shooter);
@@ -41,8 +45,10 @@ public class MainPanel extends JPanel {
 
     public void draw(Graphics g) {
 
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, getSize().width, getSize().height);
+
+        starfield.draw(g);
 
         for (Drawable drawableChild : drawableChildren) {
             drawableChild.draw(g);
@@ -50,6 +56,9 @@ public class MainPanel extends JPanel {
     }
 
     public void update() {
+
+        starfield.update(new Vector2D(0, 0));
+
         for (Updatable updatableChild : updatableChildren) {
             updatableChild.update();
         }

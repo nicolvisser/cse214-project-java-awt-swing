@@ -1,6 +1,8 @@
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+
 import geom.Vector2D;
 
 public class EnemyGroup extends DefaultCritter {
@@ -14,6 +16,8 @@ public class EnemyGroup extends DefaultCritter {
 
     private static final double DEFAULT_MOVEMENT_SPEED = 2;
     private static final int DEFAULT_MOVE_DOWN_TIME = 10;
+
+    private static final ImageIcon IMAGE_ICON_SINGLE_ENEMY = new ImageIcon("resources/enemy.png");
 
     private enum MoveState {
         LEFT, RIGHT, DOWN_BEFORE_LEFT, DOWN_BEFORE_RIGHT;
@@ -53,10 +57,17 @@ public class EnemyGroup extends DefaultCritter {
     }
 
     @Override
-    public void draw(Graphics2D g) {
-        super.draw(g);
+    public void draw(Graphics2D g2) {
+        //// super.draw(g2);
         for (DefaultCritter enemy : enemies) {
-            enemy.draw(g);
+
+            //// enemy.draw(g);
+
+            int w = (int) (enemy.width * 1.5);
+            int h = (int) (enemy.height * 1.5);
+            int x = (int) (enemy.position.x - w / 2);
+            int y = (int) (enemy.position.y - h / 2);
+            g2.drawImage(IMAGE_ICON_SINGLE_ENEMY.getImage(), x, y, w, h, null);
         }
     }
 

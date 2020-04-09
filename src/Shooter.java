@@ -67,6 +67,8 @@ public class Shooter extends DefaultCritter {
     @Override
     public void draw(Graphics2D g2) {
 
+        //// super.draw(g);
+
         g2.rotate(orientation, position.x, position.y);
 
         // fine tune image position and size to fit collisionShape
@@ -84,8 +86,6 @@ public class Shooter extends DefaultCritter {
         }
 
         g2.rotate(-orientation, position.x, position.y);
-
-        //// super.draw(g);
 
         try {
             for (Missile missile : missiles) {

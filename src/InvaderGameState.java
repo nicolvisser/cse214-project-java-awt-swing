@@ -38,17 +38,26 @@ public class InvaderGameState extends JComponent {
         Iterator<Missile> shooterMissileIterator = shooter.missiles.iterator();
         while (shooterMissileIterator.hasNext()) {
             Missile shooterMissile = shooterMissileIterator.next();
-            if (shooterMissile.getCollisionShape().intersects(enemyGroup.getCollisionShape())) {
-                Iterator<Enemy> enemyIterator = enemyGroup.enemies.iterator();
-                while (enemyIterator.hasNext()) {
-                    DefaultCritter enemy = enemyIterator.next();
-                    if (shooterMissile.getCollisionShape().intersects(enemy.getCollisionShape())) {
-                        shooterMissileIterator.remove();
-                        enemyIterator.remove();
-                        break;
+            if (shooterMissile.state == Missile.MissileState.ALIVE) {
+                if (shooterMissile.getCollisionShape().intersects(enemyGroup.getCollisionShape())) {
+                    Iterator<Enemy> enemyIterator = enemyGroup.enemies.iterator();
+                    while (enemyIterator.hasNext()) {
+                        Enemy enemy = enemyIterator.next();
+                        if (enemy.state == Enemy.EnemyState.ALIVE) {
+                            if (shooterMissile.getCollisionShape().intersects(enemy.getCollisionShape())) {
+                                shooterMissile.explode();
+                                enemy.explode();
+                                break;
+                            }
+                        } else if (enemy.state == Enemy.EnemyState.DEAD) {
+                            enemyIterator.remove();
+                        }
                     }
                 }
+            } else if (shooterMissile.state == Missile.MissileState.DEAD) {
+                shooterMissileIterator.remove();
             }
+
         }
 
     }

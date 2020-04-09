@@ -73,7 +73,7 @@ public class EnemyGroup extends DefaultCritter {
         for (Enemy enemy : enemies) {
             enemy.position.x += dx;
             enemy.position.y += dy;
-            enemy.updateRotation();
+            enemy.update();
         }
 
         switch (moveState) {

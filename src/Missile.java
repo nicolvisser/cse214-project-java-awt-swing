@@ -19,12 +19,16 @@ public class Missile extends DefaultCritter {
     }
 
     public enum MissileState {
-        ALIVE, DEAD;
+        ALIVE, EXPLODING, DEAD;
     }
 
     MissileState state = MissileState.ALIVE;
 
     public final DefaultCritter owner;
+
+    private AnimatedImage explosion = new AnimatedImage("resources/blueExplosion", "png", 17,
+            AnimatedImage.AnimationType.ONCE);
+    private double explosionOrientation = Math.random() * 3 * Math.PI;
 
     public Missile(Vector2D position, Vector2D direction, DefaultCritter owner) {
         super(position.x, position.y, DEFAULT_RADIUS, direction.getBearing());
@@ -32,27 +36,41 @@ public class Missile extends DefaultCritter {
         this.owner = owner;
     }
 
+    public void explode() {
+        state = MissileState.EXPLODING;
+    }
+
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g2) {
+
+        //// super.draw(g2);
+
+        int w, h, x, y;
         switch (state) {
             case ALIVE:
-                if (getCollisionShape().intersects(getCanvasRect())) {
+                g2.rotate(orientation, position.x, position.y);
 
-                    g.rotate(orientation, position.x, position.y);
+                w = (int) (width * 1.5);
+                h = (int) (height * 1.5);
+                x = (int) (position.x - w / 2);
+                y = (int) (position.y - h / 2);
+                g2.drawImage(imgIcon.getImage(), x, y, w, h, null);
 
-                    int w = (int) (width * 1.5);
-                    int h = (int) (height * 1.5);
-                    int x = (int) (position.x - w / 2);
-                    int y = (int) (position.y - h / 2);
-                    g.drawImage(imgIcon.getImage(), x, y, w, h, null);
+                g2.rotate(-orientation, position.x, position.y);
 
-                    g.rotate(-orientation, position.x, position.y);
+                break;
 
-                    //// super.draw(g);
+            case EXPLODING:
 
-                } else {
-                    state = MissileState.DEAD;
-                }
+                w = (int) (width * 2);
+                h = (int) (height * 2);
+                x = (int) (position.x - w / 2);
+                y = (int) (position.y - h / 2);
+
+                g2.rotate(explosionOrientation, position.x, position.y);
+                explosion.draw(g2, x, y, w, h);
+                g2.rotate(-explosionOrientation, position.x, position.y);
+
                 break;
 
             default:
@@ -64,7 +82,21 @@ public class Missile extends DefaultCritter {
     public void update() {
         switch (state) {
             case ALIVE:
+            case EXPLODING:
                 super.update();
+
+                if (state == MissileState.EXPLODING) {
+                    velocity = velocity.scale(0.8);
+                }
+
+                if (!getCollisionShape().intersects(getCanvasRect())) {
+                    state = MissileState.DEAD;
+                }
+
+                if (explosion.isComplete) {
+                    state = MissileState.DEAD;
+                }
+
                 break;
 
             default:

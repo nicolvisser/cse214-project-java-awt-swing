@@ -20,7 +20,7 @@ public class InvaderGameState extends JComponent {
         shooter = new Shooter();
         add(shooter); // add shooter JComponent to link key bindings
 
-        enemyGroup = new EnemyGroup(300, 200, 600, 400, 10, 5);
+        enemyGroup = new EnemyGroup(300, 200, 600, 400, 10, 6);
         add(enemyGroup);
     }
 
@@ -39,7 +39,7 @@ public class InvaderGameState extends JComponent {
         while (shooterMissileIterator.hasNext()) {
             Missile shooterMissile = shooterMissileIterator.next();
             if (shooterMissile.getCollisionShape().intersects(enemyGroup.getCollisionShape())) {
-                Iterator<DefaultCritter> enemyIterator = enemyGroup.enemies.iterator();
+                Iterator<Enemy> enemyIterator = enemyGroup.enemies.iterator();
                 while (enemyIterator.hasNext()) {
                     DefaultCritter enemy = enemyIterator.next();
                     if (shooterMissile.getCollisionShape().intersects(enemy.getCollisionShape())) {

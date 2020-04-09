@@ -1,6 +1,8 @@
-import geom.*;
-import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Graphics;
+
+import geom.Rectangle;
+import geom.Vector2D;
 
 public class Starfield {
 
@@ -25,8 +27,8 @@ public class Starfield {
         }
     }
 
-    public Starfield(Rectangle drawArea) {
-        this.drawArea = drawArea;
+    public Starfield(int w, int h) {
+        drawArea = new Rectangle(w / 2, h / 2, w, h);
         stars = new Star[NUM_STARS];
 
         for (int i = 0; i < NUM_STARS; i++) {

@@ -7,3 +7,10 @@ KeyBindings:
 
 Images:
     Tutorial:   https://docs.oracle.com/javase/tutorial/2d/images/index.html
+
+Various Concepts:
+    Killer Game Programming in Java
+    Author: Andrew Davison
+    Publisher: O'Reilly Media, Inc.
+    https://learning.oreilly.com/library/view/killer-game-programming/0596007302/
+

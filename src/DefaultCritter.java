@@ -9,7 +9,7 @@ import geom.Rectangle;
 import geom.Shape;
 import geom.Vector2D;
 
-public class DefaultCritter extends JComponent implements Updatable, Drawable {
+public class DefaultCritter extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
@@ -134,9 +134,6 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
         orientation += angularVelocity + 0.5 * angularAcceleration;
     }
 
-    // ===== METHODS ASSOCIATED WITH DRAWABLE AND UPDATABLE INTERFACES ===== >>>
-
-    @Override
     public void draw(Graphics2D g) {
 
         g.setColor(Color.RED);
@@ -154,7 +151,6 @@ public class DefaultCritter extends JComponent implements Updatable, Drawable {
         line.draw(g);
     }
 
-    @Override
     public void update() {
         updateTranslation();
         updateRotation();

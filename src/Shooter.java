@@ -1,16 +1,13 @@
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
+import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
@@ -29,14 +26,10 @@ public class Shooter extends DefaultCritter {
 
     private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5;
 
-    private static BufferedImage img = null;
+    private static ImageIcon imgIcon = null;
 
     static {
-        try {
-            img = ImageIO.read(new File("shooter.png"));
-        } catch (IOException e) {
-            // TODO handle
-        }
+        imgIcon = new ImageIcon("resources/shooter.png");
     }
 
     private boolean isLeftThrusterActive = false;
@@ -81,14 +74,11 @@ public class Shooter extends DefaultCritter {
         int h = (int) (height * 1.5);
         int x = (int) (position.x - w / 2);
         int y = (int) (position.y - h / 2 - h / 8);
-        g.drawImage(img, x, y, w, h, null);
+        g.drawImage(imgIcon.getImage(), x, y, w, h, null);
 
         g.rotate(-orientation, position.x, position.y);
 
-        // if image not available or debugging on, draw collisionShape
-        if (img == null || MainFrame.DEBUG) {
-            super.draw(g);
-        }
+        //// super.draw(g);
 
         try {
             for (Missile missile : missiles) {

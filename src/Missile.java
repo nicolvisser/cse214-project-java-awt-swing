@@ -1,5 +1,8 @@
 import java.awt.Graphics2D;
-import geom.*;
+
+import javax.swing.ImageIcon;
+
+import geom.Vector2D;
 
 public class Missile extends DefaultCritter {
 
@@ -8,6 +11,12 @@ public class Missile extends DefaultCritter {
     private static final int DEFAULT_RADIUS = vmin / 100;
 
     private static final int DEFAULT_SPEED = 10;
+
+    private static ImageIcon imgIcon;
+
+    static {
+        imgIcon = new ImageIcon("resources/bullet.png");
+    }
 
     public enum MissileState {
         ALIVE, DEAD;
@@ -28,7 +37,19 @@ public class Missile extends DefaultCritter {
         switch (state) {
             case ALIVE:
                 if (getCollisionShape().intersects(getCanvasRect())) {
-                    super.draw(g);
+
+                    g.rotate(orientation, position.x, position.y);
+
+                    int w = (int) (width * 1.5);
+                    int h = (int) (height * 1.5);
+                    int x = (int) (position.x - w / 2);
+                    int y = (int) (position.y - h / 2);
+                    g.drawImage(imgIcon.getImage(), x, y, w, h, null);
+
+                    g.rotate(-orientation, position.x, position.y);
+
+                    //// super.draw(g);
+
                 } else {
                     state = MissileState.DEAD;
                 }

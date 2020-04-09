@@ -26,11 +26,7 @@ public class Shooter extends DefaultCritter {
 
     private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5;
 
-    private static ImageIcon imgIcon = null;
-
-    static {
-        imgIcon = new ImageIcon("resources/shooter.png");
-    }
+    private static final AnimatedImage ANIMATED_IMAGE = new AnimatedImage("resources/Shooter", "png", 28);
 
     private boolean isLeftThrusterActive = false;
     private boolean isRightThrusterActive = false;
@@ -65,24 +61,24 @@ public class Shooter extends DefaultCritter {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g2) {
 
-        g.rotate(orientation, position.x, position.y);
+        g2.rotate(orientation, position.x, position.y);
 
         // fine tune image position and size to fit collisionShape
         int w = (int) (width * 1.5);
         int h = (int) (height * 1.5);
         int x = (int) (position.x - w / 2);
         int y = (int) (position.y - h / 2 - h / 8);
-        g.drawImage(imgIcon.getImage(), x, y, w, h, null);
+        ANIMATED_IMAGE.draw(g2, x, y, w, h);
 
-        g.rotate(-orientation, position.x, position.y);
+        g2.rotate(-orientation, position.x, position.y);
 
         //// super.draw(g);
 
         try {
             for (Missile missile : missiles) {
-                missile.draw(g);
+                missile.draw(g2);
             }
         } catch (ConcurrentModificationException e) {
             // skip missiles in this frame

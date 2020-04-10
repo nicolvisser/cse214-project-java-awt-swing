@@ -39,7 +39,7 @@ public class InvaderGameState extends JComponent {
         for (Bunker bunker : bunkers)
             bunker.draw(g2);
 
-        shooter.drawAimLine(g2, enemyGroup);
+        shooter.drawAimLine(g2, enemyGroup, bunkers);
     }
 
     public void update() {

@@ -70,7 +70,6 @@ public class Shooter extends DefaultCritter {
         super(x, y, width, height, 0);
 
         setKeyBindings();
-
     }
 
     public void takeDamage(int damagePoints) {
@@ -97,7 +96,7 @@ public class Shooter extends DefaultCritter {
     }
 
     // TODO: Change parameters to be more general (obstacles)
-    public LineSegment getAimLine(EnemyGroup enemyGroup) {
+    public LineSegment getAimLine(EnemyGroup enemyGroup, ArrayList<Bunker> bunkers) {
         Vector2D start = position; // TODO: change to end of turret position
 
         Ray aimRay = new Ray(start, lookVector());
@@ -114,13 +113,24 @@ public class Shooter extends DefaultCritter {
             }
         }
 
+        for (Bunker bunker : bunkers) {
+            if (bunker.getCollisionShape().intersects(aimRay)) {
+                for (Bunker.Block block : bunker.blocks) {
+                    Double lengthUntilCollision = aimRay.lengthUntilIntersection(block.getCollisionShape());
+                    if (Double.isFinite(lengthUntilCollision) && lengthUntilCollision < lengthOfAimLine) {
+                        lengthOfAimLine = lengthUntilCollision;
+                    }
+                }
+            }
+        }
+
         return new LineSegment(start, lookVector(), lengthOfAimLine);
     }
 
-    public void drawAimLine(Graphics2D g2, EnemyGroup enemyGroup) {
+    public void drawAimLine(Graphics2D g2, EnemyGroup enemyGroup, ArrayList<Bunker> bunkers) {
         if (state == ShooterState.ALIVE) {
             g2.setColor(new Color(0, 0.75f, 1, 0.25f));
-            getAimLine(enemyGroup).draw(g2);
+            getAimLine(enemyGroup, bunkers).draw(g2);
         }
     }
 

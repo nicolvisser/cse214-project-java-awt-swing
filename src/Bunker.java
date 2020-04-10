@@ -29,11 +29,7 @@ public class Bunker extends DefaultCritter {
         public void draw(Graphics2D g2) {
 
             g2.setColor(color);
-
-            int x = (int) (position.x - width / 2);
-            int y = (int) (position.y - height / 2);
-
-            g2.fillRect(x, y, (int) width, (int) height);
+            g2.fill(((Rectangle) getCollisionShape()).toRectangle2D());
 
             // Show Collision Boundary for Debugging: --->>
             if (InvadersFrame.DEBUG)

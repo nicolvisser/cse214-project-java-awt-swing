@@ -6,7 +6,7 @@ import geom.Vector2D;
 
 public class Starfield {
 
-    private static final int NUM_STARS = 1000;
+    private static final int NUM_STARS = 600;
     private static final double STARS_PARALLAX_SENSITIVITY_MAX = 0.083;
 
     private final Rectangle drawArea;

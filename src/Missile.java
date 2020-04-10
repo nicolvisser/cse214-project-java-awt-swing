@@ -86,7 +86,7 @@ public class Missile extends DefaultCritter {
                 super.update();
 
                 if (state == MissileState.EXPLODING) {
-                    velocity = velocity.scale(0.8);
+                    velocity = velocity.scale(0.9);
                 }
 
                 if (!getCollisionShape().intersects(getCanvasRect())) {

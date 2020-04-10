@@ -107,6 +107,15 @@ public class Missile extends DefaultCritter {
         }
     }
 
+    @Override
+    public boolean isCollidingWith(DefaultCritter critter) {
+        if (critter instanceof Enemy) {
+            return isCollidingWith((Enemy) critter);
+        } else {
+            return super.isCollidingWith(critter);
+        }
+    }
+
     public boolean isCollidingWith(Enemy enemy) {
         if ((this.state == MissileState.ALIVE) && (enemy.state == Enemy.EnemyState.ALIVE)) {
             if (this.getCollisionShape().intersects(enemy.getCollisionShape())) {
@@ -116,9 +125,23 @@ public class Missile extends DefaultCritter {
         return false;
     }
 
+    @Override
+    public void handleCollisionWith(DefaultCritter critter) {
+        if (critter instanceof Enemy) {
+            handleCollisionWith((Enemy) critter);
+        } else {
+            super.handleCollisionWith(critter);
+        }
+    }
+
     public void handleCollisionWith(Enemy enemy) {
         this.explode();
         enemy.explode();
+    }
+
+    @Override
+    public boolean mayBeRemoved() {
+        return state == MissileState.DEAD;
     }
 
 }

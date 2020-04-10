@@ -1,4 +1,5 @@
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JComponent;
@@ -35,33 +36,40 @@ public class InvaderGameState extends JComponent {
         shooter.update();
         enemyGroup.update();
 
-        // remove missiles if neccessary
-        Iterator<Missile> shooterMissileIterator = shooter.missiles.iterator();
-        while (shooterMissileIterator.hasNext()) {
-            Missile shooterMissile = shooterMissileIterator.next();
-            if (shooterMissile.state == Missile.MissileState.DEAD) {
-                shooterMissileIterator.remove();
+        removeDeadCritters(shooter.missiles);
+        removeDeadCritters(enemyGroup.enemies);
+
+        checkAndHandleCollisions(shooter.missiles, enemyGroup.enemies);
+
+    }
+
+    public void removeDeadCritters(ArrayList<? extends DefaultCritter> group) {
+        Iterator<? extends DefaultCritter> critterIterator = group.iterator();
+        while (critterIterator.hasNext()) {
+            DefaultCritter critter = critterIterator.next();
+            if (critter.mayBeRemoved()) {
+                critterIterator.remove();
             }
         }
+    }
 
-        // remove enemies if neccessary
-        Iterator<Enemy> enemyIterator = enemyGroup.enemies.iterator();
-        while (enemyIterator.hasNext()) {
-            Enemy enemy = enemyIterator.next();
-            if (enemy.state == Enemy.EnemyState.DEAD) {
-                enemyIterator.remove();
-            }
-        }
-
-        // check collissions between missiles and enemies
-        for (Missile shooterMissile : shooter.missiles) {
-            for (Enemy enemy : enemyGroup.enemies) {
-                if (shooterMissile.isCollidingWith(enemy)) {
-                    shooterMissile.handleCollisionWith(enemy);
+    public void checkAndHandleCollisions(ArrayList<? extends DefaultCritter> group1,
+            ArrayList<? extends DefaultCritter> group2) {
+        for (DefaultCritter critter1 : group1) {
+            for (DefaultCritter critter2 : group2) {
+                if (critter1.isCollidingWith(critter2)) {
+                    critter1.handleCollisionWith(critter2);
                 }
             }
         }
+    }
 
+    public void checkAndHandleCollisions(DefaultCritter critter1, ArrayList<? extends DefaultCritter> group2) {
+        for (DefaultCritter critter2 : group2) {
+            if (critter1.isCollidingWith(critter2)) {
+                critter1.handleCollisionWith(critter2);
+            }
+        }
     }
 
 }

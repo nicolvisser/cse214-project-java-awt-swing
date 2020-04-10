@@ -156,4 +156,16 @@ public class DefaultCritter extends JComponent {
         updateRotation();
     }
 
+    public boolean isCollidingWith(DefaultCritter critter) {
+        return this.getCollisionShape().intersects(critter.getCollisionShape());
+    }
+
+    public void handleCollisionWith(DefaultCritter critter) {
+        // Default do nothing
+    }
+
+    public boolean mayBeRemoved() {
+        return false; // Default to false
+    }
+
 }

@@ -78,12 +78,35 @@ public class Enemy extends DefaultCritter {
         }
     }
 
+    @Override
+    public boolean isCollidingWith(DefaultCritter critter) {
+        if (critter instanceof Missile) {
+            return isCollidingWith((Missile) critter);
+        } else {
+            return super.isCollidingWith(critter);
+        }
+    }
+
     public boolean isCollidingWith(Missile missile) {
         return missile.isCollidingWith(this); // reuse code from missile class
     }
 
+    @Override
+    public void handleCollisionWith(DefaultCritter critter) {
+        if (critter instanceof Missile) {
+            handleCollisionWith((Missile) critter);
+        } else {
+            super.handleCollisionWith(critter);
+        }
+    }
+
     public void handleCollisionWith(Missile missile) {
         missile.handleCollisionWith(this); // reuse code from missile class
+    }
+
+    @Override
+    public boolean mayBeRemoved() {
+        return state == EnemyState.DEAD;
     }
 
 }

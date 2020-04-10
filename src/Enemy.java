@@ -25,6 +25,7 @@ public class Enemy extends DefaultCritter {
     }
 
     public void explode() {
+        StdAudio.play("resources/Explosion+1.wav");
         state = EnemyState.EXPLODING;
     }
 

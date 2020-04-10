@@ -47,6 +47,9 @@ public class InvaderGameState extends JComponent {
         shooter.update();
         enemyGroup.update();
 
+        for (Bunker bunker : bunkers)
+            bunker.update();
+
         removeDeadCritters(shooter.missiles);
         removeDeadCritters(enemyGroup.enemies);
         removeDeadCritters(enemyGroup.missiles);

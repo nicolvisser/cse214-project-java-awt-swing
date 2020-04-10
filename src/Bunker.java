@@ -22,7 +22,7 @@ public class Bunker extends DefaultCritter {
 
         @Override
         public void update() {
-            // does not move or rotate
+            // dont call super does not move or rotate
         }
 
         @Override
@@ -44,6 +44,7 @@ public class Bunker extends DefaultCritter {
 
     int spacing = 1;
     ArrayList<Block> blocks = new ArrayList<>();
+    private int lastNumberOfBlocks = 0;
 
     public Bunker(double xcenter, double ycenter, double width, double height, int numRows, int numCols) {
         super(xcenter, ycenter, width, height, 0);
@@ -57,12 +58,41 @@ public class Bunker extends DefaultCritter {
                     .ymax(); y += (blockHeight + spacing)) {
                 Block block = new Block(x, y, blockWidth, blockHeight);
                 blocks.add(block);
+                lastNumberOfBlocks++;
             }
         }
     }
 
-    public boolean isCleared() {
-        return blocks.size() == 0;
+    public void recalculateCollisionShape() {
+
+        double xmin = Double.POSITIVE_INFINITY;
+        double xmax = Double.NEGATIVE_INFINITY;
+        double ymin = Double.POSITIVE_INFINITY;
+        double ymax = Double.NEGATIVE_INFINITY;
+
+        for (Block block : blocks) {
+            xmin = Math.min(xmin, block.position.x - block.width / 2);
+            xmax = Math.max(xmax, block.position.x + block.width / 2);
+            ymin = Math.min(ymin, block.position.y - block.height / 2);
+            ymax = Math.max(ymax, block.position.y + block.height / 2);
+        }
+
+        this.width = xmax - xmin;
+        this.height = ymax - ymin;
+        this.position.x = xmin + this.width / 2;
+        this.position.y = ymin + this.height / 2;
+    }
+
+    @Override
+    public void update() {
+
+        // if meanwhile an enemy has died, recalculate collision boundary of group
+        if (lastNumberOfBlocks != blocks.size() && blocks.size() > 0) {
+            recalculateCollisionShape();
+            lastNumberOfBlocks = blocks.size();
+        }
+
+        // dont call super does not move or rotate
     }
 
     public void draw(Graphics2D g2) {

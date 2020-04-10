@@ -141,6 +141,10 @@ public class Missile extends DefaultCritter {
         return false;
     }
 
+    public boolean isCollidingWith(Bunker bunker) {
+        return bunker.isCollidingWith(this); // reuse code in Bunker class
+    }
+
     @Override
     public void handleCollisionWith(DefaultCritter critter) {
         if (critter instanceof Enemy) {

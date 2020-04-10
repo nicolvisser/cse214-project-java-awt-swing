@@ -12,6 +12,7 @@ public class InvaderGameState extends JComponent {
     Starfield starfield;
     Shooter shooter;
     EnemyGroup enemyGroup;
+    ArrayList<Bunker> bunkers = new ArrayList<>();
 
     public InvaderGameState(int w, int h) {
         // before adding critters override canvas size --- NOT SURE IF THIS IS IDEAL
@@ -24,12 +25,19 @@ public class InvaderGameState extends JComponent {
 
         enemyGroup = new EnemyGroup(300, 200, 600, 400, 10, 6, shooter);
         add(enemyGroup);
+
+        bunkers.add(new Bunker(w * 1 / 4, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
+        bunkers.add(new Bunker(w * 2 / 4, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
+        bunkers.add(new Bunker(w * 3 / 4, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
     }
 
     public void draw(Graphics2D g2) {
         starfield.draw(g2);
         shooter.draw(g2);
         enemyGroup.draw(g2);
+
+        for (Bunker bunker : bunkers)
+            bunker.draw(g2);
 
         shooter.drawAimLine(g2, enemyGroup);
     }
@@ -42,9 +50,12 @@ public class InvaderGameState extends JComponent {
         removeDeadCritters(shooter.missiles);
         removeDeadCritters(enemyGroup.enemies);
         removeDeadCritters(enemyGroup.missiles);
+        removeDeadCritters(bunkers);
 
         checkAndHandleCollisions(shooter.missiles, enemyGroup.enemies);
         checkAndHandleCollisions(shooter, enemyGroup.missiles);
+        checkAndHandleCollisions(bunkers, shooter.missiles);
+        checkAndHandleCollisions(bunkers, enemyGroup.missiles);
 
     }
 

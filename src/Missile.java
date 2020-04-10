@@ -41,6 +41,7 @@ public class Missile extends DefaultCritter {
     }
 
     public void explode() {
+        StdAudio.play("resources/Explosion+1.wav");
         state = MissileState.EXPLODING;
     }
 

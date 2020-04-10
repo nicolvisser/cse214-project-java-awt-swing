@@ -10,8 +10,8 @@ public class Missile extends DefaultCritter {
     private static final long serialVersionUID = 1L;
 
     private static final int DEFAULT_RADIUS = vmin / 150;
-
     private static final int DEFAULT_SPEED = 10;
+    public static final int DEFAULT_DAMAGE_POINTS = 50;
 
     private static ImageIcon imgIcnBulletBlue = new ImageIcon("resources/bullet.png");
     private static ImageIcon imgIcnBulletRed = new ImageIcon("resources/bullet_red.png");
@@ -154,12 +154,12 @@ public class Missile extends DefaultCritter {
 
     public void handleCollisionWith(Enemy enemy) {
         this.explode();
-        enemy.explode();
+        enemy.takeDamage(DEFAULT_DAMAGE_POINTS);
     }
 
     public void handleCollisionWith(Shooter shooter) {
         this.explode();
-        // shooter.explode();
+        shooter.takeDamage(DEFAULT_DAMAGE_POINTS);
     }
 
     @Override

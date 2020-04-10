@@ -12,6 +12,8 @@ public class Enemy extends DefaultCritter {
         ALIVE, EXPLODING, DEAD;
     }
 
+    private int healthPoints = 100;
+
     public EnemyState state = EnemyState.ALIVE;
 
     private AnimatedImage explosion = new AnimatedImage("resources/redExplosion", "png", 17,
@@ -22,6 +24,13 @@ public class Enemy extends DefaultCritter {
         super(x, y, radius, orientation);
 
         //// angularVelocity = 0.1 + Math.random() / 10;
+    }
+
+    public void takeDamage(int damagePoints) {
+        healthPoints -= damagePoints;
+        if (healthPoints <= 0) {
+            explode();
+        }
     }
 
     public void explode() {

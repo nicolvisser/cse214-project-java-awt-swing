@@ -38,11 +38,16 @@ public class Shooter extends DefaultCritter {
     private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/carrier.png");
     private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/destroyer.png");
 
+    private AnimatedImage explosion = new AnimatedImage("resources/blueExplosion", "png", 17,
+            AnimatedImage.AnimationType.ONCE);
+
     public enum ShooterState {
         ALIVE, EXPLODING, DEAD;
     }
 
     public ShooterState state = ShooterState.ALIVE;
+
+    private int healthPoints = 250;
 
     private boolean isLeftThrusterActive = false;
     private boolean isRightThrusterActive = false;
@@ -68,13 +73,22 @@ public class Shooter extends DefaultCritter {
 
     }
 
-    public void shootMissile() {
-        StdAudio.play("resources/heartbeat.wav");
+    public void takeDamage(int damagePoints) {
+        healthPoints -= damagePoints;
+        if (healthPoints <= 0) {
+            explode();
+        }
+    }
 
-        if (reloadTimer >= DEFAULT_RELOAD_TIME) {
-            Missile missile = new Missile(position, lookVector(), this);
-            missiles.add(missile);
-            reloadTimer = 0;
+    public void shootMissile() {
+        if (state == ShooterState.ALIVE) {
+            StdAudio.play("resources/heartbeat.wav");
+
+            if (reloadTimer >= DEFAULT_RELOAD_TIME) {
+                Missile missile = new Missile(position, lookVector(), this);
+                missiles.add(missile);
+                reloadTimer = 0;
+            }
         }
     }
 
@@ -104,31 +118,53 @@ public class Shooter extends DefaultCritter {
     }
 
     public void drawAimLine(Graphics2D g2, EnemyGroup enemyGroup) {
-        g2.setColor(new Color(0, 0.75f, 1, 0.25f));
-        getAimLine(enemyGroup).draw(g2);
+        if (state == ShooterState.ALIVE) {
+            g2.setColor(new Color(0, 0.75f, 1, 0.25f));
+            getAimLine(enemyGroup).draw(g2);
+        }
     }
 
     @Override
     public void draw(Graphics2D g2) {
 
-        // fine tune image position and size to fit collisionShape
-        int w = (int) (width * 1.2);
-        int h = (int) (height * 1.2);
-        int x = (int) (position.x - w / 2);
-        int y = (int) (position.y - h / 2);
+        switch (state) {
+            case ALIVE:
 
-        g2.drawImage(IMAGE_ICON_SHIP.getImage(), x, y, w, h, null);
+                // fine tune image position and size to fit collisionShape
+                int w = (int) (width * 1.2);
+                int h = (int) (height * 1.2);
+                int x = (int) (position.x - w / 2);
+                int y = (int) (position.y - h / 2);
 
-        g2.rotate(orientation, position.x, position.y);
+                g2.drawImage(IMAGE_ICON_SHIP.getImage(), x, y, w, h, null);
 
-        w = (int) (DEFAULT_TURRET_WIDTH);
-        h = (int) (DEFAULT_TURRET_HEIGHT);
-        x = (int) (position.x - w / 2);
-        y = (int) (position.y - h / 2 - h / 8);
+                g2.rotate(orientation, position.x, position.y);
 
-        g2.drawImage(IMAGE_ICON_TURRET.getImage(), x, y, w, h, null);
+                w = (int) (DEFAULT_TURRET_WIDTH);
+                h = (int) (DEFAULT_TURRET_HEIGHT);
+                x = (int) (position.x - w / 2);
+                y = (int) (position.y - h / 2 - h / 8);
 
-        g2.rotate(-orientation, position.x, position.y);
+                g2.drawImage(IMAGE_ICON_TURRET.getImage(), x, y, w, h, null);
+
+                g2.rotate(-orientation, position.x, position.y);
+
+                break;
+
+            case EXPLODING:
+
+                w = (int) (width * 2);
+                h = (int) (height * 2);
+                x = (int) (position.x - w / 2);
+                y = (int) (position.y - h / 2);
+
+                explosion.draw(g2, x, y, w, h);
+
+                break;
+
+            default:
+                break;
+        }
 
         try {
             for (Missile missile : missiles) {
@@ -147,6 +183,10 @@ public class Shooter extends DefaultCritter {
 
     @Override
     public void update() {
+
+        if (explosion.isComplete) {
+            state = ShooterState.DEAD;
+        }
 
         // set acceleration from thruster statuses
         if (isLeftThrusterActive && !isRightThrusterActive) {

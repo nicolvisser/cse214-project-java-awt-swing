@@ -1,6 +1,8 @@
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import geom.Rectangle;
+import geom.Shape;
 import geom.Vector2D;
 
 public class EnemyGroup extends DefaultCritter {
@@ -23,6 +25,7 @@ public class EnemyGroup extends DefaultCritter {
     int moveDownTimer = 0;
 
     public ArrayList<Enemy> enemies = new ArrayList<>();
+    private int lastNumberOfEnemies = 0;
 
     public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol) {
         super(x, y, width, height, Math.PI);
@@ -40,6 +43,7 @@ public class EnemyGroup extends DefaultCritter {
         for (double eX = xmin + r; eX < xmax; eX += xSpacing + 2 * r) {
             for (double eY = ymin + r; eY < ymax; eY += ySpacing + 2 * r) {
                 enemies.add(new Enemy(eX, eY, r, Math.PI));
+                lastNumberOfEnemies++;
             }
         }
 
@@ -50,6 +54,37 @@ public class EnemyGroup extends DefaultCritter {
             moveState = MoveState.LEFT;
             velocity = new Vector2D(-DEFAULT_MOVEMENT_SPEED, 0);
         }
+    }
+
+    @Override
+    public Shape getCollisionShape() {
+        Rectangle r = (Rectangle) super.getCollisionShape();
+        return r;
+    }
+
+    public void recalculateCollisionShape() {
+
+        double xmin = Double.POSITIVE_INFINITY;
+        double xmax = Double.NEGATIVE_INFINITY;
+        double ymin = Double.POSITIVE_INFINITY;
+        double ymax = Double.NEGATIVE_INFINITY;
+
+        for (Enemy enemy : enemies) {
+            xmin = Math.min(xmin, enemy.position.x);
+            xmax = Math.max(xmax, enemy.position.x);
+            ymin = Math.min(ymin, enemy.position.y);
+            ymax = Math.max(ymax, enemy.position.y);
+        }
+
+        xmin -= DEFUALT_ENEMY_RADIUS;
+        xmax += DEFUALT_ENEMY_RADIUS;
+        ymin -= DEFUALT_ENEMY_RADIUS;
+        ymax += DEFUALT_ENEMY_RADIUS;
+
+        this.width = xmax - xmin;
+        this.height = ymax - ymin;
+        this.position.x = xmin + this.width / 2;
+        this.position.y = ymin + this.height / 2;
     }
 
     @Override
@@ -67,6 +102,13 @@ public class EnemyGroup extends DefaultCritter {
 
     @Override
     public void update() {
+
+        // if meanwhile an enemy has died, recalculate collision boundary of group
+        if (lastNumberOfEnemies != enemies.size() && enemies.size() > 0) {
+            recalculateCollisionShape();
+            lastNumberOfEnemies = enemies.size();
+        }
+
         // calculate how much group center will translate and store
         double dx = velocity.x + 0.5 * acceleration.x;
         double dy = velocity.y + 0.5 * acceleration.y;

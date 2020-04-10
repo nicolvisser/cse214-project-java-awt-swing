@@ -34,7 +34,7 @@ public class DefaultCritter extends JComponent {
     }
 
     private final CollisionShape boundingShape;
-    public final double width, height;
+    public double width, height;
 
     // positive x to right, positive y to bottom (as with swing frame)
     public Vector2D position, velocity, acceleration;

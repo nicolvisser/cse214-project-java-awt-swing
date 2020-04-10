@@ -1,5 +1,6 @@
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import javax.swing.JComponent;
@@ -55,20 +56,30 @@ public class InvaderGameState extends JComponent {
 
     public void checkAndHandleCollisions(ArrayList<? extends DefaultCritter> group1,
             ArrayList<? extends DefaultCritter> group2) {
-        for (DefaultCritter critter1 : group1) {
+        try {
+            for (DefaultCritter critter1 : group1) {
+                for (DefaultCritter critter2 : group2) {
+                    if (critter1.isCollidingWith(critter2)) {
+                        critter1.handleCollisionWith(critter2);
+                    }
+                }
+            }
+        } catch (ConcurrentModificationException e) {
+            e.printStackTrace();
+            // skip checking in this frame
+        }
+    }
+
+    public void checkAndHandleCollisions(DefaultCritter critter1, ArrayList<? extends DefaultCritter> group2) {
+        try {
             for (DefaultCritter critter2 : group2) {
                 if (critter1.isCollidingWith(critter2)) {
                     critter1.handleCollisionWith(critter2);
                 }
             }
-        }
-    }
-
-    public void checkAndHandleCollisions(DefaultCritter critter1, ArrayList<? extends DefaultCritter> group2) {
-        for (DefaultCritter critter2 : group2) {
-            if (critter1.isCollidingWith(critter2)) {
-                critter1.handleCollisionWith(critter2);
-            }
+        } catch (ConcurrentModificationException e) {
+            e.printStackTrace();
+            // skip checking in this frame
         }
     }
 

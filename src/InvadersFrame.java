@@ -11,6 +11,8 @@ public class InvadersFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    public static final boolean DEBUG = true;
+
     //// private static final Dimension DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN = new
     //// Dimension(800, 600);
 

@@ -54,7 +54,12 @@ public class EnemyGroup extends DefaultCritter {
 
     @Override
     public void draw(Graphics2D g2) {
-        //// super.draw(g2);
+
+        // Show Collision Boundary for Debugging: --->>
+        if (InvadersFrame.DEBUG)
+            super.draw(g2);
+        // <-------------------------------------------
+
         for (Enemy enemy : enemies) {
             enemy.draw(g2);
         }

@@ -43,8 +43,6 @@ public class Missile extends DefaultCritter {
     @Override
     public void draw(Graphics2D g2) {
 
-        //// super.draw(g2);
-
         int w, h, x, y;
         switch (state) {
             case ALIVE:
@@ -76,6 +74,11 @@ public class Missile extends DefaultCritter {
             default:
                 break;
         }
+
+        // Show Collision Boundary for Debugging: --->>
+        if (InvadersFrame.DEBUG)
+            super.draw(g2);
+        // <-------------------------------------------
     }
 
     @Override

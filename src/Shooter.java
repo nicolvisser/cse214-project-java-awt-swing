@@ -26,11 +26,8 @@ public class Shooter extends DefaultCritter {
 
     private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5;
 
-    private static final ImageIcon IMAGE_ICON_STILL = new ImageIcon("resources/shooter.png");
-    private static final AnimatedImage ANIMATED_IMAGE_LEFT = new AnimatedImage("resources/shooterMoveLeft", "png", 8,
-            AnimatedImage.AnimationType.ONCE);
-    private static final AnimatedImage ANIMATED_IMAGE_RIGHT = new AnimatedImage("resources/shooterMoveRight", "png", 8,
-            AnimatedImage.AnimationType.ONCE);
+    private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/carrier.png");
+    private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/destroyer.png");
 
     private boolean isLeftThrusterActive = false;
     private boolean isRightThrusterActive = false;
@@ -67,21 +64,22 @@ public class Shooter extends DefaultCritter {
     @Override
     public void draw(Graphics2D g2) {
 
-        g2.rotate(orientation, position.x, position.y);
-
         // fine tune image position and size to fit collisionShape
         int w = (int) (width * 1.5);
         int h = (int) (height * 1.5);
         int x = (int) (position.x - w / 2);
-        int y = (int) (position.y - h / 2 - h / 8);
+        int y = (int) (position.y - h / 2);
 
-        if (isLeftThrusterActive && !isRightThrusterActive) {
-            ANIMATED_IMAGE_LEFT.draw(g2, x, y, w, h);
-        } else if (isRightThrusterActive && !isLeftThrusterActive) {
-            ANIMATED_IMAGE_RIGHT.draw(g2, x, y, w, h);
-        } else {
-            g2.drawImage(IMAGE_ICON_STILL.getImage(), x, y, w, h, null);
-        }
+        g2.drawImage(IMAGE_ICON_SHIP.getImage(), x, y, w, h, null);
+
+        g2.rotate(orientation, position.x, position.y);
+
+        w = (int) (width * 0.8);
+        h = (int) (height * 0.8);
+        x = (int) (position.x - w / 2);
+        y = (int) (position.y - h / 2 - h / 8);
+
+        g2.drawImage(IMAGE_ICON_TURRET.getImage(), x, y, w, h, null);
 
         g2.rotate(-orientation, position.x, position.y);
 
@@ -209,7 +207,6 @@ public class Shooter extends DefaultCritter {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isLeftThrusterActive = false;
-                ANIMATED_IMAGE_LEFT.reset();
             }
 
         });
@@ -233,7 +230,6 @@ public class Shooter extends DefaultCritter {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isRightThrusterActive = false;
-                ANIMATED_IMAGE_RIGHT.reset();
             }
         });
 

@@ -21,7 +21,7 @@ public class Enemy extends DefaultCritter {
     public Enemy(double x, double y, double radius, double orientation) {
         super(x, y, radius, orientation);
 
-        angularVelocity = 0.1 + Math.random() / 10;
+        //// angularVelocity = 0.1 + Math.random() / 10;
     }
 
     public void explode() {
@@ -76,6 +76,14 @@ public class Enemy extends DefaultCritter {
         if (explosion.isComplete) {
             state = EnemyState.DEAD;
         }
+    }
+
+    public boolean isCollidingWith(Missile missile) {
+        return missile.isCollidingWith(this); // reuse code from missile class
+    }
+
+    public void handleCollisionWith(Missile missile) {
+        missile.handleCollisionWith(this); // reuse code from missile class
     }
 
 }

@@ -107,4 +107,18 @@ public class Missile extends DefaultCritter {
         }
     }
 
+    public boolean isCollidingWith(Enemy enemy) {
+        if ((this.state == MissileState.ALIVE) && (enemy.state == Enemy.EnemyState.ALIVE)) {
+            if (this.getCollisionShape().intersects(enemy.getCollisionShape())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void handleCollisionWith(Enemy enemy) {
+        this.explode();
+        enemy.explode();
+    }
+
 }

@@ -35,29 +35,31 @@ public class InvaderGameState extends JComponent {
         shooter.update();
         enemyGroup.update();
 
+        // remove missiles if neccessary
         Iterator<Missile> shooterMissileIterator = shooter.missiles.iterator();
         while (shooterMissileIterator.hasNext()) {
             Missile shooterMissile = shooterMissileIterator.next();
-            if (shooterMissile.state == Missile.MissileState.ALIVE) {
-                if (shooterMissile.getCollisionShape().intersects(enemyGroup.getCollisionShape())) {
-                    Iterator<Enemy> enemyIterator = enemyGroup.enemies.iterator();
-                    while (enemyIterator.hasNext()) {
-                        Enemy enemy = enemyIterator.next();
-                        if (enemy.state == Enemy.EnemyState.ALIVE) {
-                            if (shooterMissile.getCollisionShape().intersects(enemy.getCollisionShape())) {
-                                shooterMissile.explode();
-                                enemy.explode();
-                                break;
-                            }
-                        } else if (enemy.state == Enemy.EnemyState.DEAD) {
-                            enemyIterator.remove();
-                        }
-                    }
-                }
-            } else if (shooterMissile.state == Missile.MissileState.DEAD) {
+            if (shooterMissile.state == Missile.MissileState.DEAD) {
                 shooterMissileIterator.remove();
             }
+        }
 
+        // remove enemies if neccessary
+        Iterator<Enemy> enemyIterator = enemyGroup.enemies.iterator();
+        while (enemyIterator.hasNext()) {
+            Enemy enemy = enemyIterator.next();
+            if (enemy.state == Enemy.EnemyState.DEAD) {
+                enemyIterator.remove();
+            }
+        }
+
+        // check collissions between missiles and enemies
+        for (Missile shooterMissile : shooter.missiles) {
+            for (Enemy enemy : enemyGroup.enemies) {
+                if (shooterMissile.isCollidingWith(enemy)) {
+                    shooterMissile.handleCollisionWith(enemy);
+                }
+            }
         }
 
     }

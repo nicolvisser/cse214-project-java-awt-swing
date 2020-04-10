@@ -9,7 +9,7 @@ public class EnemyGroup extends DefaultCritter {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int DEFUALT_ENEMY_RADIUS = vmin * 2 / 100;
+    private static final int DEFAULT_ENEMY_RADIUS = vmin * 2 / 100;
 
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
@@ -42,7 +42,7 @@ public class EnemyGroup extends DefaultCritter {
         double ymin = y - height / 2;
         double ymax = y + height / 2;
 
-        double r = DEFUALT_ENEMY_RADIUS;
+        double r = DEFAULT_ENEMY_RADIUS;
 
         double xSpacing = (width - 2 * r * numEnemiesInRow) / (numEnemiesInRow - 1);
         double ySpacing = (height - 2 * r * numEnemiesInCol) / (numEnemiesInCol - 1);
@@ -83,10 +83,10 @@ public class EnemyGroup extends DefaultCritter {
             ymax = Math.max(ymax, enemy.position.y);
         }
 
-        xmin -= DEFUALT_ENEMY_RADIUS;
-        xmax += DEFUALT_ENEMY_RADIUS;
-        ymin -= DEFUALT_ENEMY_RADIUS;
-        ymax += DEFUALT_ENEMY_RADIUS;
+        xmin -= DEFAULT_ENEMY_RADIUS;
+        xmax += DEFAULT_ENEMY_RADIUS;
+        ymin -= DEFAULT_ENEMY_RADIUS;
+        ymax += DEFAULT_ENEMY_RADIUS;
 
         this.width = xmax - xmin;
         this.height = ymax - ymin;
@@ -99,8 +99,7 @@ public class EnemyGroup extends DefaultCritter {
         int i = (int) (Math.random() * enemies.size());
         Enemy randomEnemy = enemies.get(i);
         Vector2D pos = new Vector2D(randomEnemy.position.x, randomEnemy.position.y);
-        Vector2D dir = target.positionRelativeTo(randomEnemy)
-        .normalize();
+        Vector2D dir = target.positionRelativeTo(randomEnemy).normalize();
         Missile missile = new Missile(pos, dir, this);
         missiles.add(missile);
     }

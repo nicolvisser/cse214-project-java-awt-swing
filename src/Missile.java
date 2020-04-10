@@ -1,4 +1,5 @@
 import java.awt.Graphics2D;
+import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
@@ -12,11 +13,8 @@ public class Missile extends DefaultCritter {
 
     private static final int DEFAULT_SPEED = 10;
 
-    private static ImageIcon imgIcon;
-
-    static {
-        imgIcon = new ImageIcon("resources/bullet.png");
-    }
+    private static ImageIcon imgIcnBulletBlue = new ImageIcon("resources/bullet.png");
+    private static ImageIcon imgIcnBulletRed = new ImageIcon("resources/bullet_red.png");
 
     public enum MissileState {
         ALIVE, EXPLODING, DEAD;
@@ -26,14 +24,20 @@ public class Missile extends DefaultCritter {
 
     public final DefaultCritter owner;
 
-    private AnimatedImage explosion = new AnimatedImage("resources/blueExplosion", "png", 17,
-            AnimatedImage.AnimationType.ONCE);
+    private AnimatedImage explosion;
     private double explosionOrientation = Math.random() * 3 * Math.PI;
 
     public Missile(Vector2D position, Vector2D direction, DefaultCritter owner) {
         super(position.x, position.y, DEFAULT_RADIUS, direction.getBearing());
         velocity = direction.normalize().scale(DEFAULT_SPEED);
         this.owner = owner;
+
+        if (owner instanceof Shooter) {
+            explosion = new AnimatedImage("resources/blueExplosion", "png", 17, AnimatedImage.AnimationType.ONCE);
+        } else {
+            explosion = new AnimatedImage("resources/redExplosion", "png", 17, AnimatedImage.AnimationType.ONCE);
+        }
+
     }
 
     public void explode() {
@@ -52,7 +56,10 @@ public class Missile extends DefaultCritter {
                 h = (int) (height * 1.5);
                 x = (int) (position.x - w / 2);
                 y = (int) (position.y - h / 2);
-                g2.drawImage(imgIcon.getImage(), x, y, w, h, null);
+
+                Image imgBullet = owner instanceof Shooter ? imgIcnBulletBlue.getImage() : imgIcnBulletRed.getImage();
+
+                g2.drawImage(imgBullet, x, y, w, h, null);
 
                 g2.rotate(-orientation, position.x, position.y);
 
@@ -60,8 +67,8 @@ public class Missile extends DefaultCritter {
 
             case EXPLODING:
 
-                w = (int) (width * 2);
-                h = (int) (height * 2);
+                w = (int) (width * 4);
+                h = (int) (height * 4);
                 x = (int) (position.x - w / 2);
                 y = (int) (position.y - h / 2);
 
@@ -125,10 +132,21 @@ public class Missile extends DefaultCritter {
         return false;
     }
 
+    public boolean isCollidingWith(Shooter shooter) {
+        if ((this.state == MissileState.ALIVE) && (shooter.state == Shooter.ShooterState.ALIVE)) {
+            if (this.getCollisionShape().intersects(shooter.getCollisionShape())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void handleCollisionWith(DefaultCritter critter) {
         if (critter instanceof Enemy) {
             handleCollisionWith((Enemy) critter);
+        } else if (critter instanceof Shooter) {
+            handleCollisionWith((Shooter) critter);
         } else {
             super.handleCollisionWith(critter);
         }
@@ -137,6 +155,11 @@ public class Missile extends DefaultCritter {
     public void handleCollisionWith(Enemy enemy) {
         this.explode();
         enemy.explode();
+    }
+
+    public void handleCollisionWith(Shooter shooter) {
+        this.explode();
+        // shooter.explode();
     }
 
     @Override

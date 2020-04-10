@@ -27,8 +27,15 @@ public class EnemyGroup extends DefaultCritter {
     public ArrayList<Enemy> enemies = new ArrayList<>();
     private int lastNumberOfEnemies = 0;
 
-    public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol) {
+    public ArrayList<Missile> missiles = new ArrayList<>();
+    private DefaultCritter target;
+    private long lastTime = System.currentTimeMillis();
+    private long counterAttackTimer = 0;
+
+    public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol,
+            DefaultCritter target) {
         super(x, y, width, height, Math.PI);
+        this.target = target;
 
         double xmin = x - width / 2;
         double xmax = x + width / 2;
@@ -87,6 +94,13 @@ public class EnemyGroup extends DefaultCritter {
         this.position.y = ymin + this.height / 2;
     }
 
+    public void shootMissile() {
+        Vector2D pos = new Vector2D(position.x, position.y);
+        Vector2D dir = target.positionRelativeTo(this).normalize();
+        Missile missile = new Missile(pos, dir, this);
+        missiles.add(missile);
+    }
+
     @Override
     public void draw(Graphics2D g2) {
 
@@ -98,6 +112,10 @@ public class EnemyGroup extends DefaultCritter {
         for (Enemy enemy : enemies) {
             enemy.draw(g2);
         }
+
+        for (Missile missile : missiles) {
+            missile.draw(g2);
+        }
     }
 
     @Override
@@ -107,6 +125,15 @@ public class EnemyGroup extends DefaultCritter {
         if (lastNumberOfEnemies != enemies.size() && enemies.size() > 0) {
             recalculateCollisionShape();
             lastNumberOfEnemies = enemies.size();
+        }
+
+        long currentTime = System.currentTimeMillis();
+        long delta = currentTime - lastTime;
+        counterAttackTimer += delta;
+        lastTime = currentTime;
+        if (counterAttackTimer > 1000) {
+            shootMissile();
+            counterAttackTimer = 0;
         }
 
         // calculate how much group center will translate and store
@@ -121,6 +148,10 @@ public class EnemyGroup extends DefaultCritter {
             enemy.position.x += dx;
             enemy.position.y += dy;
             enemy.update();
+        }
+
+        for (Missile missile : missiles) {
+            missile.update();
         }
 
         switch (moveState) {

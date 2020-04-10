@@ -139,11 +139,7 @@ public class DefaultCritter extends JComponent {
         g.setColor(Color.RED);
 
         // Draw body (rotated)
-        g.rotate(orientation, position.x, position.y);
-        {
-            getCollisionShape().draw(g);
-        }
-        g.rotate(-orientation, position.x, position.y);
+        getCollisionShape().draw(g);
 
         // Draw lookvector line
         Vector2D lineEnd = position.add(lookVector().scale(height / 2));

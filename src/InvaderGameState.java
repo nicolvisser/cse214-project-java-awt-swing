@@ -22,7 +22,7 @@ public class InvaderGameState extends JComponent {
         shooter = new Shooter();
         add(shooter); // add shooter JComponent to link key bindings
 
-        enemyGroup = new EnemyGroup(300, 200, 600, 400, 10, 6);
+        enemyGroup = new EnemyGroup(300, 200, 600, 400, 10, 6, shooter);
         add(enemyGroup);
     }
 
@@ -39,8 +39,10 @@ public class InvaderGameState extends JComponent {
 
         removeDeadCritters(shooter.missiles);
         removeDeadCritters(enemyGroup.enemies);
+        removeDeadCritters(enemyGroup.missiles);
 
         checkAndHandleCollisions(shooter.missiles, enemyGroup.enemies);
+        checkAndHandleCollisions(shooter, enemyGroup.missiles);
 
     }
 

@@ -16,7 +16,11 @@ public class Shooter extends DefaultCritter {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int DEFAULT_SIZE = vmin * 6 / 100;
+    private static final int DEFAULT_WIDTH = vmin * 8 / 100;
+    private static final int DEFAULT_HEIGHT = vmin * 12 / 100;
+
+    private static final int DEFAULT_TURRET_WIDTH = DEFAULT_WIDTH * 3 / 4;
+    private static final int DEFAULT_TURRET_HEIGHT = DEFAULT_HEIGHT * 3 / 4;
 
     private static final int DEFAULT_POSITION_X = vw * 50 / 100;
     private static final int DEFAULT_POSITION_Y = vh * 90 / 100;
@@ -28,6 +32,12 @@ public class Shooter extends DefaultCritter {
 
     private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/carrier.png");
     private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/destroyer.png");
+
+    public enum ShooterState {
+        ALIVE, EXPLODING, DEAD;
+    }
+
+    public ShooterState state = ShooterState.ALIVE;
 
     private boolean isLeftThrusterActive = false;
     private boolean isRightThrusterActive = false;
@@ -43,11 +53,11 @@ public class Shooter extends DefaultCritter {
     public ArrayList<Missile> missiles = new ArrayList<>();
 
     public Shooter() {
-        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_SIZE / 2);
+        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
-    public Shooter(double x, double y, double radius) {
-        super(x, y, radius, 0);
+    public Shooter(double x, double y, double width, double height) {
+        super(x, y, width, height, 0);
 
         setKeyBindings();
 
@@ -61,12 +71,16 @@ public class Shooter extends DefaultCritter {
         }
     }
 
+    public void explode() {
+        state = ShooterState.EXPLODING;
+    }
+
     @Override
     public void draw(Graphics2D g2) {
 
         // fine tune image position and size to fit collisionShape
-        int w = (int) (width * 1.5);
-        int h = (int) (height * 1.5);
+        int w = (int) (width * 1.2);
+        int h = (int) (height * 1.2);
         int x = (int) (position.x - w / 2);
         int y = (int) (position.y - h / 2);
 
@@ -74,8 +88,8 @@ public class Shooter extends DefaultCritter {
 
         g2.rotate(orientation, position.x, position.y);
 
-        w = (int) (width * 0.8);
-        h = (int) (height * 0.8);
+        w = (int) (DEFAULT_TURRET_WIDTH);
+        h = (int) (DEFAULT_TURRET_HEIGHT);
         x = (int) (position.x - w / 2);
         y = (int) (position.y - h / 2 - h / 8);
 
@@ -289,6 +303,32 @@ public class Shooter extends DefaultCritter {
                 shootMissile();
             }
         });
+    }
+
+    @Override
+    public boolean isCollidingWith(DefaultCritter critter) {
+        if (critter instanceof Missile) {
+            return isCollidingWith((Missile) critter);
+        } else {
+            return super.isCollidingWith(critter);
+        }
+    }
+
+    public boolean isCollidingWith(Missile missile) {
+        return missile.isCollidingWith(this); // reuse code in missile class
+    }
+
+    @Override
+    public void handleCollisionWith(DefaultCritter critter) {
+        if (critter instanceof Missile) {
+            handleCollisionWith((Missile) critter);
+        } else {
+            super.handleCollisionWith(critter);
+        }
+    }
+
+    public void handleCollisionWith(Missile missile) {
+        missile.handleCollisionWith(this); // reuse code in missile class
     }
 
 }

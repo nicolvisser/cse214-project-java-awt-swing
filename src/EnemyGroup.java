@@ -95,8 +95,12 @@ public class EnemyGroup extends DefaultCritter {
     }
 
     public void shootMissile() {
-        Vector2D pos = new Vector2D(position.x, position.y);
-        Vector2D dir = target.positionRelativeTo(this).normalize();
+        StdAudio.play("resources/heartbeat.wav");
+        int i = (int) (Math.random() * enemies.size());
+        Enemy randomEnemy = enemies.get(i);
+        Vector2D pos = new Vector2D(randomEnemy.position.x, randomEnemy.position.y);
+        Vector2D dir = target.positionRelativeTo(randomEnemy)
+        .normalize();
         Missile missile = new Missile(pos, dir, this);
         missiles.add(missile);
     }
@@ -127,13 +131,15 @@ public class EnemyGroup extends DefaultCritter {
             lastNumberOfEnemies = enemies.size();
         }
 
-        long currentTime = System.currentTimeMillis();
-        long delta = currentTime - lastTime;
-        counterAttackTimer += delta;
-        lastTime = currentTime;
-        if (counterAttackTimer > 1000) {
-            shootMissile();
-            counterAttackTimer = 0;
+        if (enemies.size() > 0) {
+            long currentTime = System.currentTimeMillis();
+            long delta = currentTime - lastTime;
+            counterAttackTimer += delta;
+            lastTime = currentTime;
+            if (counterAttackTimer > 1000) {
+                shootMissile();
+                counterAttackTimer = 0;
+            }
         }
 
         // calculate how much group center will translate and store

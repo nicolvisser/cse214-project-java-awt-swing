@@ -26,10 +26,12 @@ public class InvaderGameState extends JComponent {
         add(enemyGroup);
     }
 
-    public void draw(Graphics2D g) {
-        starfield.draw(g);
-        shooter.draw(g);
-        enemyGroup.draw(g);
+    public void draw(Graphics2D g2) {
+        starfield.draw(g2);
+        shooter.draw(g2);
+        enemyGroup.draw(g2);
+
+        shooter.drawAimLine(g2, enemyGroup);
     }
 
     public void update() {

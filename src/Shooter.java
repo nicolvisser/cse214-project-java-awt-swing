@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -11,6 +12,10 @@ import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+
+import geom.LineSegment;
+import geom.Ray;
+import geom.Vector2D;
 
 public class Shooter extends DefaultCritter {
 
@@ -64,6 +69,8 @@ public class Shooter extends DefaultCritter {
     }
 
     public void shootMissile() {
+        StdAudio.play("resources/heartbeat.wav");
+
         if (reloadTimer >= DEFAULT_RELOAD_TIME) {
             Missile missile = new Missile(position, lookVector(), this);
             missiles.add(missile);
@@ -73,6 +80,32 @@ public class Shooter extends DefaultCritter {
 
     public void explode() {
         state = ShooterState.EXPLODING;
+    }
+
+    // TODO: Change parameters to be more general (obstacles)
+    public LineSegment getAimLine(EnemyGroup enemyGroup) {
+        Vector2D start = position; // TODO: change to end of turret position
+
+        Ray aimRay = new Ray(start, lookVector());
+        double lengthOfAimLine = 2000; // TODO: fix hardcoding
+
+        if (enemyGroup.getCollisionShape().intersects(aimRay)) {
+            for (Enemy enemy : enemyGroup.enemies) {
+                if (enemy.state == Enemy.EnemyState.ALIVE) {
+                    Double lengthUntilCollision = aimRay.lengthUntilIntersection(enemy.getCollisionShape());
+                    if (Double.isFinite(lengthUntilCollision) && lengthUntilCollision < lengthOfAimLine) {
+                        lengthOfAimLine = lengthUntilCollision;
+                    }
+                }
+            }
+        }
+
+        return new LineSegment(start, lookVector(), lengthOfAimLine);
+    }
+
+    public void drawAimLine(Graphics2D g2, EnemyGroup enemyGroup) {
+        g2.setColor(new Color(0, 0.75f, 1, 0.25f));
+        getAimLine(enemyGroup).draw(g2);
     }
 
     @Override
@@ -303,6 +336,7 @@ public class Shooter extends DefaultCritter {
                 shootMissile();
             }
         });
+
     }
 
     @Override

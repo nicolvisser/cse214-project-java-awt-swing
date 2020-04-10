@@ -21,6 +21,9 @@ public class Shooter extends DefaultCritter {
 
     private static final long serialVersionUID = 1L;
 
+    private static final int DEFAULT_HEALTH_POINTS = 250;
+    private static final int DEFAULT_ENERGY_POINTS = 100;
+
     private static final int DEFAULT_WIDTH = vmin * 8 / 100;
     private static final int DEFAULT_HEIGHT = vmin * 12 / 100;
 
@@ -47,7 +50,8 @@ public class Shooter extends DefaultCritter {
 
     public ShooterState state = ShooterState.ALIVE;
 
-    private int healthPoints = 250;
+    public int healthPoints = DEFAULT_HEALTH_POINTS;
+    public int energyPoints = DEFAULT_ENERGY_POINTS;
 
     private boolean isLeftThrusterActive = false;
     private boolean isRightThrusterActive = false;
@@ -77,6 +81,14 @@ public class Shooter extends DefaultCritter {
         if (healthPoints <= 0) {
             explode();
         }
+    }
+
+    public int getHealthPercentage() {
+        return (int) Math.max(0, Math.round(healthPoints * 100 / (double) DEFAULT_HEALTH_POINTS));
+    }
+
+    public int getEnergyPercentage() {
+        return (int) Math.max(0, Math.round(energyPoints * 100 / (double) DEFAULT_ENERGY_POINTS));
     }
 
     public void shootMissile() {

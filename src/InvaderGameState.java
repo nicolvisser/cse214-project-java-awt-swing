@@ -1,4 +1,6 @@
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -14,9 +16,14 @@ public class InvaderGameState extends JComponent {
     EnemyGroup enemyGroup;
     ArrayList<Bunker> bunkers = new ArrayList<>();
 
+    int pWidth, pHeight;
+
     public InvaderGameState(int w, int h) {
         // before adding critters override canvas size --- NOT SURE IF THIS IS IDEAL
         DefaultCritter.setCanvasSize(w, h);
+
+        this.pWidth = w;
+        this.pHeight = h;
 
         starfield = new Starfield(w, h);
 
@@ -40,6 +47,31 @@ public class InvaderGameState extends JComponent {
             bunker.draw(g2);
 
         shooter.drawAimLine(g2, enemyGroup, bunkers);
+
+        // HUD
+
+        g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
+        drawStatusBar(g2, pWidth * 3 / 100, pHeight * 75 / 100, pWidth / 100, pHeight * 20 / 100,
+                shooter.getHealthPercentage());
+
+        g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
+        drawStatusBar(g2, pWidth * 5 / 100, pHeight * 75 / 100, pWidth / 100, pHeight * 20 / 100, 100);
+
+    }
+
+    public void drawStatusBar(Graphics2D g2, int x, int y, int w, int h, int perc) {
+        final int SPACING = 2;
+
+        double innerHeight = (h - 2 * SPACING) * perc / 100.0;
+        double innerPositionY = y + SPACING + (h - 2 * SPACING) * (1 - perc / 100.0);
+
+        RoundRectangle2D outer = new RoundRectangle2D.Double(x, y, w, h, w, w);
+        RoundRectangle2D inner = new RoundRectangle2D.Double(x + SPACING, innerPositionY, w - 2 * SPACING, innerHeight,
+                w - 2 * SPACING, w - 2 * SPACING);
+
+        g2.draw(outer);
+        g2.fill(inner);
+
     }
 
     public void update() {

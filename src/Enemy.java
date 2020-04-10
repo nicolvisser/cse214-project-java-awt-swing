@@ -1,4 +1,5 @@
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.ImageIcon;
 
@@ -12,7 +13,7 @@ public class Enemy extends DefaultCritter {
         ALIVE, EXPLODING, DEAD;
     }
 
-    private int healthPoints = 100;
+    private int healthPoints = 50;
 
     public EnemyState state = EnemyState.ALIVE;
 
@@ -48,6 +49,9 @@ public class Enemy extends DefaultCritter {
                 h = (int) (height * 1.4);
                 x = (int) (position.x - w / 2);
                 y = (int) (position.y - h / 2);
+
+                final AffineTransform at = new AffineTransform();
+                at.rotate(orientation, position.x, position.y);
 
                 g2.rotate(orientation, position.x, position.y);
                 g2.drawImage(IMAGE_ICON_SINGLE_ENEMY.getImage(), x, y, w, h, null);

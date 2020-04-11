@@ -166,7 +166,21 @@ public class InvadersFrame extends JFrame {
         }
     }
 
+    public void stop() {
+
+        running = false;
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        gd.setFullScreenWindow(null);
+
+    }
+
     public void gameUpdate() {
+
+        if (panel.readyToQuit()) {
+            this.stop();
+        }
+
         panel.update();
 
     }
@@ -191,6 +205,8 @@ public class InvadersFrame extends JFrame {
         InvadersFrame game = new InvadersFrame(true);
 
         game.run();
+
+        System.exit(0);
 
     }
 

@@ -15,6 +15,8 @@ public class InvadersPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private boolean quitFlag = false;
+
     private final int pWidth;
     private final int pHeight;
 
@@ -87,9 +89,14 @@ public class InvadersPanel extends JPanel {
                         break;
 
                     case 3: // settings
+                        mainMenuScreen.resetSelection();
+                        removeAll();
+                        add(settingsScreen);
+                        activeDisplayState = DisplayState.SETTINGS;
                         break;
 
                     case 4: // quit
+                        quitFlag = true;
                         break;
 
                     default:
@@ -177,12 +184,82 @@ public class InvadersPanel extends JPanel {
                         break;
                 }
                 break;
+
             case SETTINGS:
+                switch (settingsScreen.selectedOption) {
+                    case -2: // back (to main menu)
+                        settingsScreen.resetSelection();
+                        settingsScreen.resetHiglight();
+                        removeAll();
+                        add(mainMenuScreen);
+                        activeDisplayState = DisplayState.MAIN_MENU;
+                        break;
+
+                    case -1: // not yet selected
+                        break;
+
+                    case 0: // set resolution
+                        settingsScreen.resetSelection();
+                        removeAll();
+                        add(resolutionScreen);
+                        activeDisplayState = DisplayState.SET_RESOLUTION;
+                        break;
+
+                    case 1: // controls
+                        settingsScreen.resetSelection();
+                        // removeAll();
+                        // TODO: add(controlScreen);
+                        // activeDisplayState = DisplayState.CONTROLS;
+                        break;
+
+                    case 2: // back
+                        settingsScreen.selectOptionToGoBack();
+                        break;
+
+                    default:
+                        break;
+                }
                 break;
+
             case CONTROLS:
                 break;
             case SET_RESOLUTION:
+                switch (resolutionScreen.selectedOption) {
+                    case -2: // back (to setting screen)
+                        resolutionScreen.resetSelection();
+                        resolutionScreen.resetHiglight();
+                        removeAll();
+                        add(settingsScreen);
+                        activeDisplayState = DisplayState.SETTINGS;
+                        break;
+
+                    case -1: // not yet selected
+                        break;
+
+                    case 0: // 600x600
+                        // TODO: setupStdDrawCanvas(600, 600);
+                        resolutionScreen.resetSelection();
+                        break;
+
+                    case 1: // 800x800
+                        // TODO: setupStdDrawCanvas(800, 800);
+                        resolutionScreen.resetSelection();
+                        break;
+
+                    case 2: // 1000x1000
+                        // TODO: setupStdDrawCanvas(1000, 1000);
+                        resolutionScreen.resetSelection();
+                        break;
+
+                    case 3: // cancel
+                        resolutionScreen.selectOptionToGoBack();
+                        break;
+
+                    default:
+                        break;
+                }
                 break;
+
             case GAME_OVER:
                 break;
 
@@ -247,9 +324,13 @@ public class InvadersPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                quitFlag = true;
             }
         });
+    }
+
+    public boolean readyToQuit() {
+        return quitFlag;
     }
 
 }

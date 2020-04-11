@@ -13,6 +13,8 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import geom.Vector2D;
+
 public class InvaderGameState extends JComponent {
 
     private static final long serialVersionUID = 1L;
@@ -22,7 +24,6 @@ public class InvaderGameState extends JComponent {
     public boolean pauseFlag = false;
     public boolean gameOverFlag = false;
 
-    private Starfield starfield;
     private Shooter shooter;
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
@@ -34,12 +35,10 @@ public class InvaderGameState extends JComponent {
         this.pWidth = w;
         this.pHeight = h;
 
-        starfield = new Starfield(w, h);
-
         shooter = new Shooter();
         add(shooter); // add shooter JComponent to link key bindings
 
-        enemyGroup = new EnemyGroup(0.2 * w, 0.15 * h, 0.4 * w, 0.3 * h, 6, 4, shooter);
+        enemyGroup = new EnemyGroup(0.2 * w, 0.15 * h, 0.4 * w, 0.3 * h, 6, 4, shooter);        add(enemyGroup);
         add(enemyGroup);
 
         bunkers.add(new Bunker(0.25 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
@@ -50,7 +49,6 @@ public class InvaderGameState extends JComponent {
     }
 
     public void draw(Graphics2D g2) {
-        starfield.draw(g2);
         shooter.draw(g2);
         enemyGroup.draw(g2);
 
@@ -91,7 +89,6 @@ public class InvaderGameState extends JComponent {
     }
 
     public void update() {
-        starfield.update(shooter.velocity);
         shooter.update();
         enemyGroup.update();
 
@@ -172,5 +169,9 @@ public class InvaderGameState extends JComponent {
                 pauseFlag = true;
             }
         });
+    }
+
+    public Vector2D getVelocityForBackground() {
+        return shooter.velocity;
     }
 }

@@ -2,9 +2,12 @@ package geom;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 
-public class Rectangle implements BoundingShape {
+public class Rectangle implements BoundingShape, Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     public double width, height;
     public Vector2D center;
 

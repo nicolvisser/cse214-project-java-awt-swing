@@ -2,8 +2,11 @@ package geom;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
+import java.io.Serializable;
 
-public class Ray implements Shape {
+public class Ray implements Shape, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     Vector2D start;
     Vector2D direction;

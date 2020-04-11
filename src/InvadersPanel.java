@@ -20,6 +20,9 @@ public class InvadersPanel extends JPanel {
 
     InvaderGameState igs;
 
+    String[] menuOptions = { "Option1", "Option2" };
+    MenuScreen menu;
+
     public InvadersPanel(int width, int height) {
         pWidth = width;
         pHeight = height;
@@ -27,12 +30,15 @@ public class InvadersPanel extends JPanel {
         setIgnoreRepaint(true);
         setKeyBindings();
 
-        igs = new InvaderGameState(pWidth, pHeight);
-        add(igs);
+        // igs = new InvaderGameState(pWidth, pHeight);
+        // add(igs);
+
+        menu = new MenuScreen(width, height, "TestTitle", "TestSubTitle", menuOptions);
+        add(menu);
     }
 
     public void update() {
-        igs.update();
+        // igs.update();
     }
 
     public void draw(Graphics2D g2) {
@@ -40,7 +46,8 @@ public class InvadersPanel extends JPanel {
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, pWidth, pHeight);
 
-        igs.draw(g2);
+        // igs.draw(g2);
+        menu.draw(g2);
 
     }
 

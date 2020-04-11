@@ -147,6 +147,10 @@ public class Rectangle implements BoundingShape {
         g.draw(toRectangle2D());
     }
 
+    public void fill(Graphics2D g) {
+        g.fill(toRectangle2D());
+    }
+
     // ===== Methods related to BoundedShape interface =====>
 
     @Override

@@ -50,6 +50,7 @@ public class InvadersPanel extends JPanel {
     private MenuScreen saveGameScreen;
     private MenuScreen loadGameScreen;
     private HighScoreScreen highScoreScreen;
+    private ControlsScreen controlsScreen;
 
     public InvadersPanel(int width, int height) {
         pWidth = width;
@@ -67,6 +68,7 @@ public class InvadersPanel extends JPanel {
         saveGameScreen = new MenuScreen(width, height, "Save Game", saveGameScreenOptions);
         loadGameScreen = new MenuScreen(width, height, "Load Game", loadGameScreenOptions);
         highScoreScreen = new HighScoreScreen(width, height);
+        controlsScreen = new ControlsScreen(width, height);
 
         activeDisplayState = DisplayState.MAIN_MENU;
         add(mainMenuScreen);
@@ -259,9 +261,9 @@ public class InvadersPanel extends JPanel {
 
                     case 1: // controls
                         settingsScreen.resetSelection();
-                        // removeAll();
-                        // TODO: add(controlScreen);
-                        // activeDisplayState = DisplayState.CONTROLS;
+                        removeAll();
+                        add(controlsScreen);
+                        activeDisplayState = DisplayState.CONTROLS;
                         break;
 
                     case 2: // back
@@ -274,7 +276,32 @@ public class InvadersPanel extends JPanel {
                 break;
 
             case CONTROLS:
+                switch (controlsScreen.selectedOption) {
+                    case -2: // back (to setting screen)
+                        controlsScreen.resetSelection();
+                        controlsScreen.resetHiglight();
+                        removeAll();
+                        add(settingsScreen);
+                        activeDisplayState = DisplayState.SETTINGS;
+                        break;
+
+                    case -1: // not yet selected
+                        break;
+
+                    case 0: // reset to defaults
+                        controlsScreen.resetSelection();
+                        controlsScreen.setDefaultKeys();
+                        break;
+
+                    case 1: // back
+                        controlsScreen.selectOptionToGoBack();
+                        break;
+
+                    default:
+                        break;
+                }
                 break;
+
             case SET_RESOLUTION:
                 switch (resolutionScreen.selectedOption) {
                     case -2: // back (to setting screen)
@@ -351,6 +378,7 @@ public class InvadersPanel extends JPanel {
                 settingsScreen.draw(g2);
                 break;
             case CONTROLS:
+                controlsScreen.draw(g2);
                 break;
             case SET_RESOLUTION:
                 resolutionScreen.draw(g2);

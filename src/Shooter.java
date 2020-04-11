@@ -53,13 +53,13 @@ public class Shooter extends DefaultCritter {
     public int healthPoints = DEFAULT_HEALTH_POINTS;
     public int energyPoints = DEFAULT_ENERGY_POINTS;
 
-    private boolean isLeftThrusterActive = false;
-    private boolean isRightThrusterActive = false;
+    boolean isLeftThrusterActive = false;
+    boolean isRightThrusterActive = false;
 
     private static final double DEFAULT_ANGULAR_ACCELERATION = 0.005;
 
-    private boolean isRotatingLeft = false;
-    private boolean isRotatingRight = false;
+    boolean isRotatingLeft = false;
+    boolean isRotatingRight = false;
 
     private static final int DEFAULT_RELOAD_TIME = 5; // in number of frames as unit
     private int reloadTimer = DEFAULT_RELOAD_TIME; // ready to shoot from start
@@ -304,108 +304,7 @@ public class Shooter extends DefaultCritter {
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = getActionMap();
 
-        KeyStroke moveLeftKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false);
-        inputMap.put(moveLeftKeyPress, "moveLeftKeyPress");
-        actionMap.put("moveLeftKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isLeftThrusterActive = true;
-            }
-
-        });
-
-        KeyStroke moveLeftKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true);
-        inputMap.put(moveLeftKeyRelease, "moveLeftKeyRelease");
-        actionMap.put("moveLeftKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isLeftThrusterActive = false;
-            }
-
-        });
-
-        KeyStroke moveRightKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false);
-        inputMap.put(moveRightKeyPress, "moveRightKeyPress");
-        actionMap.put("moveRightKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isRightThrusterActive = true;
-            }
-        });
-
-        KeyStroke moveRightKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true);
-        inputMap.put(moveRightKeyRelease, "moveRightKeyRelease");
-        actionMap.put("moveRightKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isRightThrusterActive = false;
-            }
-        });
-
-        KeyStroke rotateLeftKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false);
-        inputMap.put(rotateLeftKeyPress, "rotateLeftKeyPress");
-        actionMap.put("rotateLeftKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isRotatingLeft = true;
-            }
-
-        });
-
-        KeyStroke rotateLeftKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true);
-        inputMap.put(rotateLeftKeyRelease, "rotateLeftKeyRelease");
-        actionMap.put("rotateLeftKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isRotatingLeft = false;
-            }
-
-        });
-
-        KeyStroke rotateRightKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false);
-        inputMap.put(rotateRightKeyPress, "rotateRightKeyPress");
-        actionMap.put("rotateRightKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isRotatingRight = true;
-            }
-        });
-
-        KeyStroke rotateRightKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true);
-        inputMap.put(rotateRightKeyRelease, "rotateRightKeyRelease");
-        actionMap.put("rotateRightKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isRotatingRight = false;
-            }
-        });
-
-        KeyStroke shootKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, true);
-        inputMap.put(shootKeyRelease, "shootKeyRelease");
-        actionMap.put("shootKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                shootMissile();
-            }
-        });
+        
 
     }
 

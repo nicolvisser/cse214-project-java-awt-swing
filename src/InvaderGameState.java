@@ -115,11 +115,11 @@ public class InvaderGameState extends JComponent {
                 }
             }
         } catch (ConcurrentModificationException e) {
-            // ===== EXCEPTION IDENTIFIED: ================================
+            System.out.println("===== EXCEPTION IDENTIFIED: ================================");
             e.printStackTrace();
-            // ------------------------------------------------------------
-            // Handled by skipping draw of some critters for a single frame
-            // ============================================================
+            System.out.println("------------------------------------------------------------");
+            System.out.println("Handled by skipping draw of some critters for a single frame");
+            System.out.println("============================================================");
         }
     }
 
@@ -131,11 +131,11 @@ public class InvaderGameState extends JComponent {
                 }
             }
         } catch (ConcurrentModificationException e) {
-            // ===== EXCEPTION IDENTIFIED: ================================
+            System.out.println("===== EXCEPTION IDENTIFIED: ================================");
             e.printStackTrace();
-            // ------------------------------------------------------------
-            // Handled by skipping draw of some critters for a single frame
-            // ============================================================
+            System.out.println("------------------------------------------------------------");
+            System.out.println("Handled by skipping draw of some critters for a single frame");
+            System.out.println("============================================================");
         }
     }
 

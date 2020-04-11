@@ -193,11 +193,11 @@ public class Shooter extends DefaultCritter {
                 missile.draw(g2);
             }
         } catch (ConcurrentModificationException e) {
-            // ===== EXCEPTION IDENTIFIED: ================================
+            System.out.println("===== EXCEPTION IDENTIFIED: ================================");
             e.printStackTrace();
-            // ------------------------------------------------------------
-            // Handled by skipping draw of missile for a single frame
-            // ============================================================
+            System.out.println("------------------------------------------------------------");
+            System.out.println("Handled by skipping draw of missile for a single frame");
+            System.out.println("============================================================");
         }
 
         // Show Collision Boundary for Debugging: --->>
@@ -285,11 +285,11 @@ public class Shooter extends DefaultCritter {
                 }
             }
         } catch (ConcurrentModificationException e) {
-            // ===== EXCEPTION IDENTIFIED: ================================
+            System.out.println("===== EXCEPTION IDENTIFIED: ================================");
             e.printStackTrace();
-            // ------------------------------------------------------------
-            // Handled by skipping update/removal of missile this frame
-            // ============================================================
+            System.out.println("------------------------------------------------------------");
+            System.out.println("Handled by skipping update/removal of missile this frame");
+            System.out.println("============================================================");
         }
 
     }

@@ -14,7 +14,7 @@ public class InvadersFrame extends JFrame {
 
     public static final boolean DEBUG = false;
 
-    private static final Dimension DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN = new Dimension(800, 600);
+    private static final Dimension DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN = new Dimension(800, 800);
 
     public static int width;
     public static int height;

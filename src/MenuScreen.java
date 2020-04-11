@@ -16,14 +16,14 @@ public class MenuScreen extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private final int WIDTH;
-    private final int HEIGHT;
+    protected final int WIDTH;
+    protected final int HEIGHT;
 
-    private final int XCENTER;
+    protected final int XCENTER;
 
-    private final int BUTTON_WIDTH;
-    private final int BUTTON_HEIGHT;
-    private final int BUTTON_SPACING;
+    protected final int BUTTON_WIDTH;
+    protected final int BUTTON_HEIGHT;
+    protected final int BUTTON_SPACING;
 
     public String title;
     public String subtitle;
@@ -47,9 +47,9 @@ public class MenuScreen extends JComponent {
 
         XCENTER = WIDTH / 2;
 
-        BUTTON_WIDTH = w / 2;
-        BUTTON_HEIGHT = h / 10;
-        BUTTON_SPACING = h / 20;
+        BUTTON_WIDTH = w / 3;
+        BUTTON_HEIGHT = h / 20;
+        BUTTON_SPACING = h / 30;
 
         setKeyBindings();
     }
@@ -180,20 +180,37 @@ public class MenuScreen extends JComponent {
         }
     }
 
-    public void drawCenteredText(Graphics2D g2, double x, double y, String text) {
+    protected void drawCenteredText(Graphics2D g2, double x, double y, String text) {
         FontMetrics fm = g2.getFontMetrics();
         int wStr = fm.stringWidth(text);
         int hStr = fm.getHeight();
         float xStr = (float) (x - wStr / 2);
-        float yStr = (float) (y + hStr / 2);
+        float yStr = (float) (y + hStr / 3);
         g2.drawString(text, xStr, yStr);
     }
 
-    public void drawCenteredRect(Graphics2D g2, double x, double y, double w, double h) {
+    protected void drawLeftAlignedText(Graphics2D g2, double x, double y, String text) {
+        FontMetrics fm = g2.getFontMetrics();
+        int hStr = fm.getHeight();
+        float xStr = (float) (x);
+        float yStr = (float) (y + hStr / 3);
+        g2.drawString(text, xStr, yStr);
+    }
+
+    protected void drawRightAlignedText(Graphics2D g2, double x, double y, String text) {
+        FontMetrics fm = g2.getFontMetrics();
+        int wStr = fm.stringWidth(text);
+        int hStr = fm.getHeight();
+        float xStr = (float) (x - wStr);
+        float yStr = (float) (y + hStr / 3);
+        g2.drawString(text, xStr, yStr);
+    }
+
+    protected void drawCenteredRect(Graphics2D g2, double x, double y, double w, double h) {
         (new Rectangle(x, y, w, h)).draw(g2);
     }
 
-    public void fillCenteredRect(Graphics2D g2, double x, double y, double w, double h) {
+    protected void fillCenteredRect(Graphics2D g2, double x, double y, double w, double h) {
         (new Rectangle(x, y, w, h)).fill(g2);
     }
 

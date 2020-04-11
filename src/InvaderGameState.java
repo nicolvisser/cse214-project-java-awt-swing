@@ -1,22 +1,31 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 
 public class InvaderGameState extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
-    Starfield starfield;
-    Shooter shooter;
-    EnemyGroup enemyGroup;
-    ArrayList<Bunker> bunkers = new ArrayList<>();
+    private int pWidth, pHeight;
 
-    int pWidth, pHeight;
+    public boolean pauseFlag = false;
+    public boolean gameOverFlag = false;
+
+    private Starfield starfield;
+    private Shooter shooter;
+    private EnemyGroup enemyGroup;
+    private ArrayList<Bunker> bunkers = new ArrayList<>();
 
     public InvaderGameState(int w, int h) {
         // before adding critters override canvas size --- NOT SURE IF THIS IS IDEAL
@@ -36,6 +45,8 @@ public class InvaderGameState extends JComponent {
         bunkers.add(new Bunker(0.25 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
         bunkers.add(new Bunker(0.50 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
         bunkers.add(new Bunker(0.75 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
+
+        setKeyBindings();
     }
 
     public void draw(Graphics2D g2) {
@@ -57,6 +68,11 @@ public class InvaderGameState extends JComponent {
         g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
         drawStatusBar(g2, pWidth * 5 / 100, pHeight * 75 / 100, pWidth / 100, pHeight * 20 / 100, 100);
 
+    }
+
+    public void resetFlags() {
+        pauseFlag = false;
+        gameOverFlag = false;
     }
 
     public void drawStatusBar(Graphics2D g2, int x, int y, int w, int h, int perc) {
@@ -139,4 +155,22 @@ public class InvaderGameState extends JComponent {
         }
     }
 
+    private void setKeyBindings() {
+        // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
+        // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
+
+        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        KeyStroke pauseScreenKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        inputMap.put(pauseScreenKeyPress, "pauseScreenKeyPress");
+        actionMap.put("pauseScreenKeyPress", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pauseFlag = true;
+            }
+        });
+    }
 }

@@ -1,4 +1,6 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
@@ -13,8 +15,7 @@ public class InvadersFrame extends JFrame {
 
     public static final boolean DEBUG = false;
 
-    //// private static final Dimension DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN = new
-    //// Dimension(800, 600);
+    private static final Dimension DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN = new Dimension(800, 600);
 
     public static int width;
     public static int height;
@@ -57,7 +58,7 @@ public class InvadersFrame extends JFrame {
 
         width = getBounds().width;
         height = getBounds().height;
-        System.out.println(width + " x " + height);
+        System.out.println("Fullscreen: " + width + " x " + height);
 
         // TODO Configure Display Modes
 
@@ -79,12 +80,47 @@ public class InvadersFrame extends JFrame {
         }
 
         panel = new InvadersPanel(width, height);
-
         add(panel);
     }
 
     private void initWindowedMode() {
-        // TODO Implement Method to init
+        // TODO Issue: (at least on MacOS) Title bar draws over drawing area. This is
+        // because we are not using swing's built in paint method but our own. Our own
+        // method is faster and better suited for active rendereing but can not yet
+        // handle all window related stuff such as window clipping areas etc.
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setIgnoreRepaint(true);
+        setPreferredSize(DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN);
+        setLayout(null);
+
+        width = (int) DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN.getWidth();
+        height = (int) DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN.getHeight();
+        System.out.println("Windowed: " + width + " x " + height);
+
+        panel = new InvadersPanel(width, height);
+        add(panel);
+        pack();
+
+        // BUFFER STRATEGY
+        try {
+            EventQueue.invokeAndWait(new Runnable() {
+                public void run() {
+                    createBufferStrategy(2);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("Error while creating buffer strategy");
+            System.exit(0);
+        }
+
+        try { // sleep to give time for buffer strategy to be done
+            Thread.sleep(500); // 0.5 sec
+        } catch (InterruptedException ex) {
+        }
+
+        setVisible(true);
     }
 
     // Tutorial at
@@ -153,7 +189,7 @@ public class InvadersFrame extends JFrame {
 
     public static void main(String[] args) {
 
-        InvadersFrame game = new InvadersFrame(true);
+        InvadersFrame game = new InvadersFrame(false);
 
         game.run();
 

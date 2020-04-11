@@ -14,8 +14,8 @@ public class EnemyGroup extends DefaultCritter {
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
 
-    private static final double DEFAULT_MOVEMENT_SPEED = 2;
-    private static final int DEFAULT_MOVE_DOWN_TIME = 10;
+    private static final double DEFAULT_MOVEMENT_SPEED = 0.002 * vmin;
+    private static final int DEFAULT_MOVE_DOWN_TIME = 10; // TODO Make this + logic in seconds not frames
 
     private enum MoveState {
         LEFT, RIGHT, DOWN_BEFORE_LEFT, DOWN_BEFORE_RIGHT;

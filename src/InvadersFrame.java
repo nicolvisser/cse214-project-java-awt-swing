@@ -179,7 +179,7 @@ public class InvadersFrame extends JFrame {
 
         // draw green boundary and overlay
         g2.setColor(Color.GREEN);
-        g2.drawString("FPS: " + fps, 10, 20);
+        g2.drawString("FPS: " + fps, 10, height - 10);
         g2.drawRect(0, 0, width, height);
 
         g2.dispose();

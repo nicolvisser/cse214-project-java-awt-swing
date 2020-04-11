@@ -10,7 +10,7 @@ public class Missile extends DefaultCritter {
     private static final long serialVersionUID = 1L;
 
     private static final int DEFAULT_RADIUS = vmin / 150;
-    private static final int DEFAULT_SPEED = 10;
+    private static final double DEFAULT_SPEED = 0.01 * vmin;
     public static final int DEFAULT_DAMAGE_POINTS = 50;
 
     private static ImageIcon imgIcnBulletBlue = new ImageIcon("resources/bullet.png");

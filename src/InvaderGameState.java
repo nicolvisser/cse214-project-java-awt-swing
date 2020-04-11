@@ -30,12 +30,12 @@ public class InvaderGameState extends JComponent {
         shooter = new Shooter();
         add(shooter); // add shooter JComponent to link key bindings
 
-        enemyGroup = new EnemyGroup(300, 200, 600, 400, 10, 6, shooter);
+        enemyGroup = new EnemyGroup(0.2 * w, 0.15 * h, 0.4 * w, 0.3 * h, 6, 4, shooter);
         add(enemyGroup);
 
-        bunkers.add(new Bunker(w * 1 / 4, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
-        bunkers.add(new Bunker(w * 2 / 4, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
-        bunkers.add(new Bunker(w * 3 / 4, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
+        bunkers.add(new Bunker(0.25 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
+        bunkers.add(new Bunker(0.50 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
+        bunkers.add(new Bunker(0.75 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
     }
 
     public void draw(Graphics2D g2) {

@@ -2,11 +2,8 @@ package geom;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-import java.io.Serializable;
 
-public class Circle implements BoundingShape, Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Circle implements BoundingShape {
 
     public Vector2D center;
     public double radius;

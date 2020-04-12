@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.HashMap;
 
 public class ControlsScreen extends MenuScreen {
 

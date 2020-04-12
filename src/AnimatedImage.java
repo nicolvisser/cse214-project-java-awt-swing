@@ -1,11 +1,8 @@
 import java.awt.Graphics2D;
-import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
-public class AnimatedImage implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class AnimatedImage {
 
     public enum AnimationType {
         ONCE, LOOP

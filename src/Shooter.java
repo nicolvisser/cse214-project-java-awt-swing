@@ -1,17 +1,10 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
 import geom.LineSegment;
 import geom.Ray;
@@ -72,8 +65,6 @@ public class Shooter extends DefaultCritter {
 
     public Shooter(double x, double y, double width, double height) {
         super(x, y, width, height, 0);
-
-        setKeyBindings();
     }
 
     public void takeDamage(int damagePoints) {
@@ -291,20 +282,6 @@ public class Shooter extends DefaultCritter {
             System.out.println("Handled by skipping update/removal of missile this frame");
             System.out.println("============================================================");
         }
-
-    }
-
-    private void setKeyBindings() {
-        // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
-        // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
-        // https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/InputMap.html
-        // https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/KeyStroke.html
-        // https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/ActionMap.html
-
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
-
-        
 
     }
 

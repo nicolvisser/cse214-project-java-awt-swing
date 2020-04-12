@@ -3,11 +3,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -28,18 +23,15 @@ public class InvadersPanel extends JPanel {
     private final int pHeight;
 
     public enum DisplayState {
-        MAIN_MENU, PLAYING, PAUSE, SAVE_GAME, LOAD_GAME, HIGH_SCORES, SETTINGS, CONTROLS, SET_RESOLUTION, GAME_OVER,
-        QUIT;
+        MAIN_MENU, PLAYING, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS, SET_RESOLUTION, GAME_OVER, QUIT;
     }
 
     public DisplayState activeDisplayState;
 
-    private static String[] mainMenuScreenOptions = { "New Game", "Load Game", "High Scores", "Settings", "Quit Game" };
-    private static String[] pauseScreenOptions = { "Resume Game", "Save Game", "Quit To Main Menu" };
+    private static String[] mainMenuScreenOptions = { "New Game", "High Scores", "Settings", "Quit Game" };
+    private static String[] pauseScreenOptions = { "Resume Game", "Quit To Main Menu" };
     private static String[] settingsScreenOptions = { "Set Resolution", "Controls", "Back" };
     private static String[] resolutionScreenOptions = { "600x600", "800x800", "1000x1000", "Cancel" };
-    private static String[] saveGameScreenOptions = { "Slot 1", "Slot 2", "Slot 3", "Slot 4", "Cancel" };
-    private static String[] loadGameScreenOptions = { "Slot 1", "Slot 2", "Slot 3", "Slot 4", "Cancel" };
 
     private Starfield starfield;
     private InvaderGameState loadedInvaderGameState;
@@ -47,8 +39,6 @@ public class InvadersPanel extends JPanel {
     private MenuScreen pauseScreen;
     private MenuScreen settingsScreen;
     private MenuScreen resolutionScreen;
-    private MenuScreen saveGameScreen;
-    private MenuScreen loadGameScreen;
     private HighScoreScreen highScoreScreen;
     private ControlsScreen controlsScreen;
 
@@ -61,12 +51,10 @@ public class InvadersPanel extends JPanel {
 
         starfield = new Starfield(width, height);
 
-        mainMenuScreen = new MenuScreen(width, height, "TestTitle", "TestSubTitle", mainMenuScreenOptions);
+        mainMenuScreen = new MenuScreen(width, height, "Invaders", "Main Menu", mainMenuScreenOptions);
         pauseScreen = new MenuScreen(width, height, "Paused", pauseScreenOptions);
         settingsScreen = new MenuScreen(width, height, "Settings", settingsScreenOptions);
         resolutionScreen = new MenuScreen(width, height, "Change Resolution", resolutionScreenOptions);
-        saveGameScreen = new MenuScreen(width, height, "Save Game", saveGameScreenOptions);
-        loadGameScreen = new MenuScreen(width, height, "Load Game", loadGameScreenOptions);
         highScoreScreen = new HighScoreScreen(width, height);
         controlsScreen = new ControlsScreen(width, height);
 
@@ -96,24 +84,21 @@ public class InvadersPanel extends JPanel {
                         activeDisplayState = DisplayState.PLAYING;
                         break;
 
-                    case 1: // loadgame
-                        break;
-
-                    case 2: // high scores
+                    case 1: // high scores
                         mainMenuScreen.resetSelection();
                         removeAll();
                         add(highScoreScreen);
                         activeDisplayState = DisplayState.HIGH_SCORES;
                         break;
 
-                    case 3: // settings
+                    case 2: // settings
                         mainMenuScreen.resetSelection();
                         removeAll();
                         add(settingsScreen);
                         activeDisplayState = DisplayState.SETTINGS;
                         break;
 
-                    case 4: // quit
+                    case 3: // quit
                         quitFlag = true;
                         break;
 
@@ -156,15 +141,7 @@ public class InvadersPanel extends JPanel {
                         pauseScreen.selectOptionToGoBack();
                         break;
 
-                    case 1: // save game
-                        pauseScreen.resetSelection();
-                        setMenuScreenOptionsFromSaveFiles(saveGameScreen);
-                        activeDisplayState = DisplayState.SAVE_GAME;
-                        removeAll();
-                        add(saveGameScreen);
-                        break;
-
-                    case 2: // quit to main menu
+                    case 1: // quit to main menu
                         pauseScreen.resetSelection();
                         pauseScreen.resetHiglight();
                         activeDisplayState = DisplayState.MAIN_MENU;
@@ -177,41 +154,6 @@ public class InvadersPanel extends JPanel {
                 }
                 break;
 
-            case SAVE_GAME:
-                switch (saveGameScreen.selectedOption) {
-                    case -2: // back (to pause screen)
-                        saveGameScreen.resetSelection();
-                        saveGameScreen.resetHiglight();
-                        activeDisplayState = DisplayState.PAUSE;
-                        break;
-
-                    case -1: // not yet selected
-                        break;
-
-                    case 0: // slot 1
-                    case 1: // slot 2
-                    case 2: // slot 3
-                    case 3: // slot 4s
-                        int slot = saveGameScreen.selectedOption + 1;
-                        if (saveInvaderGameState(slot)) {
-                            saveGameScreen.resetHiglight();
-                            activeDisplayState = DisplayState.PLAYING;
-                        } else {
-                            saveGameScreen.setSubtitle("Failed to save game in slot " + slot + ".");
-                        }
-                        saveGameScreen.resetSelection();
-                        break;
-
-                    case 4: // cancel
-                        saveGameScreen.selectOptionToGoBack();
-                        break;
-
-                    default:
-                        break;
-                }
-                break;
-            case LOAD_GAME:
-                break;
             case HIGH_SCORES:
                 switch (highScoreScreen.selectedOption) {
                     case -2: // back (to main menu)
@@ -365,12 +307,6 @@ public class InvadersPanel extends JPanel {
             case PAUSE:
                 pauseScreen.draw(g2);
                 break;
-            case SAVE_GAME:
-                saveGameScreen.draw(g2);
-                break;
-            case LOAD_GAME:
-                loadGameScreen.draw(g2);
-                break;
             case HIGH_SCORES:
                 highScoreScreen.draw(g2);
                 break;
@@ -413,99 +349,6 @@ public class InvadersPanel extends JPanel {
 
     public boolean readyToQuit() {
         return quitFlag;
-    }
-
-    static String getPlainTimestamp() {
-        String date = java.time.LocalDate.now().toString().replaceAll("-", "");
-        String time = java.time.LocalTime.now().toString().substring(0, 6).replaceAll(":", "");
-        return date + time;
-    }
-
-    static String formatTimestamp(String plainTimestamp) {
-        String date = plainTimestamp.substring(0, 4) + "-" + plainTimestamp.substring(4, 6) + "-"
-                + plainTimestamp.substring(6, 8);
-        String time = plainTimestamp.substring(8, 10) + ":" + plainTimestamp.substring(10, 12);
-        return date + " " + time;
-    }
-
-    static String filenameOfSaveFile(int slot) {
-        File folder = new File(System.getProperty("user.dir")); // gets "working directory"
-        File[] listOfFiles = folder.listFiles();
-
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                String filename = listOfFiles[i].getName();
-                if (filename.startsWith("savedata_slot" + slot)) {
-                    return filename;
-                }
-            }
-        }
-        return null;
-    }
-
-    static void setMenuScreenOptionsFromSaveFiles(MenuScreen menuScreen) {
-        String[] options = new String[5];
-
-        for (int i = 0; i < 4; i++) {
-            String filename = filenameOfSaveFile(i + 1);
-            if (filename != null) {
-                options[i] = "Slot " + (i + 1) + " - " + formatTimestamp(filename.substring(15));
-            } else {
-                options[i] = "Slot " + (i + 1) + " - Empty";
-            }
-        }
-
-        options[4] = "Cancel";
-
-        menuScreen.setOptions(options);
-
-    }
-
-    boolean saveInvaderGameState(int slot) {
-        loadedInvaderGameState.resetFlags(); // so as not to save true flags in game state
-        try {
-            // delete old savegame (if any) of this slot first:
-            String existingFilename = filenameOfSaveFile(slot);
-            if (existingFilename != null) {
-                File file = new File(existingFilename);
-                if (file.delete()) {
-                    System.out.println("Old savegame, " + existingFilename + ", deleted successfully.");
-                }
-            }
-
-            String filename = "savedata_slot" + slot + "_" + getPlainTimestamp() + ".dat";
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename));
-            out.writeObject(loadedInvaderGameState);
-            out.close();
-            System.out.println("New savegame, " + filename + ", created successfully.");
-            return true;
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            // if created a file and save failed, delete that corrupted file
-            String existingFilename = filenameOfSaveFile(slot);
-            if (existingFilename != null) {
-                File file = new File(existingFilename);
-                file.delete();
-            }
-            return false;
-            // dealt with error message for user inside gameloop using return value
-        }
-
-    }
-
-    boolean loadInvaderGameState(int slot) {
-        try {
-            String filename = filenameOfSaveFile(slot);
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
-            loadedInvaderGameState = (InvaderGameState) in.readObject();
-            in.close();
-            loadGameScreen.setSubtitle(""); // clear error message if any
-            return true;
-        } catch (Exception e1) {
-            // e1.printStackTrace();
-            return false;
-            // dealt with error message for user inside gameloop using return value
-        }
     }
 
 }

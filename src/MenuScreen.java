@@ -74,7 +74,7 @@ public class MenuScreen extends JComponent {
         highlightedOption = 0;
     }
 
-    private void setKeyBindings() {
+    protected void setKeyBindings() {
         // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
         // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
 

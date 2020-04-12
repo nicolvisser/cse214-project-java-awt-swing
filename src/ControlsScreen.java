@@ -1,5 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 
 public class ControlsScreen extends MenuScreen {
 
@@ -12,14 +20,14 @@ public class ControlsScreen extends MenuScreen {
     static final int SHOOT = 4;
     static final int BLOCK = 5;
 
-    static final String[] MENU_OPTIONS = { "Reset to Defaults", "Back" };
+    static final String[] MENU_OPTIONS = { "Edit", "Reset to Defaults", "Back" };
 
     static final String[] actionDescriptions = { "Thrust Left", "Thrust Right", "Rotate Left", "Rotate Right", "Shoot",
             "Block" };
     static final int[] defaultKeyCodes = { 65, 68, 37, 39, 38, 40 };
 
     int[] currentKeyCodes = new int[defaultKeyCodes.length];
-    String[] currentKeyDescriptions;
+    String[] currentKeyDescriptions = new String[defaultKeyCodes.length];
 
     public ControlsScreen(int w, int h) {
         super(w, h, "Controls", MENU_OPTIONS);
@@ -30,11 +38,61 @@ public class ControlsScreen extends MenuScreen {
     public void setDefaultKeys() {
         for (int i = 0; i < defaultKeyCodes.length; i++) {
             currentKeyCodes[i] = defaultKeyCodes[i];
+            currentKeyDescriptions[i] = lookupKeyDescritionFromFile(defaultKeyCodes[i]);
         }
     }
 
-    public void setKeysFromFile(String filename) {
+    public void listenForNextKeyCode(int i) {
 
+        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        In in = new In("keyLookup.txt");
+        while (in.hasNextLine()) {
+            int keyCode = in.readInt();
+            String keyDescription = in.readLine().substring(1);
+
+            KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode, 0, false);
+            inputMap.put(keyStroke, keyCode);
+            actionMap.put(keyCode, new AbstractAction() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    currentKeyCodes[i] = keyCode;
+                    currentKeyDescriptions[i] = lookupKeyDescritionFromFile(keyCode);
+                }
+            });
+        }
+        in.close();
+
+        KeyStroke escPress = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        inputMap.put(escPress, "escPress");
+        actionMap.put("escPress", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                inputMap.clear();
+                actionMap.clear();
+                setKeyBindings();
+            }
+        });
+
+    }
+
+    public static String lookupKeyDescritionFromFile(int code) {
+        In in = new In("keyLookup.txt");
+        while (in.hasNextLine()) {
+            int keyCode = in.readInt();
+            String keyDescription = in.readLine().substring(1);
+            if (keyCode == code) {
+                in.close();
+                return keyDescription;
+            }
+        }
+        in.close();
+        return null;
     }
 
     public void draw(Graphics2D g2) {
@@ -55,7 +113,7 @@ public class ControlsScreen extends MenuScreen {
             g2.setColor(Color.WHITE);
 
             drawLeftAlignedText(g2, WIDTH * 0.3, y, actionDescriptions[i]);
-            drawRightAlignedText(g2, WIDTH * 0.7, y, "" + currentKeyCodes[i]);
+            drawRightAlignedText(g2, WIDTH * 0.7, y, "" + currentKeyDescriptions[i]);
         }
 
         for (int i = 0; i < textOptions.length; i++) {

@@ -230,12 +230,17 @@ public class InvadersPanel extends JPanel {
                     case -1: // not yet selected
                         break;
 
-                    case 0: // reset to defaults
+                    case 0: // edit
+                        controlsScreen.listenForNextKeyCode(0);
+                        controlsScreen.resetSelection();
+                        break;
+
+                    case 1: // reset to defaults
                         controlsScreen.resetSelection();
                         controlsScreen.setDefaultKeys();
                         break;
 
-                    case 1: // back
+                    case 2: // back
                         controlsScreen.selectOptionToGoBack();
                         break;
 

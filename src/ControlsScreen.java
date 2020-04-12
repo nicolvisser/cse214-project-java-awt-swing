@@ -47,6 +47,8 @@ public class ControlsScreen extends MenuScreen {
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = getActionMap();
 
+        // for each predefined keycode in a textfile
+        // create a key binding that will set selected control to that keycode
         In in = new In("keyLookup.txt");
         while (in.hasNextLine()) {
             int keyCode = in.readInt();
@@ -60,21 +62,25 @@ public class ControlsScreen extends MenuScreen {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     currentKeyCodes[i] = keyCode;
-                    currentKeyDescriptions[i] = lookupKeyDescritionFromFile(keyCode);
+                    currentKeyDescriptions[i] = keyDescription;
                 }
             });
         }
         in.close();
 
+        // set key binding for escape - a way for user to exit listen loop
         KeyStroke escPress = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
         inputMap.put(escPress, "escPress");
         actionMap.put("escPress", new AbstractAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) { // if escape is pressed
+                // clear current key bindings for this panel
                 inputMap.clear();
                 actionMap.clear();
+
+                // reinstate original key bindings for panel
                 setKeyBindings();
             }
         });

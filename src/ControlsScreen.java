@@ -20,29 +20,35 @@ public class ControlsScreen extends MenuScreen {
     static final int SHOOT = 4;
     static final int BLOCK = 5;
 
-    static final String[] MENU_OPTIONS = { "Edit", "Reset to Defaults", "Back" };
+    static final String[] MENU_OPTIONS = { "Thrust Left", "Thrust Right", "Rotate Left", "Rotate Right", "Shoot",
+            "Block", "Reset to Defaults", "Back" };
+    static final String DEFAULT_SUBTITLE = "Please select an option or key from the menu:";
 
-    static final String[] actionDescriptions = { "Thrust Left", "Thrust Right", "Rotate Left", "Rotate Right", "Shoot",
-            "Block" };
+    static final int numControls = 6;
     static final int[] defaultKeyCodes = { 65, 68, 37, 39, 38, 40 };
 
-    int[] currentKeyCodes = new int[defaultKeyCodes.length];
-    String[] currentKeyDescriptions = new String[defaultKeyCodes.length];
+    int[] currentKeyCodes = new int[numControls];
+    String[] currentKeyDescriptions = new String[numControls];
+
+    int currentlyEditingOption = -1;
 
     public ControlsScreen(int w, int h) {
         super(w, h, "Controls", MENU_OPTIONS);
-        subtitle = "Select a key to change";
+        subtitle = DEFAULT_SUBTITLE;
         setDefaultKeys();
     }
 
     public void setDefaultKeys() {
-        for (int i = 0; i < defaultKeyCodes.length; i++) {
+        for (int i = 0; i < numControls; i++) {
             currentKeyCodes[i] = defaultKeyCodes[i];
             currentKeyDescriptions[i] = lookupKeyDescritionFromFile(defaultKeyCodes[i]);
         }
     }
 
-    public void listenForNextKeyCode(int i) {
+    public void letUserSetKeyCodeForControl(int controlIndex) {
+
+        subtitle = "Press a key to change. Press escape to cancel.";
+        currentlyEditingOption = controlIndex;
 
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = getActionMap();
@@ -61,8 +67,21 @@ public class ControlsScreen extends MenuScreen {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    currentKeyCodes[i] = keyCode;
-                    currentKeyDescriptions[i] = keyDescription;
+                    currentKeyCodes[controlIndex] = keyCode;
+                    currentKeyDescriptions[controlIndex] = keyDescription;
+
+                    // clear current key bindings for this panel
+                    inputMap.clear();
+                    actionMap.clear();
+
+                    // reinstate original key bindings for panel
+                    setKeyBindings();
+
+                    // no longer editing any option (no need to highlight in green)
+                    currentlyEditingOption = -1;
+
+                    subtitle = DEFAULT_SUBTITLE;
+
                 }
             });
         }
@@ -72,6 +91,7 @@ public class ControlsScreen extends MenuScreen {
         KeyStroke escPress = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
         inputMap.put(escPress, "escPress");
         actionMap.put("escPress", new AbstractAction() {
+
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -82,7 +102,14 @@ public class ControlsScreen extends MenuScreen {
 
                 // reinstate original key bindings for panel
                 setKeyBindings();
+
+                // no longer editing any option (no need to highlight in green)
+                currentlyEditingOption = -1;
+
+                subtitle = DEFAULT_SUBTITLE;
+
             }
+
         });
 
     }
@@ -113,26 +140,53 @@ public class ControlsScreen extends MenuScreen {
         g2.setColor(Color.YELLOW);
         drawCenteredText(g2, XCENTER, y, subtitle);
 
-        for (int i = 0; i < defaultKeyCodes.length; i++) {
-            y += g2.getFontMetrics().getHeight() * 3;
-
-            g2.setColor(Color.WHITE);
-
-            drawLeftAlignedText(g2, WIDTH * 0.3, y, actionDescriptions[i]);
-            drawRightAlignedText(g2, WIDTH * 0.7, y, "" + currentKeyDescriptions[i]);
-        }
-
         for (int i = 0; i < textOptions.length; i++) {
             y += (BUTTON_HEIGHT + BUTTON_SPACING);
 
-            g2.setColor(Color.BLACK);
-            fillCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+            if (i < numControls) {
+                // IS A EDITABLE CONTROL
 
-            g2.setColor(i == highlightedOption ? Color.RED : Color.WHITE);
-            drawCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+                g2.setColor(Color.BLACK);
+                fillCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
 
-            drawCenteredText(g2, XCENTER, y, textOptions[i]);
+                g2.setColor(i == highlightedOption ? Color.RED : Color.WHITE);
+                drawCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+
+                // let content flash to indicate editing
+                if (i == currentlyEditingOption) {
+                    if (System.nanoTime() % 1000000000 < 500000000) {
+                        continue;
+                    }
+                }
+                drawLeftAlignedText(g2, XCENTER - BUTTON_WIDTH / 2.5, y, textOptions[i]);
+                drawRightAlignedText(g2, XCENTER + BUTTON_WIDTH / 2.5, y, "" + currentKeyDescriptions[i]);
+
+            } else {
+                // IS A DEFAULT TYPE OF MENU OPTION
+
+                g2.setColor(Color.BLACK);
+                fillCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+
+                g2.setColor(i == highlightedOption ? Color.RED : Color.WHITE);
+                drawCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+
+                drawCenteredText(g2, XCENTER, y, textOptions[i]);
+            }
+
         }
+    }
+
+    @Override
+    public void selectCurrentOption() {
+        if (highlightedOption < numControls) {
+            // start listening for user input to set control
+            letUserSetKeyCodeForControl(highlightedOption);
+            resetSelection();
+        } else {
+            // handle like normal menu button
+            super.selectCurrentOption();
+        }
+
     }
 
 }

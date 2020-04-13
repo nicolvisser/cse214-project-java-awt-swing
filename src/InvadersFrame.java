@@ -202,7 +202,7 @@ public class InvadersFrame extends JFrame {
 
     public static void main(String[] args) {
 
-        InvadersFrame game = new InvadersFrame(true);
+        InvadersFrame game = new InvadersFrame(false);
 
         game.run();
 

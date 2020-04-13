@@ -28,7 +28,7 @@ public class InvaderGameState extends JComponent {
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
 
-    public InvaderGameState(int w, int h) {
+    public InvaderGameState(int w, int h, int[] keyCodes) {
         // before adding critters override canvas size --- NOT SURE IF THIS IS IDEAL
         DefaultCritter.setCanvasSize(w, h);
 
@@ -46,7 +46,7 @@ public class InvaderGameState extends JComponent {
         bunkers.add(new Bunker(0.50 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
         bunkers.add(new Bunker(0.75 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
 
-        setKeyBindings();
+        setKeyBindings(keyCodes);
     }
 
     public void draw(Graphics2D g2) {
@@ -153,7 +153,7 @@ public class InvaderGameState extends JComponent {
         }
     }
 
-    private void setKeyBindings() {
+    private void setKeyBindings(int[] keyCodes) {
         // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
         // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
 
@@ -171,7 +171,7 @@ public class InvaderGameState extends JComponent {
             }
         });
 
-        KeyStroke moveLeftKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false);
+        KeyStroke moveLeftKeyPress = KeyStroke.getKeyStroke(keyCodes[0], 0, false);
         inputMap.put(moveLeftKeyPress, "moveLeftKeyPress");
         actionMap.put("moveLeftKeyPress", new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -183,7 +183,7 @@ public class InvaderGameState extends JComponent {
 
         });
 
-        KeyStroke moveLeftKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true);
+        KeyStroke moveLeftKeyRelease = KeyStroke.getKeyStroke(keyCodes[0], 0, true);
         inputMap.put(moveLeftKeyRelease, "moveLeftKeyRelease");
         actionMap.put("moveLeftKeyRelease", new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -195,7 +195,7 @@ public class InvaderGameState extends JComponent {
 
         });
 
-        KeyStroke moveRightKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false);
+        KeyStroke moveRightKeyPress = KeyStroke.getKeyStroke(keyCodes[1], 0, false);
         inputMap.put(moveRightKeyPress, "moveRightKeyPress");
         actionMap.put("moveRightKeyPress", new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -206,7 +206,7 @@ public class InvaderGameState extends JComponent {
             }
         });
 
-        KeyStroke moveRightKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true);
+        KeyStroke moveRightKeyRelease = KeyStroke.getKeyStroke(keyCodes[1], 0, true);
         inputMap.put(moveRightKeyRelease, "moveRightKeyRelease");
         actionMap.put("moveRightKeyRelease", new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -217,7 +217,7 @@ public class InvaderGameState extends JComponent {
             }
         });
 
-        KeyStroke rotateLeftKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false);
+        KeyStroke rotateLeftKeyPress = KeyStroke.getKeyStroke(keyCodes[2], 0, false);
         inputMap.put(rotateLeftKeyPress, "rotateLeftKeyPress");
         actionMap.put("rotateLeftKeyPress", new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -229,7 +229,7 @@ public class InvaderGameState extends JComponent {
 
         });
 
-        KeyStroke rotateLeftKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true);
+        KeyStroke rotateLeftKeyRelease = KeyStroke.getKeyStroke(keyCodes[2], 0, true);
         inputMap.put(rotateLeftKeyRelease, "rotateLeftKeyRelease");
         actionMap.put("rotateLeftKeyRelease", new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -241,7 +241,7 @@ public class InvaderGameState extends JComponent {
 
         });
 
-        KeyStroke rotateRightKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false);
+        KeyStroke rotateRightKeyPress = KeyStroke.getKeyStroke(keyCodes[3], 0, false);
         inputMap.put(rotateRightKeyPress, "rotateRightKeyPress");
         actionMap.put("rotateRightKeyPress", new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -252,7 +252,7 @@ public class InvaderGameState extends JComponent {
             }
         });
 
-        KeyStroke rotateRightKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true);
+        KeyStroke rotateRightKeyRelease = KeyStroke.getKeyStroke(keyCodes[3], 0, true);
         inputMap.put(rotateRightKeyRelease, "rotateRightKeyRelease");
         actionMap.put("rotateRightKeyRelease", new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -263,7 +263,7 @@ public class InvaderGameState extends JComponent {
             }
         });
 
-        KeyStroke shootKeyRelease = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, true);
+        KeyStroke shootKeyRelease = KeyStroke.getKeyStroke(keyCodes[4], 0, true);
         inputMap.put(shootKeyRelease, "shootKeyRelease");
         actionMap.put("shootKeyRelease", new AbstractAction() {
             private static final long serialVersionUID = 1L;

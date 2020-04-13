@@ -13,39 +13,77 @@ public class ControlsScreen extends MenuScreen {
 
     private static final long serialVersionUID = 1L;
 
-    static final int THRUST_LEFT = 0;
-    static final int THRUST_RIGHT = 1;
-    static final int ROTATE_LEFT = 2;
-    static final int ROTATE_RIGHT = 3;
-    static final int SHOOT = 4;
-    static final int BLOCK = 5;
+    // Constants relating to MenuScreen class
+    private static final String[] MENU_OPTIONS = { "Thrust Left", "Thrust Right", "Rotate Left", "Rotate Right",
+            "Shoot", "Block", "Reset to Defaults", "Back" };
+    private static final String DEFAULT_SUBTITLE = "Please select an option or key from the menu:";
 
-    static final String[] MENU_OPTIONS = { "Thrust Left", "Thrust Right", "Rotate Left", "Rotate Right", "Shoot",
-            "Block", "Reset to Defaults", "Back" };
-    static final String DEFAULT_SUBTITLE = "Please select an option or key from the menu:";
+    // Constants relating to ControlsScreen class
+    private static final int NUM_CONTROLS = 6;
+    private static final int[] DEFAULT_KEYCODES = { 65, 68, 37, 39, 38, 40 };
+    private static String FILENAME_KEY_CONFIG = "keys.txt";
+    private static String FILENAME_KEY_LOOKUP = "keyLookup.txt";
 
-    static final int numControls = 6;
-    static final int[] defaultKeyCodes = { 65, 68, 37, 39, 38, 40 };
-
-    int[] currentKeyCodes = new int[numControls];
-    String[] currentKeyDescriptions = new String[numControls];
-
-    int currentlyEditingOption = -1;
+    private int[] currentKeyCodes = new int[NUM_CONTROLS];
+    private String[] currentKeyDescriptions = new String[NUM_CONTROLS];
+    private int currentlyEditingOption = -1; // used to let GUI menu option that is currently being edited flash
 
     public ControlsScreen(int w, int h) {
         super(w, h, "Controls", MENU_OPTIONS);
         subtitle = DEFAULT_SUBTITLE;
-        setDefaultKeys();
+        setKeysFromFile();
+    }
+
+    private static String lookupKeyDescriptionFromFile(int code) {
+        In in = new In(FILENAME_KEY_LOOKUP);
+        while (in.hasNextLine()) {
+            int keyCode = in.readInt();
+            String keyDescription = in.readLine().substring(1);
+            if (keyCode == code) {
+                in.close();
+                return keyDescription;
+            }
+        }
+        in.close();
+        return null;
     }
 
     public void setDefaultKeys() {
-        for (int i = 0; i < numControls; i++) {
-            currentKeyCodes[i] = defaultKeyCodes[i];
-            currentKeyDescriptions[i] = lookupKeyDescritionFromFile(defaultKeyCodes[i]);
+        for (int i = 0; i < NUM_CONTROLS; i++) {
+            currentKeyCodes[i] = DEFAULT_KEYCODES[i];
+            currentKeyDescriptions[i] = lookupKeyDescriptionFromFile(DEFAULT_KEYCODES[i]);
+        }
+        saveKeysToFile();
+    }
+
+    private void setKeysFromFile() {
+        In in = null;
+        try {
+            in = new In(FILENAME_KEY_CONFIG);
+            for (int i = 0; i < NUM_CONTROLS; i++) {
+                currentKeyCodes[i] = in.readInt();
+                currentKeyDescriptions[i] = lookupKeyDescriptionFromFile(currentKeyCodes[i]);
+            }
+            in.close();
+        } catch (Exception e) {
+            if (in != null) {
+                System.out.println("Failed to load key configuration file. Resetting to default.");
+                // e.printStackTrace();
+                in.close();
+            }
+            setDefaultKeys();
         }
     }
 
-    public void letUserSetKeyCodeForControl(int controlIndex) {
+    private void saveKeysToFile() {
+        Out out = new Out(FILENAME_KEY_CONFIG);
+        for (int key : currentKeyCodes) {
+            out.println(key);
+        }
+        out.close();
+    }
+
+    private void letUserSetKeyCodeForControl(int controlIndex) {
 
         subtitle = "Press a key to change. Press escape to cancel.";
         currentlyEditingOption = controlIndex;
@@ -55,7 +93,7 @@ public class ControlsScreen extends MenuScreen {
 
         // for each predefined keycode in a textfile
         // create a key binding that will set selected control to that keycode
-        In in = new In("keyLookup.txt");
+        In in = new In(FILENAME_KEY_LOOKUP);
         while (in.hasNextLine()) {
             int keyCode = in.readInt();
             String keyDescription = in.readLine().substring(1);
@@ -67,8 +105,18 @@ public class ControlsScreen extends MenuScreen {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
+
+                    // if keycode already in use by another control don't assign keycode
+                    for (int i = 0; i < NUM_CONTROLS; i++) {
+                        if (i != controlIndex && keyCode == currentKeyCodes[i]) {
+                            subtitle = "Keycode already in use";
+                            return;
+                        }
+                    }
+
                     currentKeyCodes[controlIndex] = keyCode;
                     currentKeyDescriptions[controlIndex] = keyDescription;
+                    saveKeysToFile();
 
                     // clear current key bindings for this panel
                     inputMap.clear();
@@ -114,20 +162,13 @@ public class ControlsScreen extends MenuScreen {
 
     }
 
-    public static String lookupKeyDescritionFromFile(int code) {
-        In in = new In("keyLookup.txt");
-        while (in.hasNextLine()) {
-            int keyCode = in.readInt();
-            String keyDescription = in.readLine().substring(1);
-            if (keyCode == code) {
-                in.close();
-                return keyDescription;
-            }
-        }
-        in.close();
-        return null;
+    public int[] getCurrentConfiguration() {
+        return currentKeyCodes;
     }
 
+    // Override some methods from MenuScreen class:
+
+    @Override
     public void draw(Graphics2D g2) {
         double y = 0.1 * HEIGHT;
 
@@ -143,7 +184,7 @@ public class ControlsScreen extends MenuScreen {
         for (int i = 0; i < textOptions.length; i++) {
             y += (BUTTON_HEIGHT + BUTTON_SPACING);
 
-            if (i < numControls) {
+            if (i < NUM_CONTROLS) {
                 // IS A EDITABLE CONTROL
 
                 g2.setColor(Color.BLACK);
@@ -178,7 +219,7 @@ public class ControlsScreen extends MenuScreen {
 
     @Override
     public void selectCurrentOption() {
-        if (highlightedOption < numControls) {
+        if (highlightedOption < NUM_CONTROLS) {
             // start listening for user input to set control
             letUserSetKeyCodeForControl(highlightedOption);
             resetSelection();

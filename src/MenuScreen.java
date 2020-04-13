@@ -47,7 +47,7 @@ public class MenuScreen extends JComponent {
 
         XCENTER = WIDTH / 2;
 
-        BUTTON_WIDTH = w / 3;
+        BUTTON_WIDTH = w / 2;
         BUTTON_HEIGHT = h / 20;
         BUTTON_SPACING = h / 30;
 

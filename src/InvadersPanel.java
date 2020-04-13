@@ -42,6 +42,8 @@ public class InvadersPanel extends JPanel {
     private HighScoreScreen highScoreScreen;
     private ControlsScreen controlsScreen;
 
+    int[] gameKeys = { 65, 68, 37, 39, 38, 40 };
+
     public InvadersPanel(int width, int height) {
         pWidth = width;
         pHeight = height;
@@ -79,7 +81,8 @@ public class InvadersPanel extends JPanel {
                     case 0: // new game
                         mainMenuScreen.resetSelection();
                         removeAll();
-                        loadedInvaderGameState = new InvaderGameState(pWidth, pHeight);
+                        loadedInvaderGameState = new InvaderGameState(pWidth, pHeight,
+                                controlsScreen.getCurrentConfiguration());
                         add(loadedInvaderGameState);
                         activeDisplayState = DisplayState.PLAYING;
                         break;

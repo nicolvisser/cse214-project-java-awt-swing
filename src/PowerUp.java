@@ -1,7 +1,5 @@
 import java.awt.Graphics2D;
 
-import geom.Vector2D;
-
 public class PowerUp extends DefaultCritter {
 
     private static final long serialVersionUID = 1L;

@@ -54,8 +54,9 @@ public class Shooter extends DefaultCritter {
     boolean isRotatingLeft = false;
     boolean isRotatingRight = false;
 
-    private static final int DEFAULT_RELOAD_TIME = 5; // in number of frames as unit
-    private int reloadTimer = DEFAULT_RELOAD_TIME; // ready to shoot from start
+    static final int DEFAULT_RELOAD_TIME = 20; // in number of frames as unit // TODO change to time based not frame
+    int currentReloadTime = DEFAULT_RELOAD_TIME;
+    private int reloadTimer = currentReloadTime; // ready to shoot from start
 
     public ArrayList<Missile> missiles = new ArrayList<>();
 
@@ -84,9 +85,8 @@ public class Shooter extends DefaultCritter {
 
     public void shootMissile() {
         if (state == ShooterState.ALIVE) {
-            StdAudio.play("resources/heartbeat.wav");
-
-            if (reloadTimer >= DEFAULT_RELOAD_TIME) {
+            if (reloadTimer >= currentReloadTime) {
+                StdAudio.play("resources/heartbeat.wav");
                 Missile missile = new Missile(position, lookVector(), this);
                 missiles.add(missile);
                 reloadTimer = 0;
@@ -289,6 +289,8 @@ public class Shooter extends DefaultCritter {
     public boolean isCollidingWith(DefaultCritter critter) {
         if (critter instanceof Missile) {
             return isCollidingWith((Missile) critter);
+        } else if (critter instanceof PowerUp) {
+            return isCollidingWith((PowerUp) critter);
         } else {
             return super.isCollidingWith(critter);
         }
@@ -298,10 +300,16 @@ public class Shooter extends DefaultCritter {
         return missile.isCollidingWith(this); // reuse code in missile class
     }
 
+    public boolean isCollidingWith(PowerUp powerUp) {
+        return powerUp.isCollidingWith(this); // reuse code in PowerUp class
+    }
+
     @Override
     public void handleCollisionWith(DefaultCritter critter) {
         if (critter instanceof Missile) {
             handleCollisionWith((Missile) critter);
+        } else if (critter instanceof PowerUp) {
+            handleCollisionWith((PowerUp) critter);
         } else {
             super.handleCollisionWith(critter);
         }
@@ -309,6 +317,10 @@ public class Shooter extends DefaultCritter {
 
     public void handleCollisionWith(Missile missile) {
         missile.handleCollisionWith(this); // reuse code in missile class
+    }
+
+    public void handleCollisionWith(PowerUp powerUp) {
+        powerUp.handleCollisionWith(this); // reuse code in PowerUp class
     }
 
 }

@@ -27,6 +27,7 @@ public class InvaderGameState extends JComponent {
     private Shooter shooter;
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
+    private ArrayList<PowerUp> powerUps = new ArrayList<>();
 
     public InvaderGameState(int w, int h, int[] keyCodes) {
         // before adding critters override canvas size --- NOT SURE IF THIS IS IDEAL
@@ -46,6 +47,8 @@ public class InvaderGameState extends JComponent {
         bunkers.add(new Bunker(0.50 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
         bunkers.add(new Bunker(0.75 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
 
+        powerUps.add(new PowerUp(0.2 * w, 0.9 * h, PowerUp.PowerUpType.FAST_RELOAD));
+
         setKeyBindings(keyCodes);
     }
 
@@ -55,6 +58,9 @@ public class InvaderGameState extends JComponent {
 
         for (Bunker bunker : bunkers)
             bunker.draw(g2);
+
+        for (PowerUp powerUp : powerUps)
+            powerUp.draw(g2);
 
         shooter.drawAimLine(g2, enemyGroup, bunkers);
 
@@ -96,15 +102,21 @@ public class InvaderGameState extends JComponent {
         for (Bunker bunker : bunkers)
             bunker.update();
 
+        for (PowerUp powerUp : powerUps)
+            powerUp.update();
+
         removeDeadCritters(shooter.missiles);
         removeDeadCritters(enemyGroup.enemies);
         removeDeadCritters(enemyGroup.missiles);
         removeDeadCritters(bunkers);
+        removeDeadCritters(powerUps);
 
         checkAndHandleCollisions(shooter.missiles, enemyGroup.enemies);
         checkAndHandleCollisions(shooter, enemyGroup.missiles);
         checkAndHandleCollisions(bunkers, shooter.missiles);
         checkAndHandleCollisions(bunkers, enemyGroup.missiles);
+        checkAndHandleCollisions(shooter, powerUps);
+        checkAndHandleCollisions(shooter.missiles, powerUps);
 
     }
 

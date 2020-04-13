@@ -119,6 +119,12 @@ public class Missile extends DefaultCritter {
     public boolean isCollidingWith(DefaultCritter critter) {
         if (critter instanceof Enemy) {
             return isCollidingWith((Enemy) critter);
+        } else if (critter instanceof Shooter) {
+            return isCollidingWith((Shooter) critter);
+        } else if (critter instanceof Bunker) {
+            return isCollidingWith((Bunker) critter);
+        } else if (critter instanceof PowerUp) {
+            return isCollidingWith((PowerUp) critter);
         } else {
             return super.isCollidingWith(critter);
         }
@@ -146,12 +152,20 @@ public class Missile extends DefaultCritter {
         return bunker.isCollidingWith(this); // reuse code in Bunker class
     }
 
+    public boolean isCollidingWith(PowerUp powerUp) {
+        return powerUp.isCollidingWith(this); // reuse code in PowerUp class
+    }
+
     @Override
     public void handleCollisionWith(DefaultCritter critter) {
         if (critter instanceof Enemy) {
             handleCollisionWith((Enemy) critter);
         } else if (critter instanceof Shooter) {
             handleCollisionWith((Shooter) critter);
+        } else if (critter instanceof Bunker) {
+            handleCollisionWith((Bunker) critter);
+        } else if (critter instanceof PowerUp) {
+            handleCollisionWith((PowerUp) critter);
         } else {
             super.handleCollisionWith(critter);
         }
@@ -165,6 +179,14 @@ public class Missile extends DefaultCritter {
     public void handleCollisionWith(Shooter shooter) {
         this.explode();
         shooter.takeDamage(DEFAULT_DAMAGE_POINTS);
+    }
+
+    public void handleCollisionWith(Bunker bunker) {
+        bunker.handleCollisionWith(this); // reuse code in bunker class
+    }
+
+    public void handleCollisionWith(PowerUp powerUp) {
+        powerUp.handleCollisionWith(this); // reuse code in PowerUp class
     }
 
     @Override

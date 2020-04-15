@@ -80,3 +80,4 @@
 155 Insert
 161 Left Brace
 162 Right Brace
+65406 AltGr

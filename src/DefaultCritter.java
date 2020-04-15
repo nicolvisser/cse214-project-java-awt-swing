@@ -118,7 +118,7 @@ public class DefaultCritter extends JComponent {
     }
 
     public void lookAt(DefaultCritter other) {
-        orientation = this.positionRelativeTo(other).getBearing();
+        orientation = this.positionRelativeTo(other).getBearing(); // TODO Think there is an error here, TEST
     }
 
     public void lookAt(double x, double y) {

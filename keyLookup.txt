@@ -4,7 +4,6 @@
 16 Shift
 17 Ctrl
 18 Alt
-20 Caps Lock
 32 Space
 33 Page Up
 34 Page Down

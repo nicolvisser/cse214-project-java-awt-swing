@@ -216,8 +216,8 @@ public class Shooter extends DefaultCritter {
 
         // if almost no 'thrust' applied or thrust applied in opposite direction than
         // movement, then slow down shooter for fast stopping or turning
-        if (velocity.x * acceleration.x < 0.00001) {
-            velocity.x = 0.8 * velocity.x;
+        if (velocity.dot(acceleration) < 0.00001) {
+            velocity = velocity.scale(0.8);
         }
 
         // set acceleration from thruster statuses

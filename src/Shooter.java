@@ -12,8 +12,6 @@ import geom.Vector2D;
 
 public class Shooter extends DefaultCritter {
 
-    private static final long serialVersionUID = 1L;
-
     private static final int DEFAULT_HEALTH_POINTS = 250;
     private static final int DEFAULT_ENERGY_POINTS = 100;
 

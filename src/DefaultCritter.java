@@ -1,17 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import javax.swing.JComponent;
-
 import geom.Circle;
 import geom.LineSegment;
 import geom.Rectangle;
 import geom.Shape;
 import geom.Vector2D;
 
-public class DefaultCritter extends JComponent {
-
-    private static final long serialVersionUID = 1L;
+public class DefaultCritter {
 
     protected static int vw = 800; // viewport width
     protected static int vh = 800; // viewport width
@@ -73,7 +69,6 @@ public class DefaultCritter extends JComponent {
         angularVelocity = 0;
         angularAcceleration = 0;
 
-        setIgnoreRepaint(true);
     }
 
     public Shape getCollisionShape() {

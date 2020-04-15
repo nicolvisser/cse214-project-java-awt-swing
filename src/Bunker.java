@@ -8,10 +8,7 @@ import geom.Rectangle;
 
 public class Bunker extends DefaultCritter {
 
-    private static final long serialVersionUID = 1L;
-
     public class Block extends DefaultCritter {
-        private static final long serialVersionUID = 1L;
         private Color color;
 
         public Block(double x, double y, double width, double height) {

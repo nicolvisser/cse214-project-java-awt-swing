@@ -2,8 +2,6 @@ import java.awt.Graphics2D;
 
 public class PowerUp extends DefaultCritter {
 
-    private static final long serialVersionUID = 1L;
-
     enum PowerUpType {
         BLUE, RED, GREEN, FAST_RELOAD;
     }

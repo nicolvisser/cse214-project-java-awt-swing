@@ -5,8 +5,6 @@ import javax.swing.ImageIcon;
 
 public class Enemy extends DefaultCritter {
 
-    private static final long serialVersionUID = 1L;
-
     private static final ImageIcon IMAGE_ICON_SINGLE_ENEMY = new ImageIcon("resources/enemy.png");
 
     public enum EnemyState {

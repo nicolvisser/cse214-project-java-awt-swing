@@ -7,8 +7,6 @@ import geom.Vector2D;
 
 public class EnemyGroup extends DefaultCritter {
 
-    private static final long serialVersionUID = 1L;
-
     private static final int DEFAULT_ENEMY_RADIUS = vmin * 2 / 100;
 
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;

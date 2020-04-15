@@ -37,11 +37,8 @@ public class InvaderGameState extends JComponent {
         this.keyCodes = keyCodes;
 
         shooter = new Shooter();
-        add(shooter); // add shooter JComponent to link key bindings
 
         enemyGroup = new EnemyGroup(0.2 * w, 0.15 * h, 0.4 * w, 0.3 * h, 6, 4, shooter);
-        add(enemyGroup);
-        add(enemyGroup);
 
         bunkers.add(new Bunker(0.25 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
         bunkers.add(new Bunker(0.50 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));

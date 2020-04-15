@@ -112,7 +112,7 @@ public class Shooter extends DefaultCritter {
         Vector2D start = position; // TODO: change to end of turret position
 
         Ray aimRay = new Ray(start, lookVector());
-        double lengthOfAimLine = 2000; // TODO: fix hardcoding
+        double lengthOfAimLine = vw + vh; // will always extend outside frame
 
         if (enemyGroup.getCollisionShape().intersects(aimRay)) {
             for (Enemy enemy : enemyGroup.enemies) {

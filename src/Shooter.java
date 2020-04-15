@@ -17,6 +17,17 @@ public class Shooter extends DefaultCritter {
     private static final int DEFAULT_HEALTH_POINTS = 250;
     private static final int DEFAULT_ENERGY_POINTS = 100;
 
+    // The following class properties are defined relative the set view size via
+    // these super class propertiesL:
+    // vw - view width
+    // vh - view height
+    // vmin - minimum dimension of view
+    // vmax - maximum dimension of view
+    //
+    // --- EXAMPLE: --->
+    // DEFAULT_POSITION_Y = vh * 90 / 100
+    // means the y position will be at 90% of screen height from the top of screen
+
     private static final int DEFAULT_WIDTH = vmin * 8 / 100;
     private static final int DEFAULT_HEIGHT = vmin * 12 / 100;
 
@@ -29,7 +40,7 @@ public class Shooter extends DefaultCritter {
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
 
-    private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5;
+    private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5; // TODO change to relative value
 
     private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/carrier.png");
     private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/destroyer.png");

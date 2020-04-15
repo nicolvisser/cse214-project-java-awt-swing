@@ -30,7 +30,7 @@ public class ControlsScreen extends MenuScreen {
 
 
         setFocusTraversalKeysEnabled(false);
-        // <--- this is to allow TAB key, see
+        // <--- this is to allow TAB key to be picked up by keyListener, see
         // https://stackoverflow.com/questions/8275204/how-can-i-listen-to-a-tab-key-pressed-typed-in-java
     }
 

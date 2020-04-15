@@ -73,6 +73,11 @@ public class InvadersPanel extends JPanel {
 
         switch (activeDisplayState) {
             case MAIN_MENU:
+
+                if (!mainMenuScreen.hasFocus()) {
+                    mainMenuScreen.requestFocusInWindow();
+                }
+
                 switch (mainMenuScreen.selectedOption) {
                     case -2: // back (nowhere to go back to)
                     case -1: // not yet selected
@@ -111,6 +116,11 @@ public class InvadersPanel extends JPanel {
                 break;
 
             case PLAYING:
+
+                if (!loadedInvaderGameState.hasFocus()) {
+                    loadedInvaderGameState.requestFocusInWindow();
+                }
+
                 loadedInvaderGameState.update();
 
                 if (loadedInvaderGameState.pauseFlag) {
@@ -129,6 +139,10 @@ public class InvadersPanel extends JPanel {
                 break;
 
             case PAUSE:
+
+                if (!pauseScreen.hasFocus()) {
+                    pauseScreen.requestFocusInWindow();
+                }
 
                 switch (pauseScreen.selectedOption) {
                     case -2: // back (to playing game)
@@ -158,6 +172,11 @@ public class InvadersPanel extends JPanel {
                 break;
 
             case HIGH_SCORES:
+
+                if (!highScoreScreen.hasFocus()) {
+                    highScoreScreen.requestFocusInWindow();
+                }
+
                 switch (highScoreScreen.selectedOption) {
                     case -2: // back (to main menu)
                         highScoreScreen.resetSelection();
@@ -185,6 +204,11 @@ public class InvadersPanel extends JPanel {
                 break;
 
             case SETTINGS:
+
+                if (!settingsScreen.hasFocus()) {
+                    settingsScreen.requestFocusInWindow();
+                }
+
                 switch (settingsScreen.selectedOption) {
                     case -2: // back (to main menu)
                         settingsScreen.resetSelection();
@@ -221,6 +245,11 @@ public class InvadersPanel extends JPanel {
                 break;
 
             case CONTROLS:
+
+                if (!controlsScreen.hasFocus()) {
+                    controlsScreen.requestFocusInWindow();
+                }
+
                 switch (controlsScreen.selectedOption) {
                     case -2: // back (to setting screen)
                         controlsScreen.resetSelection();
@@ -248,7 +277,6 @@ public class InvadersPanel extends JPanel {
 
                     case 7: // back
                         controlsScreen.selectOptionToGoBack();
-                        break;
 
                     default:
                         break;
@@ -256,6 +284,11 @@ public class InvadersPanel extends JPanel {
                 break;
 
             case SET_RESOLUTION:
+
+                if (!resolutionScreen.hasFocus()) {
+                    resolutionScreen.requestFocusInWindow();
+                }
+
                 switch (resolutionScreen.selectedOption) {
                     case -2: // back (to setting screen)
                         resolutionScreen.resetSelection();
@@ -340,8 +373,14 @@ public class InvadersPanel extends JPanel {
     }
 
     private void setKeyBindings() {
+        // Using key binding for q key to quit.
+        // The keybinding works whether panel has focus or not.
         // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
-        // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
+        // Also see https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
+        //
+        // Considered using keybinding for other classes as well. It would have worked very nice for
+        // creating custom controls. However it seems that key bindings can't recognize a modifier key
+        // (shift, alt, control) press on its own.
 
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = getActionMap();
@@ -350,7 +389,6 @@ public class InvadersPanel extends JPanel {
         inputMap.put(quitKeyPress, "quitKeyPress");
         actionMap.put("quitKeyPress", new AbstractAction() {
             private static final long serialVersionUID = 1L;
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 quitFlag = true;

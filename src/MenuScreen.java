@@ -1,14 +1,10 @@
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.*;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
 import geom.Rectangle;
 
@@ -51,7 +47,7 @@ public class MenuScreen extends JComponent {
         BUTTON_HEIGHT = h / 20;
         BUTTON_SPACING = h / 30;
 
-        setKeyBindings();
+        addKeyListener(new MenuControlKeyListener());
     }
 
     public void setTitle(String title) {
@@ -74,60 +70,35 @@ public class MenuScreen extends JComponent {
         highlightedOption = 0;
     }
 
-    protected void setKeyBindings() {
-        // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
-        // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
+    protected class MenuControlKeyListener extends KeyAdapter {
 
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
+        MenuControlKeyListener() {
+        }
 
-        KeyStroke keyUp = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false);
-        inputMap.put(keyUp, "keyUp");
-        actionMap.put("keyUp", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
+        @Override
+        public void keyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_UP:
+                    changeSelectionUp();
+                    break;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeSelectionUp();
+                case KeyEvent.VK_DOWN:
+                    changeSelectionDown();
+                    break;
+
+                case KeyEvent.VK_ENTER:
+                    selectCurrentOption();
+                    break;
+
+                case KeyEvent.VK_ESCAPE:
+                    selectOptionToGoBack();
+                    break;
+
+                default:
+                    break;
             }
+        }
 
-        });
-
-        KeyStroke keyDown = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false);
-        inputMap.put(keyDown, "keyDown");
-        actionMap.put("keyDown", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeSelectionDown();
-            }
-
-        });
-
-        KeyStroke keyEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
-        inputMap.put(keyEnter, "keyEnter");
-        actionMap.put("keyEnter", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectCurrentOption();
-            }
-
-        });
-
-        KeyStroke keyBack = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        inputMap.put(keyBack, "keyBack");
-        actionMap.put("keyBack", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectOptionToGoBack();
-            }
-
-        });
     }
 
     public void changeSelectionUp() {

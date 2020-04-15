@@ -1,17 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
 import geom.Vector2D;
 
@@ -24,6 +20,8 @@ public class InvaderGameState extends JComponent {
     public boolean pauseFlag = false;
     public boolean gameOverFlag = false;
 
+    private int[] keyCodes;
+
     private Shooter shooter;
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
@@ -35,6 +33,8 @@ public class InvaderGameState extends JComponent {
 
         this.pWidth = w;
         this.pHeight = h;
+
+        this.keyCodes = keyCodes;
 
         shooter = new Shooter();
         add(shooter); // add shooter JComponent to link key bindings
@@ -49,7 +49,7 @@ public class InvaderGameState extends JComponent {
 
         powerUps.add(new PowerUp(0.2 * w, 0.9 * h, PowerUp.PowerUpType.FAST_RELOAD));
 
-        setKeyBindings(keyCodes);
+        addKeyListener(new GameKeyListener());
     }
 
     public void draw(Graphics2D g2) {
@@ -165,126 +165,51 @@ public class InvaderGameState extends JComponent {
         }
     }
 
-    private void setKeyBindings(int[] keyCodes) {
-        // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
-        // https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
+    public void setGameKeys(int[] keyCodes) {
+        this.keyCodes = keyCodes;
+    }
 
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
+    private class GameKeyListener extends KeyAdapter {
 
-        KeyStroke pauseScreenKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        inputMap.put(pauseScreenKeyPress, "pauseScreenKeyPress");
-        actionMap.put("pauseScreenKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
+        GameKeyListener() {
+        }
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 pauseFlag = true;
-            }
-        });
-
-        KeyStroke moveLeftKeyPress = KeyStroke.getKeyStroke(keyCodes[0], 0, false);
-        inputMap.put(moveLeftKeyPress, "moveLeftKeyPress");
-        actionMap.put("moveLeftKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            } else if (e.getKeyCode() == keyCodes[0]) { // Move Left
                 shooter.isLeftThrusterActive = true;
-            }
-
-        });
-
-        KeyStroke moveLeftKeyRelease = KeyStroke.getKeyStroke(keyCodes[0], 0, true);
-        inputMap.put(moveLeftKeyRelease, "moveLeftKeyRelease");
-        actionMap.put("moveLeftKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                shooter.isLeftThrusterActive = false;
-            }
-
-        });
-
-        KeyStroke moveRightKeyPress = KeyStroke.getKeyStroke(keyCodes[1], 0, false);
-        inputMap.put(moveRightKeyPress, "moveRightKeyPress");
-        actionMap.put("moveRightKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            } else if (e.getKeyCode() == keyCodes[1]) { // Move Right
                 shooter.isRightThrusterActive = true;
-            }
-        });
-
-        KeyStroke moveRightKeyRelease = KeyStroke.getKeyStroke(keyCodes[1], 0, true);
-        inputMap.put(moveRightKeyRelease, "moveRightKeyRelease");
-        actionMap.put("moveRightKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                shooter.isRightThrusterActive = false;
-            }
-        });
-
-        KeyStroke rotateLeftKeyPress = KeyStroke.getKeyStroke(keyCodes[2], 0, false);
-        inputMap.put(rotateLeftKeyPress, "rotateLeftKeyPress");
-        actionMap.put("rotateLeftKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            } else if (e.getKeyCode() == keyCodes[2]) { // Rotate Left
                 shooter.isRotatingLeft = true;
-            }
-
-        });
-
-        KeyStroke rotateLeftKeyRelease = KeyStroke.getKeyStroke(keyCodes[2], 0, true);
-        inputMap.put(rotateLeftKeyRelease, "rotateLeftKeyRelease");
-        actionMap.put("rotateLeftKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                shooter.isRotatingLeft = false;
-            }
-
-        });
-
-        KeyStroke rotateRightKeyPress = KeyStroke.getKeyStroke(keyCodes[3], 0, false);
-        inputMap.put(rotateRightKeyPress, "rotateRightKeyPress");
-        actionMap.put("rotateRightKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            } else if (e.getKeyCode() == keyCodes[3]) { // Rotate Right
                 shooter.isRotatingRight = true;
+            } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
+
+            } else if (e.getKeyCode() == keyCodes[5]) { // Block
+
             }
-        });
+        }
 
-        KeyStroke rotateRightKeyRelease = KeyStroke.getKeyStroke(keyCodes[3], 0, true);
-        inputMap.put(rotateRightKeyRelease, "rotateRightKeyRelease");
-        actionMap.put("rotateRightKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        @Override
+        public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == keyCodes[0]) { // Move Left
+                shooter.isLeftThrusterActive = false;
+            } else if (e.getKeyCode() == keyCodes[1]) { // Move Right
+                shooter.isRightThrusterActive = false;
+            } else if (e.getKeyCode() == keyCodes[2]) { // Rotate Left
+                shooter.isRotatingLeft = false;
+            } else if (e.getKeyCode() == keyCodes[3]) { // Rotate Right
                 shooter.isRotatingRight = false;
-            }
-        });
-
-        KeyStroke shootKeyRelease = KeyStroke.getKeyStroke(keyCodes[4], 0, true);
-        inputMap.put(shootKeyRelease, "shootKeyRelease");
-        actionMap.put("shootKeyRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
                 shooter.shootMissile();
+            } else if (e.getKeyCode() == keyCodes[5]) { // Block
+
             }
-        });
+        }
+
     }
 
     public Vector2D getVelocityForBackground() {

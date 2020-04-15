@@ -1,13 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
+import java.awt.event.KeyListener;
 
 public class ControlsScreen extends MenuScreen {
 
@@ -83,83 +78,54 @@ public class ControlsScreen extends MenuScreen {
         out.close();
     }
 
-    private void letUserSetKeyCodeForControl(int controlIndex) {
+    private class ChangeControlToNextKeyPressedListener extends KeyAdapter {
 
-        subtitle = "Press a key to change. Press escape to cancel.";
-        currentlyEditingOption = controlIndex;
+        int controlIndex;
 
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
+        ChangeControlToNextKeyPressedListener(int controlIndex) {
+            this.controlIndex = controlIndex;
+        }
 
-        // for each predefined keycode in a textfile
-        // create a key binding that will set selected control to that keycode
-        In in = new In(FILENAME_KEY_LOOKUP);
-        while (in.hasNextLine()) {
-            int keyCode = in.readInt();
-            String keyDescription = in.readLine().substring(1);
-
-            KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode, 0, false);
-            inputMap.put(keyStroke, keyCode);
-            actionMap.put(keyCode, new AbstractAction() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-                    // if keycode already in use by another control don't assign keycode
-                    for (int i = 0; i < NUM_CONTROLS; i++) {
-                        if (i != controlIndex && keyCode == currentKeyCodes[i]) {
-                            subtitle = "Keycode already in use";
-                            return;
-                        }
-                    }
-
-                    currentKeyCodes[controlIndex] = keyCode;
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                stopListeningForUserInput();
+            } else {
+                String keyDescription = lookupKeyDescriptionFromFile(e.getKeyCode());
+                if (keyDescription != null) {
+                    currentKeyCodes[controlIndex] = e.getKeyCode();
                     currentKeyDescriptions[controlIndex] = keyDescription;
                     saveKeysToFile();
-
-                    // clear current key bindings for this panel
-                    inputMap.clear();
-                    actionMap.clear();
-
-                    // reinstate original key bindings for panel
-                    setKeyBindings();
-
-                    // no longer editing any option (no need to highlight in green)
-                    currentlyEditingOption = -1;
-
-                    subtitle = DEFAULT_SUBTITLE;
-
+                    stopListeningForUserInput();
                 }
-            });
-        }
-        in.close();
-
-        // set key binding for escape - a way for user to exit listen loop
-        KeyStroke escPress = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        inputMap.put(escPress, "escPress");
-        actionMap.put("escPress", new AbstractAction() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) { // if escape is pressed
-                // clear current key bindings for this panel
-                inputMap.clear();
-                actionMap.clear();
-
-                // reinstate original key bindings for panel
-                setKeyBindings();
-
-                // no longer editing any option (no need to highlight in green)
-                currentlyEditingOption = -1;
-
-                subtitle = DEFAULT_SUBTITLE;
-
             }
+        }
+    }
 
-        });
+    private void startListeningForUserInput(int controlIndex) {
 
+        // remove active key listeners
+        for (KeyListener l : getKeyListeners()) {
+            removeKeyListener(l);
+        }
+
+        addKeyListener(new ChangeControlToNextKeyPressedListener(controlIndex));
+
+        subtitle = "Press a key to change. Press escape to cancel.";
+        currentlyEditingOption = controlIndex; // for draw method to be able to flash option
+    }
+
+    private void stopListeningForUserInput() {
+
+        // remove active key listeners
+        for (KeyListener l : getKeyListeners()) {
+            removeKeyListener(l);
+        }
+
+        addKeyListener(new MenuControlKeyListener());
+
+        subtitle = DEFAULT_SUBTITLE;
+        currentlyEditingOption = -1; // for draw method to stop flashing
     }
 
     public int[] getCurrentConfiguration() {
@@ -221,7 +187,7 @@ public class ControlsScreen extends MenuScreen {
     public void selectCurrentOption() {
         if (highlightedOption < NUM_CONTROLS) {
             // start listening for user input to set control
-            letUserSetKeyCodeForControl(highlightedOption);
+            startListeningForUserInput(highlightedOption);
             resetSelection();
         } else {
             // handle like normal menu button

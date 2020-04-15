@@ -378,8 +378,10 @@ public class InvadersPanel extends JPanel {
         // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
         // Also see https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
         //
-        // Considered using keybinding for other classes as well. It would have worked very nice for
-        // creating custom controls. However it seems that key bindings can't recognize a modifier key
+        // Considered using keybinding for other classes as well. It would have worked
+        // very nice for
+        // creating custom controls. However it seems that key bindings can't recognize
+        // a modifier key
         // (shift, alt, control) press on its own.
 
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -389,6 +391,7 @@ public class InvadersPanel extends JPanel {
         inputMap.put(quitKeyPress, "quitKeyPress");
         actionMap.put("quitKeyPress", new AbstractAction() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 quitFlag = true;

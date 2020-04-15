@@ -22,6 +22,8 @@ public class InvaderGameState extends JComponent {
 
     private int[] keyCodes;
 
+    private final ScoreKeeper score;
+
     private Shooter shooter;
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
@@ -36,7 +38,9 @@ public class InvaderGameState extends JComponent {
 
         this.keyCodes = keyCodes;
 
-        shooter = new Shooter();
+        score = new ScoreKeeper(w, h);
+
+        shooter = new Shooter(score);
 
         enemyGroup = new EnemyGroup(0.2 * w, 0.15 * h, 0.4 * w, 0.3 * h, 6, 4, shooter);
 
@@ -67,6 +71,8 @@ public class InvaderGameState extends JComponent {
         shooter.drawAimLine(g2, enemyGroup, bunkers);
 
         // HUD
+
+        score.draw(g2);
 
         g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
         drawStatusBar(g2, pWidth * 3 / 100, pHeight * 75 / 100, pWidth / 100, pHeight * 20 / 100,

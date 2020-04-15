@@ -172,6 +172,11 @@ public class Missile extends DefaultCritter {
     public void handleCollisionWith(Enemy enemy) {
         this.explode();
         enemy.takeDamage(DEFAULT_DAMAGE_POINTS);
+
+        if (this.owner instanceof Shooter) {
+            Shooter shooter = (Shooter) this.owner;
+            shooter.score.addPoints(DEFAULT_DAMAGE_POINTS, position);
+        }
     }
 
     public void handleCollisionWith(Shooter shooter) {

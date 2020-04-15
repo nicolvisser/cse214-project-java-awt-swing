@@ -69,12 +69,15 @@ public class Shooter extends DefaultCritter {
 
     public ArrayList<Missile> missiles = new ArrayList<>();
 
-    public Shooter() {
-        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    public ScoreKeeper score;
+
+    public Shooter(ScoreKeeper score) {
+        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT, score);
     }
 
-    public Shooter(double x, double y, double width, double height) {
+    public Shooter(double x, double y, double width, double height, ScoreKeeper score) {
         super(x, y, width, height, 0);
+        this.score = score;
     }
 
     public void takeDamage(int damagePoints) {

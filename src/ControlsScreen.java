@@ -27,6 +27,11 @@ public class ControlsScreen extends MenuScreen {
         super(w, h, "Controls", MENU_OPTIONS);
         subtitle = DEFAULT_SUBTITLE;
         setKeysFromFile();
+
+
+        setFocusTraversalKeysEnabled(false);
+        // <--- this is to allow TAB key, see
+        // https://stackoverflow.com/questions/8275204/how-can-i-listen-to-a-tab-key-pressed-typed-in-java
     }
 
     private static String lookupKeyDescriptionFromFile(int code) {

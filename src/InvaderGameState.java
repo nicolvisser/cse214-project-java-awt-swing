@@ -50,6 +50,11 @@ public class InvaderGameState extends JComponent {
         powerUps.add(new PowerUp(0.2 * w, 0.9 * h, PowerUp.PowerUpType.FAST_RELOAD));
 
         addKeyListener(new GameKeyListener());
+
+        setFocusTraversalKeysEnabled(false);
+        // <--- this is to allow TAB key to be picked up by keyListener, see
+        // https://stackoverflow.com/questions/8275204/how-can-i-listen-to-a-tab-key-pressed-typed-in-java
+
     }
 
     public void draw(Graphics2D g2) {

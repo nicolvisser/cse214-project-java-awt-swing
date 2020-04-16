@@ -22,7 +22,7 @@ public class InvaderGameState extends JComponent {
 
     private int[] keyCodes;
 
-    private final ScoreKeeper score;
+    public final ScoreKeeper score;
 
     private Shooter shooter;
     private EnemyGroup enemyGroup;
@@ -125,6 +125,10 @@ public class InvaderGameState extends JComponent {
         checkAndHandleCollisions(bunkers, enemyGroup.missiles);
         checkAndHandleCollisions(shooter, powerUps);
         checkAndHandleCollisions(shooter.missiles, powerUps);
+
+        if (enemyGroup.enemies.size() <= 0 || shooter.state == Shooter.ShooterState.DEAD) {
+            gameOverFlag = true;
+        }
 
     }
 

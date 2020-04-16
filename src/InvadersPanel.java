@@ -40,6 +40,7 @@ public class InvadersPanel extends JPanel {
     private MenuScreen settingsScreen;
     private MenuScreen resolutionScreen;
     private HighScoreScreen highScoreScreen;
+    private GameOverScreen gameOverScreen;
     private ControlsScreen controlsScreen;
 
     int[] gameKeys = { 65, 68, 37, 39, 38, 40 };
@@ -58,6 +59,7 @@ public class InvadersPanel extends JPanel {
         settingsScreen = new MenuScreen(width, height, "Settings", settingsScreenOptions);
         resolutionScreen = new MenuScreen(width, height, "Change Resolution", resolutionScreenOptions);
         highScoreScreen = new HighScoreScreen(width, height);
+        gameOverScreen = new GameOverScreen(width, height);
         controlsScreen = new ControlsScreen(width, height);
 
         activeDisplayState = DisplayState.MAIN_MENU;
@@ -97,6 +99,7 @@ public class InvadersPanel extends JPanel {
                         removeAll();
                         add(highScoreScreen);
                         activeDisplayState = DisplayState.HIGH_SCORES;
+                        highScoreScreen.loadFromFile();
                         break;
 
                     case 2: // settings
@@ -134,6 +137,9 @@ public class InvadersPanel extends JPanel {
                 if (loadedInvaderGameState.gameOverFlag) {
                     loadedInvaderGameState.resetFlags();
                     activeDisplayState = DisplayState.GAME_OVER;
+                    removeAll();
+                    add(gameOverScreen);
+                    gameOverScreen.loadFromFile();
                     break;
                 }
                 break;
@@ -326,6 +332,41 @@ public class InvadersPanel extends JPanel {
                 break;
 
             case GAME_OVER:
+
+                if (!gameOverScreen.hasFocus()) {
+                    gameOverScreen.requestFocusInWindow();
+                }
+
+                if (loadedInvaderGameState != null) {
+                    int score = loadedInvaderGameState.score.getScore();
+                    gameOverScreen.setLastGameScore(score);
+                    loadedInvaderGameState = null;
+                }
+
+                switch (gameOverScreen.selectedOption) {
+                    case -2: // back (to main menu)
+                        gameOverScreen.resetSelection();
+                        gameOverScreen.resetHiglight();
+                        removeAll();
+                        add(mainMenuScreen);
+                        activeDisplayState = DisplayState.MAIN_MENU;
+                        break;
+
+                    case -1: // not yet selected
+                        // do nothing
+                        break;
+
+                    case 0: // rename
+                        // do nothing, handled inside gameOverScreen class
+                        break;
+
+                    case 1: // back to main menu
+                        gameOverScreen.selectOptionToGoBack();
+                        break;
+
+                    default:
+                        break;
+                }
                 break;
 
             default:
@@ -364,6 +405,7 @@ public class InvadersPanel extends JPanel {
                 resolutionScreen.draw(g2);
                 break;
             case GAME_OVER:
+                gameOverScreen.draw(g2);
                 break;
 
             default:

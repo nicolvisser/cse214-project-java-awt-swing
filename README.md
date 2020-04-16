@@ -1,6 +1,8 @@
 # Group project for Computer Science (Engineering) 214
 A space shooter game with graphics implemented via java.awt and javax.swing libraries.
 
+<img src="screenshots/readme-screenshot.png" width="100%" >
+
 ## Getting Your Way Around Code
 
 ### Main class from which game can be run is `./src/InvadersFrame.java`

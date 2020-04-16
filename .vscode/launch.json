@@ -6,9 +6,33 @@
     "configurations": [
         {
             "type": "java",
-            "name": "RUN GAME",
+            "name": "RUN GAME: Windowed",
             "request": "launch",
             "mainClass": "InvadersFrame",
+            "projectName": "cse214-project-java-awt-swing"
+        },
+        {
+            "type": "java",
+            "name": "RUN GAME: Fullscreen",
+            "request": "launch",
+            "mainClass": "InvadersFrame",
+            "args": "-f",
+            "projectName": "cse214-project-java-awt-swing"
+        },
+        {
+            "type": "java",
+            "name": "RUN GAME: Windowed & Visual Debugging ",
+            "request": "launch",
+            "mainClass": "InvadersFrame",
+            "args": "-d",
+            "projectName": "cse214-project-java-awt-swing"
+        },
+        {
+            "type": "java",
+            "name": "RUN GAME: Fullscreen & Visual Debugging",
+            "request": "launch",
+            "mainClass": "InvadersFrame",
+            "args": "-f -d",
             "projectName": "cse214-project-java-awt-swing"
         },
         {

@@ -12,7 +12,7 @@ public class InvadersFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    public static final boolean DEBUG = false;
+    public static boolean DEBUG = false;
 
     private static final Dimension DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN = new Dimension(800, 800);
 
@@ -202,7 +202,17 @@ public class InvadersFrame extends JFrame {
 
     public static void main(String[] args) {
 
-        InvadersFrame game = new InvadersFrame(false);
+        boolean runInFullscreen = false;
+        for (String arg : args) {
+            if (arg.equals("-f") || arg.equals("-fullscreen")) {
+                runInFullscreen = true;
+            }
+            if (arg.equals("-d") || arg.equals("-debug")) {
+                InvadersFrame.DEBUG = true;
+            }
+        }
+
+        InvadersFrame game = new InvadersFrame(runInFullscreen);
 
         game.run();
 

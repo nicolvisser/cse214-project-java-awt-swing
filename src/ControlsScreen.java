@@ -16,8 +16,8 @@ public class ControlsScreen extends MenuScreen {
     // Constants relating to ControlsScreen class
     private static final int NUM_CONTROLS = 6;
     private static final int[] DEFAULT_KEYCODES = { 65, 68, 37, 39, 38, 40 };
-    private static String FILENAME_KEY_CONFIG = "keys.txt";
-    private static String FILENAME_KEY_LOOKUP = "keyLookup.txt";
+    private static String FILENAME_KEY_CONFIG = "resources/keys.txt";
+    private static String FILENAME_KEY_LOOKUP = "resources/keyLookup.txt";
 
     private int[] currentKeyCodes = new int[NUM_CONTROLS];
     private String[] currentKeyDescriptions = new String[NUM_CONTROLS];

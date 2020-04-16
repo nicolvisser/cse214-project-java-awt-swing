@@ -5,6 +5,8 @@ public class HighScoreScreen extends MenuScreen {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String FILENAME_HIGHSCORES = "resources/highscores.txt";
+
     static final int NUM_ENTRIES = 10;
     static final String[] DEFAULT_OPTIONS = { "Reset", "Back" };
     static final String[] GAME_OVER_OPTIONS = { "Rename", "Back" };
@@ -22,7 +24,7 @@ public class HighScoreScreen extends MenuScreen {
     }
 
     public void loadFromFile() {
-        In in = new In("highscores.txt");
+        In in = new In(FILENAME_HIGHSCORES);
         for (int i = 0; i < NUM_ENTRIES; i++) {
             names[i] = in.readLine();
             scores[i] = Integer.parseInt(in.readLine());
@@ -31,7 +33,7 @@ public class HighScoreScreen extends MenuScreen {
     }
 
     public void saveToFile() {
-        Out out = new Out("highscores.txt");
+        Out out = new Out(FILENAME_HIGHSCORES);
         for (int i = 0; i < NUM_ENTRIES; i++) {
             out.println(names[i]);
             out.println(scores[i]);

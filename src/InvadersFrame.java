@@ -11,23 +11,42 @@ public class InvadersFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    // static flag that other classes can use to know whether game is in visual
+    // debugging mode or not:
     public static boolean DEBUG = false;
 
+    // if game could not run in fullscreen it will default to the following window
+    // size on startup:
     private static final int DEFAULT_WIDTH = 800;
     private static final int DEFAULT_HEIGHT = 800;
 
+    // to store actual game frame size determined during runtime
     public static int width;
     public static int height;
 
-    private int TARGET_FPS = 60;
-    private int TARGET_TIME_PER_FRAME = 1000000000 / TARGET_FPS; // in nano seconds
+    // to target a specified frame rate
+    private static final int TARGET_FPS = 60;
+    private static final int TARGET_TIME_PER_FRAME = 1000000000 / TARGET_FPS; // in nano seconds
+
+    // to keep track of actual frames per second and to display it
     private int fpsCounter = 0;
     private int fps = 60;
 
+    // to store bufferStrategy from which we can get the graphics object during game
+    // loop
     private BufferStrategy bufferStrategy;
+
+    // the JPanel child that holds more of current game logic
     private InvadersPanel panel;
+
+    // to control the game loop
     private boolean running = true;
 
+    /**
+     * Constructor to initialise a frame where invaders game will run in
+     * 
+     * @param fullscreen true to try and run game in full screen executive mode
+     */
     public InvadersFrame(boolean fullscreen) {
         super("Invaders");
         if (fullscreen) {
@@ -37,7 +56,10 @@ public class InvadersFrame extends JFrame {
         }
     }
 
+    // Resources used to build this game loop:
+    // 1 -
     // https://docs.oracle.com/javase/tutorial/extra/fullscreen/exclusivemode.html
+    // 2 -
     // https://www.oreilly.com/library/view/killer-game-programming/0596007302/ch04.html
     private void initFullScreenMode() {
         // set some properties of the frame:

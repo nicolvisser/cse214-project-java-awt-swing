@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -14,20 +13,20 @@ public class InvadersFrame extends JFrame {
 
     public static boolean DEBUG = false;
 
-    private static final Dimension DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN = new Dimension(800, 800);
+    private static final int DEFAULT_WIDTH = 800;
+    private static final int DEFAULT_HEIGHT = 800;
 
     public static int width;
     public static int height;
 
     private int TARGET_FPS = 60;
-    private int TARGET_TIME_PER_FRAME = 1000000000 / TARGET_FPS;
+    private int TARGET_TIME_PER_FRAME = 1000000000 / TARGET_FPS; // in nano seconds
     private int fpsCounter = 0;
     private int fps = 60;
 
-    private boolean running = true;
     private BufferStrategy bufferStrategy;
-
-    InvadersPanel panel;
+    private InvadersPanel panel;
+    private boolean running = true;
 
     public InvadersFrame(boolean fullscreen) {
         super("Invaders");
@@ -41,43 +40,37 @@ public class InvadersFrame extends JFrame {
     // https://docs.oracle.com/javase/tutorial/extra/fullscreen/exclusivemode.html
     // https://www.oreilly.com/library/view/killer-game-programming/0596007302/ch04.html
     private void initFullScreenMode() {
+        // set some properties of the frame:
+        setUndecorated(true);
+        setResizable(false);
+        setIgnoreRepaint(true); // for active rendering (see
+                                // https://docs.oracle.com/javase/tutorial/extra/fullscreen/rendering.html)
 
+        // check if default monitor supports full screen mode, else quit with message
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
-
-        setUndecorated(true);
-        setIgnoreRepaint(true);
-        setResizable(false);
-
         if (!gd.isFullScreenSupported()) {
             System.out.println("Full-screen exclusive mode not supported");
             System.exit(0);
         }
+
+        // make this frame fullscreen on default monitor
         gd.setFullScreenWindow(this);
 
+        // now get store and print the size of the frame
         width = getBounds().width;
         height = getBounds().height;
         System.out.println("Fullscreen: " + width + " x " + height);
 
-        // TODO Configure Display Modes
-
-        // BUFFER STRATEGY
+        // set a double buffer strategy
         try {
-            EventQueue.invokeAndWait(new Runnable() {
-                public void run() {
-                    createBufferStrategy(2);
-                }
-            });
+            createBufferStrategy(2);
         } catch (Exception e) {
-            System.out.println("Error while creating buffer strategy");
+            System.out.println("Could not create double buffer strategy");
             System.exit(0);
         }
 
-        try { // sleep to give time for buffer strategy to be done
-            Thread.sleep(500); // 0.5 sec
-        } catch (InterruptedException ex) {
-        }
-
+        // create a new game panel and add to the frame
         panel = new InvadersPanel(width, height);
         add(panel);
     }
@@ -88,35 +81,31 @@ public class InvadersFrame extends JFrame {
         // method is faster and better suited for active rendereing but can not yet
         // handle all window related stuff such as window clipping areas etc.
 
+        // set some properties of the frame:
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setIgnoreRepaint(true);
-        setPreferredSize(DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN);
+        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         setLayout(null);
 
-        width = (int) DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN.getWidth();
-        height = (int) DEFAULT_FRAME_SIZE_IF_NOT_FULLSCREEN.getHeight();
+        // store and print the size of the frame
+        width = DEFAULT_WIDTH;
+        height = DEFAULT_HEIGHT;
         System.out.println("Windowed: " + width + " x " + height);
 
+        // create a new game panel and add to the frame
         panel = new InvadersPanel(width, height);
         add(panel);
+
+        // pack the frame with its new contents
         pack();
 
-        // BUFFER STRATEGY
+        // set a double buffer strategy
         try {
-            EventQueue.invokeAndWait(new Runnable() {
-                public void run() {
-                    createBufferStrategy(2);
-                }
-            });
+            createBufferStrategy(2);
         } catch (Exception e) {
-            System.out.println("Error while creating buffer strategy");
+            System.out.println("Could not create double buffer strategy");
             System.exit(0);
-        }
-
-        try { // sleep to give time for buffer strategy to be done
-            Thread.sleep(500); // 0.5 sec
-        } catch (InterruptedException ex) {
         }
 
         setVisible(true);
@@ -127,6 +116,7 @@ public class InvadersFrame extends JFrame {
     // Also some credit to http://www.java-gaming.org/index.php?topic=24220.0
     public void run() {
 
+        // store buffer strategy to be used in loop
         bufferStrategy = getBufferStrategy();
 
         long timer = 0;
@@ -146,6 +136,8 @@ public class InvadersFrame extends JFrame {
 
             long remainingTime = TARGET_TIME_PER_FRAME - (afterWorkTime - startTime);
 
+            // If it took less time to update the game and draw than target time per frame,
+            // then rest for the remaining duration
             if (remainingTime > 0) {
                 try {
                     Thread.sleep(remainingTime / 1000000);
@@ -154,10 +146,11 @@ public class InvadersFrame extends JFrame {
                 }
             }
 
+            // update timer
             long endTime = System.nanoTime();
-
             timer += (endTime - startTime);
 
+            // if a second has passes, update fps counter and reset timer
             if (timer > 1000000000) {
                 fps = fpsCounter;
                 fpsCounter = 0;
@@ -167,41 +160,61 @@ public class InvadersFrame extends JFrame {
     }
 
     public void stop() {
+        running = false; // to quit game loop
 
-        running = false;
+        // take monitor out of fullscreen mode
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
         gd.setFullScreenWindow(null);
-
     }
 
     public void gameUpdate() {
 
         if (panel.readyToQuit()) {
+            // if the quit flag was raised inside the panel class, then stop the game loop
+            // in this class
             this.stop();
+
+        } else {
+            // update state of panel
+            panel.update();
+
         }
-
-        panel.update();
-
     }
 
     public void gameDraw() {
+        // get graphics object of the frame and then cast it to Graphics2D object which
+        // has more applicable methods for this game's requirements
         Graphics2D g2 = (Graphics2D) bufferStrategy.getDrawGraphics();
 
-        // draw contents of panel
+        // draw contents of panel in the buffer
         panel.draw(g2);
 
-        // draw green boundary and overlay
-        g2.setColor(Color.GREEN);
-        g2.drawString("FPS: " + fps, 10, height - 10);
-        g2.drawRect(0, 0, width, height);
-
-        g2.dispose();
+        // show the contents drawn in the previous frame (double buffering)
         bufferStrategy.show();
+
+        // draw a green rectangle for the frame's boundary as well as the most recent
+        // FPS count
+        g2.setColor(Color.GREEN);
+        g2.drawRect(0, 0, width, height);
+        g2.drawString("FPS: " + fps, 10, height - 10);
+
+        // dispose the graphicsobject (which is a buffer type object)
+        g2.dispose();
     }
 
+    /**
+     * A main method to run the game.
+     * 
+     * @param args if no parameters specified game will run in windowed mode.
+     *             Alternatively you can add one or more of the following
+     *             parameters: '-f' or '-fullscreen' to run the game in full screen
+     *             exclusive mode, '-d' or '-debug' ro run the game in visual
+     *             debugging mode.
+     *
+     */
     public static void main(String[] args) {
-
+        // handle arguments passed
         boolean runInFullscreen = false;
         for (String arg : args) {
             if (arg.equals("-f") || arg.equals("-fullscreen")) {

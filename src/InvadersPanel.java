@@ -19,20 +19,32 @@ public class InvadersPanel extends JPanel {
 
     private boolean quitFlag = false;
 
-    private final int pWidth;
-    private final int pHeight;
+    // stores size of frame passed down via constructor
+    private final int width;
+    private final int height;
 
+    // defined different states panel can be in, which is used to determine what
+    // component to display on panel at what time
     public enum DisplayState {
         MAIN_MENU, PLAYING, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS, SET_RESOLUTION, GAME_OVER, QUIT;
     }
 
+    // stores current state the panel is in
     public DisplayState activeDisplayState;
 
-    private static String[] mainMenuScreenOptions = { "New Game", "High Scores", "Settings", "Quit Game" };
-    private static String[] pauseScreenOptions = { "Resume Game", "Quit To Main Menu" };
-    private static String[] settingsScreenOptions = { "Set Resolution", "Controls", "Back" };
-    private static String[] resolutionScreenOptions = { "600x600", "800x800", "1000x1000", "Cancel" };
+    // define the text for screens that make use of the default MenuScreen object
+    private static final String[] mainMenuScreenOptions = { "New Game", "High Scores", "Settings", "Quit Game" };
+    private static final String[] pauseScreenOptions = { "Resume Game", "Quit To Main Menu" };
+    private static final String[] settingsScreenOptions = { "Set Resolution", "Controls", "Back" };
+    private static final String[] resolutionScreenOptions = { "600x600", "800x800", "1000x1000", "Cancel" }; // TODO:
+                                                                                                             // Placeholders
+                                                                                                             // only,
+                                                                                                             // not
+                                                                                                             // functioning
+                                                                                                             // yet
 
+    // declare components different components that will at some point be drawn on
+    // panel
     private Starfield starfield;
     private InvaderGameState loadedInvaderGameState;
     private MenuScreen mainMenuScreen;
@@ -43,11 +55,10 @@ public class InvadersPanel extends JPanel {
     private GameOverScreen gameOverScreen;
     private ControlsScreen controlsScreen;
 
-    int[] gameKeys = { 65, 68, 37, 39, 38, 40 };
-
     public InvadersPanel(int width, int height) {
-        pWidth = width;
-        pHeight = height;
+        this.width = width;
+        this.height = height;
+
         setPreferredSize(new Dimension(width, height));
         setIgnoreRepaint(true);
         setKeyBindings();
@@ -66,20 +77,54 @@ public class InvadersPanel extends JPanel {
         add(mainMenuScreen);
     }
 
+    private void setKeyBindings() {
+        // TODO: Sort out issue with quit on Q press when renaming highscore
+
+        // Using key binding for q key to quit.
+        // The keybinding works whether panel has focus or not.
+        // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
+        // Also see https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
+        //
+        // Considered using keybinding for other classes as well. It would have worked
+        // very nice for
+        // creating custom controls. However it seems that key bindings can't recognize
+        // a modifier key
+        // (shift, alt, control) press on its own.
+
+        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        KeyStroke quitKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0, false);
+        inputMap.put(quitKeyPress, "quitKeyPress");
+        actionMap.put("quitKeyPress", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                quitFlag = true;
+            }
+        });
+    }
+
     public void update() {
 
+        // update starfield based on whether game is playing or menu is showing
         if (activeDisplayState == DisplayState.PLAYING)
             starfield.update(loadedInvaderGameState.getVelocityForBackground());
         else
-            starfield.update(new Vector2D(-pWidth / 50, -pHeight / 50));
+            starfield.update(new Vector2D(-width / 50, -height / 50));
 
+        // update active scren
         switch (activeDisplayState) {
             case MAIN_MENU:
 
+                // ensure the current screen has focus in order for keylistener to work
+                // TODO try and combine repeating code for every screen
                 if (!mainMenuScreen.hasFocus()) {
                     mainMenuScreen.requestFocusInWindow();
                 }
 
+                // decide what to do if user selected a option in the menu
                 switch (mainMenuScreen.selectedOption) {
                     case -2: // back (nowhere to go back to)
                     case -1: // not yet selected
@@ -88,7 +133,7 @@ public class InvadersPanel extends JPanel {
                     case 0: // new game
                         mainMenuScreen.resetSelection();
                         removeAll();
-                        loadedInvaderGameState = new InvaderGameState(pWidth, pHeight,
+                        loadedInvaderGameState = new InvaderGameState(width, height,
                                 controlsScreen.getCurrentConfiguration());
                         add(loadedInvaderGameState);
                         activeDisplayState = DisplayState.PLAYING;
@@ -120,12 +165,15 @@ public class InvadersPanel extends JPanel {
 
             case PLAYING:
 
+                // ensure the current screen has focus in order for keylistener to work
                 if (!loadedInvaderGameState.hasFocus()) {
                     loadedInvaderGameState.requestFocusInWindow();
                 }
 
+                // update game state
                 loadedInvaderGameState.update();
 
+                // if game state signals a pause, handle it
                 if (loadedInvaderGameState.pauseFlag) {
                     loadedInvaderGameState.resetFlags();
                     activeDisplayState = DisplayState.PAUSE;
@@ -134,6 +182,7 @@ public class InvadersPanel extends JPanel {
                     break;
                 }
 
+                // if game state signals game over, handle it
                 if (loadedInvaderGameState.gameOverFlag) {
                     loadedInvaderGameState.resetFlags();
                     activeDisplayState = DisplayState.GAME_OVER;
@@ -146,10 +195,12 @@ public class InvadersPanel extends JPanel {
 
             case PAUSE:
 
+                // ensure the current screen has focus in order for keylistener to work
                 if (!pauseScreen.hasFocus()) {
                     pauseScreen.requestFocusInWindow();
                 }
 
+                // decide what to do if user selected a option in the menu
                 switch (pauseScreen.selectedOption) {
                     case -2: // back (to playing game)
                         pauseScreen.resetSelection();
@@ -179,10 +230,12 @@ public class InvadersPanel extends JPanel {
 
             case HIGH_SCORES:
 
+                // ensure the current screen has focus in order for keylistener to work
                 if (!highScoreScreen.hasFocus()) {
                     highScoreScreen.requestFocusInWindow();
                 }
 
+                // decide what to do if user selected a option in the menu
                 switch (highScoreScreen.selectedOption) {
                     case -2: // back (to main menu)
                         highScoreScreen.resetSelection();
@@ -211,10 +264,12 @@ public class InvadersPanel extends JPanel {
 
             case SETTINGS:
 
+                // ensure the current screen has focus in order for keylistener to work
                 if (!settingsScreen.hasFocus()) {
                     settingsScreen.requestFocusInWindow();
                 }
 
+                // decide what to do if user selected a option in the menu
                 switch (settingsScreen.selectedOption) {
                     case -2: // back (to main menu)
                         settingsScreen.resetSelection();
@@ -252,10 +307,12 @@ public class InvadersPanel extends JPanel {
 
             case CONTROLS:
 
+                // ensure the current screen has focus in order for keylistener to work
                 if (!controlsScreen.hasFocus()) {
                     controlsScreen.requestFocusInWindow();
                 }
 
+                // decide what to do if user selected a option in the menu
                 switch (controlsScreen.selectedOption) {
                     case -2: // back (to setting screen)
                         controlsScreen.resetSelection();
@@ -291,10 +348,12 @@ public class InvadersPanel extends JPanel {
 
             case SET_RESOLUTION:
 
+                // ensure the current screen has focus in order for keylistener to work
                 if (!resolutionScreen.hasFocus()) {
                     resolutionScreen.requestFocusInWindow();
                 }
 
+                // decide what to do if user selected a option in the menu
                 switch (resolutionScreen.selectedOption) {
                     case -2: // back (to setting screen)
                         resolutionScreen.resetSelection();
@@ -333,16 +392,19 @@ public class InvadersPanel extends JPanel {
 
             case GAME_OVER:
 
+                // ensure the current screen has focus in order for keylistener to work
                 if (!gameOverScreen.hasFocus()) {
                     gameOverScreen.requestFocusInWindow();
                 }
 
+                // update high score screen with the game's score
                 if (loadedInvaderGameState != null) {
                     int score = loadedInvaderGameState.score.getScore();
                     gameOverScreen.setLastGameScore(score);
                     loadedInvaderGameState = null;
                 }
 
+                // decide what to do if user selected a option in the menu
                 switch (gameOverScreen.selectedOption) {
                     case -2: // back (to main menu)
                         gameOverScreen.resetSelection();
@@ -378,10 +440,12 @@ public class InvadersPanel extends JPanel {
 
         // draw black background
         g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, pWidth, pHeight);
+        g2.fillRect(0, 0, width, height);
 
+        // draw starfield
         starfield.draw(g2);
 
+        // draw active screen
         switch (activeDisplayState) {
             case MAIN_MENU:
                 mainMenuScreen.draw(g2);
@@ -414,34 +478,7 @@ public class InvadersPanel extends JPanel {
 
     }
 
-    private void setKeyBindings() {
-        // Using key binding for q key to quit.
-        // The keybinding works whether panel has focus or not.
-        // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s
-        // Also see https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
-        //
-        // Considered using keybinding for other classes as well. It would have worked
-        // very nice for
-        // creating custom controls. However it seems that key bindings can't recognize
-        // a modifier key
-        // (shift, alt, control) press on its own.
-
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
-
-        KeyStroke quitKeyPress = KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0, false);
-        inputMap.put(quitKeyPress, "quitKeyPress");
-        actionMap.put("quitKeyPress", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                quitFlag = true;
-            }
-        });
-    }
-
-    public boolean readyToQuit() {
+    public boolean isReadyToQuit() {
         return quitFlag;
     }
 

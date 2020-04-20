@@ -192,7 +192,7 @@ public class InvadersFrame extends JFrame {
 
     public void gameUpdate() {
 
-        if (panel.readyToQuit()) {
+        if (panel.isReadyToQuit()) {
             // if the quit flag was raised inside the panel class, then stop the game loop
             // in this class
             this.stop();

@@ -20,15 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 
 /**
  * <i>Standard audio</i>. This class provides a basic capability for creating,
@@ -322,10 +314,14 @@ public final class StdAudio {
      * @throws IllegalArgumentException if {@code filename} is {@code null}
      */
     public static synchronized void play(final String filename) {
+        play(filename, 100);
+    }
+
+    public static synchronized void play(final String filename, int loudnessPerc) {
         new Thread(new Runnable() {
             public void run() {
                 AudioInputStream ais = getAudioInputStreamFromFile(filename);
-                stream(ais);
+                stream(ais, loudnessPerc);
             }
         }).start();
     }
@@ -336,21 +332,68 @@ public final class StdAudio {
     // because
     // JVM closes (see remedy in loop)
     private static void stream(AudioInputStream ais) {
+        stream(ais, 100);
+    }
+
+    private static void stream(AudioInputStream ais, int loudnessPerc) {
         SourceDataLine line = null;
         int BUFFER_SIZE = 4096; // 4K buffer
 
         try {
             AudioFormat audioFormat = ais.getFormat();
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+
             line = (SourceDataLine) AudioSystem.getLine(info);
+
             line.open(audioFormat);
+
+            FloatControl volumeControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
+
+            // loundnessPerc is a measure for perceived loudness of audio. (100 is
+            // full loudness and 50 is perceived as half as loud). Note this is approximate
+            // and subjective!!!!
+            //
+            // volumePerc corresponds to range of decibels of audio line as retreived from
+            // FloatControl MASTER_GAIN type: (100 is max volume in decibels, whereas 50 is
+            // half the range of decibels i.e. midway between max and min)
+            //
+            // assume that 'half as load' corresponds to 10 percentage points of decibel
+            // range
+            //
+            // now, map perceived loudness percentage to volume percentage ->
+            float volumePerc;
+            if (loudnessPerc <= 0.01) {
+                volumePerc = 0;
+            } else {
+                volumePerc = (float) (100 + 10 * (Math.log(loudnessPerc / 100f) / Math.log(2)));
+            }
+
+            System.out.println(volumePerc);
+
+            // ensure volumePerc is between 0 and 100 after mapping
+            volumePerc = Math.min(volumePerc, 100);
+            volumePerc = Math.max(volumePerc, 0);
+
+            System.out.println(volumePerc);
+
+            // use volumePerc to determine new volumne level
+            float newVolumne = volumeControl.getMinimum()
+                    + (volumeControl.getMaximum() - volumeControl.getMinimum()) * volumePerc / 100f;
+
+            // set line volume to this volume
+            volumeControl.setValue(newVolumne);
+
+            System.out.println(volumeControl.getValue());
+
             line.start();
             byte[] samples = new byte[BUFFER_SIZE];
             int count = 0;
             while ((count = ais.read(samples, 0, BUFFER_SIZE)) != -1) {
                 line.write(samples, 0, count);
             }
-        } catch (IOException e) {
+        } catch (
+
+        IOException e) {
             e.printStackTrace();
         } catch (LineUnavailableException e) {
             e.printStackTrace();

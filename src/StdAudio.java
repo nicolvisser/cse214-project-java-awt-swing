@@ -331,9 +331,10 @@ public final class StdAudio {
     // javax.sound.sampled.Clip fails for long clips (on some systems), perhaps
     // because
     // JVM closes (see remedy in loop)
-    private static void stream(AudioInputStream ais) {
-        stream(ais, 100);
-    }
+
+    // private static void stream(AudioInputStream ais) {
+    //     stream(ais, 100);
+    // }
 
     private static void stream(AudioInputStream ais, int loudnessPerc) {
         SourceDataLine line = null;

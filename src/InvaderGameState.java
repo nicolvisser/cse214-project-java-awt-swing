@@ -27,7 +27,7 @@ public class InvaderGameState extends JComponent {
     private Shooter shooter;
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
-    private ArrayList<PowerUp> powerUps = new ArrayList<>();
+    private PowerUpManager powerUpManager;
 
     public InvaderGameState(int w, int h, int[] keyCodes) {
         // before adding critters override canvas size --- NOT SURE IF THIS IS IDEAL
@@ -48,7 +48,7 @@ public class InvaderGameState extends JComponent {
         bunkers.add(new Bunker(0.50 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
         bunkers.add(new Bunker(0.75 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
 
-        powerUps.add(new PowerUp(0.5 * w, 0.1 * h, PowerUp.PowerUpType.FAST_RELOAD));
+        powerUpManager = new PowerUpManager(w, h);
 
         addKeyListener(new GameKeyListener());
 
@@ -65,8 +65,7 @@ public class InvaderGameState extends JComponent {
         for (Bunker bunker : bunkers)
             bunker.draw(g2);
 
-        for (PowerUp powerUp : powerUps)
-            powerUp.draw(g2);
+        powerUpManager.draw(g2);
 
         shooter.drawAimLine(g2, enemyGroup, bunkers);
 
@@ -110,21 +109,20 @@ public class InvaderGameState extends JComponent {
         for (Bunker bunker : bunkers)
             bunker.update();
 
-        for (PowerUp powerUp : powerUps)
-            powerUp.update();
+        powerUpManager.update();
 
         removeDeadCritters(shooter.missiles);
         removeDeadCritters(enemyGroup.enemies);
         removeDeadCritters(enemyGroup.missiles);
         removeDeadCritters(bunkers);
-        removeDeadCritters(powerUps);
+        removeDeadCritters(powerUpManager.powerUps);
 
         checkAndHandleCollisions(shooter.missiles, enemyGroup.enemies);
         checkAndHandleCollisions(shooter, enemyGroup.missiles);
         checkAndHandleCollisions(bunkers, shooter.missiles);
         checkAndHandleCollisions(bunkers, enemyGroup.missiles);
-        checkAndHandleCollisions(shooter, powerUps);
-        checkAndHandleCollisions(shooter.missiles, powerUps);
+        checkAndHandleCollisions(shooter, powerUpManager.powerUps);
+        checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
 
         if (enemyGroup.enemies.size() <= 0 || shooter.state == Shooter.ShooterState.DEAD) {
             gameOverFlag = true;

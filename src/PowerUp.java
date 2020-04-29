@@ -1,5 +1,7 @@
 import java.awt.Graphics2D;
 
+import geom.Vector2D;
+
 public class PowerUp extends DefaultCritter {
 
     enum PowerUpType {
@@ -11,7 +13,7 @@ public class PowerUp extends DefaultCritter {
     }
 
     private static final long DEFAULT_LIFETIME_MS = 10000;
-    private static final int DEFAULT_COLLISION_RADIUS = vw / 100;
+    private static final int DEFAULT_COLLISION_RADIUS = vw / 80;
 
     public PowerUpState state = PowerUpState.ALIVE;
 
@@ -25,6 +27,8 @@ public class PowerUp extends DefaultCritter {
 
     public PowerUp(double x, double y, PowerUpType type) {
         super(x, y, DEFAULT_COLLISION_RADIUS, 0);
+
+        velocity = new Vector2D(0, 1);
 
         this.type = type;
 
@@ -48,9 +52,16 @@ public class PowerUp extends DefaultCritter {
 
     @Override
     public void draw(Graphics2D g2) {
+        int w, h, x, y;
         switch (state) {
             case ALIVE:
-                animatedPowerUpSprite.draw(g2, (int) position.x, (int) position.y, (int) width, (int) height);
+
+                w = (int) width;
+                h = (int) height;
+                x = (int) (position.x - w / 2);
+                y = (int) (position.y - h / 2);
+
+                animatedPowerUpSprite.draw(g2, x, y, w, (int) h);
                 break;
 
             default:

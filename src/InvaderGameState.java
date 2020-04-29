@@ -48,7 +48,7 @@ public class InvaderGameState extends JComponent {
         bunkers.add(new Bunker(0.50 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
         bunkers.add(new Bunker(0.75 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
 
-        powerUps.add(new PowerUp(0.2 * w, 0.9 * h, PowerUp.PowerUpType.FAST_RELOAD));
+        powerUps.add(new PowerUp(0.5 * w, 0.1 * h, PowerUp.PowerUpType.FAST_RELOAD));
 
         addKeyListener(new GameKeyListener());
 

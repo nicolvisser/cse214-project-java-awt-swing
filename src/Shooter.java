@@ -18,7 +18,7 @@ public class Shooter extends DefaultCritter {
     private static final int vw = GlobalSettings.vw;
     private static final int vh = GlobalSettings.vh;
     private static final int vmin = GlobalSettings.vmin;
-    //// private static final int vmax = GlobalSettings.vmax;
+    private static final int vmax = GlobalSettings.vmax;
 
     private static final int DEFAULT_COLLISION_RADIUS = vmin * 3 / 100;
     private static final int DEFAULT_TURRET_RADIUS = DEFAULT_COLLISION_RADIUS * 3 / 4; // TODO: ugly
@@ -29,7 +29,7 @@ public class Shooter extends DefaultCritter {
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
 
-    private static final double DEFAULT_THRUSTER_ACCELERATION = 0.5; // TODO change to relative value
+    private static final double DEFAULT_THRUSTER_ACCELERATION = vmax / 2000.0;
 
     private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/carrier.png");
     private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/destroyer.png");

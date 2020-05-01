@@ -105,24 +105,24 @@ public class MenuScreen extends JComponent {
         highlightedOption--;
         if (highlightedOption < 0)
             highlightedOption += textOptions.length;
-        StdAudio.play("resources/cut.wav");
+        StdAudio.play("resources/cut.wav", GlobalSettings.volume);
     }
 
     public void changeSelectionDown() {
         highlightedOption++;
         if (highlightedOption >= textOptions.length)
             highlightedOption -= textOptions.length;
-        StdAudio.play("resources/cut.wav");
+        StdAudio.play("resources/cut.wav", GlobalSettings.volume);
     }
 
     public void selectCurrentOption() {
         selectedOption = highlightedOption;
-        StdAudio.play("resources/click7.wav");
+        StdAudio.play("resources/click7.wav", GlobalSettings.volume);
     }
 
     public void selectOptionToGoBack() {
         selectedOption = -2;
-        StdAudio.play("resources/click7.wav");
+        StdAudio.play("resources/click7.wav", GlobalSettings.volume);
     }
 
     public void draw(Graphics2D g2) {

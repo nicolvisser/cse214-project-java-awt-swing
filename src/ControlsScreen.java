@@ -133,7 +133,7 @@ public class ControlsScreen extends MenuScreen {
         currentlyEditingOption = -1; // for draw method to stop flashing
     }
 
-    public int[] getCurrentConfiguration() {
+    public int[] getCurrentControlsConfig() {
         return currentKeyCodes;
     }
 

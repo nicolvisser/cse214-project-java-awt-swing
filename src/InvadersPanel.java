@@ -133,8 +133,7 @@ public class InvadersPanel extends JPanel {
                     case 0: // new game
                         mainMenuScreen.resetSelection();
                         removeAll();
-                        loadedInvaderGameState = new InvaderGameState(width, height,
-                                controlsScreen.getCurrentConfiguration());
+                        loadedInvaderGameState = new InvaderGameState(controlsScreen.getCurrentControlsConfig());
                         add(loadedInvaderGameState);
                         activeDisplayState = DisplayState.PLAYING;
                         break;

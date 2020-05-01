@@ -5,15 +5,20 @@ import geom.Rectangle;
 import geom.Shape;
 import geom.Vector2D;
 
-public class EnemyGroup extends DefaultCritter {
+public class EnemyGroup implements Collidable, Disposable {
 
-    private static final int DEFAULT_ENEMY_RADIUS = vmin * 2 / 100;
+    private static final int vw = GlobalSettings.vw;
+    //// private static final int vh = GlobalSettings.vh;
+    private static final int vmin = GlobalSettings.vmin;
+    //// private static final int vmax = GlobalSettings.vmax;
 
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
 
     private static final double DEFAULT_MOVEMENT_SPEED = 0.002 * vmin;
     private static final int DEFAULT_MOVE_DOWN_TIME = 10; // TODO Make this + logic in seconds not frames
+
+    private static final double POWERUP_SPAWN_PROBABILITY = 0.1;
 
     private enum MoveState {
         LEFT, RIGHT, DOWN_BEFORE_LEFT, DOWN_BEFORE_RIGHT;
@@ -30,9 +35,17 @@ public class EnemyGroup extends DefaultCritter {
     private long lastTime = System.currentTimeMillis();
     private long counterAttackTimer = 0;
 
+    private PowerUpManager powerUpManagerRef;
+
+    Vector2D position, velocity;
+    double width, height;
+
     public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol,
             DefaultCritter target) {
-        super(x, y, width, height, Math.PI);
+
+        position = new Vector2D(x, y);
+        this.width = width;
+        this.height = height;
         this.target = target;
 
         double xmin = x - width / 2;
@@ -40,7 +53,7 @@ public class EnemyGroup extends DefaultCritter {
         double ymin = y - height / 2;
         double ymax = y + height / 2;
 
-        double r = DEFAULT_ENEMY_RADIUS;
+        double r = Enemy.DEFAULT_COLLISION_RADIUS;
 
         double xSpacing = (width - 2 * r * numEnemiesInRow) / (numEnemiesInRow - 1);
         double ySpacing = (height - 2 * r * numEnemiesInCol) / (numEnemiesInCol - 1);
@@ -52,19 +65,13 @@ public class EnemyGroup extends DefaultCritter {
             }
         }
 
-        if (position.x < vw / 2) {
+        if (x < vw / 2) {
             moveState = MoveState.RIGHT;
             velocity = new Vector2D(DEFAULT_MOVEMENT_SPEED, 0);
         } else {
             moveState = MoveState.LEFT;
             velocity = new Vector2D(-DEFAULT_MOVEMENT_SPEED, 0);
         }
-    }
-
-    @Override
-    public Shape getCollisionShape() {
-        Rectangle r = (Rectangle) super.getCollisionShape();
-        return r;
     }
 
     public void recalculateCollisionShape() {
@@ -81,19 +88,19 @@ public class EnemyGroup extends DefaultCritter {
             ymax = Math.max(ymax, enemy.position.y);
         }
 
-        xmin -= DEFAULT_ENEMY_RADIUS;
-        xmax += DEFAULT_ENEMY_RADIUS;
-        ymin -= DEFAULT_ENEMY_RADIUS;
-        ymax += DEFAULT_ENEMY_RADIUS;
+        xmin -= Enemy.DEFAULT_COLLISION_RADIUS;
+        xmax += Enemy.DEFAULT_COLLISION_RADIUS;
+        ymin -= Enemy.DEFAULT_COLLISION_RADIUS;
+        ymax += Enemy.DEFAULT_COLLISION_RADIUS;
 
-        this.width = xmax - xmin;
-        this.height = ymax - ymin;
-        this.position.x = xmin + this.width / 2;
-        this.position.y = ymin + this.height / 2;
+        width = xmax - xmin;
+        height = ymax - ymin;
+        position.x = xmin + width / 2;
+        position.y = ymin + height / 2;
     }
 
     public void shootMissile() {
-        StdAudio.play("resources/heartbeat.wav");
+        StdAudio.play("resources/heartbeat.wav", GlobalSettings.volume);
         int i = (int) (Math.random() * enemies.size());
         Enemy randomEnemy = enemies.get(i);
         Vector2D pos = new Vector2D(randomEnemy.position.x, randomEnemy.position.y);
@@ -102,13 +109,7 @@ public class EnemyGroup extends DefaultCritter {
         missiles.add(missile);
     }
 
-    @Override
     public void draw(Graphics2D g2) {
-
-        // Show Collision Boundary for Debugging: --->>
-        if (InvadersFrame.DEBUG)
-            super.draw(g2);
-        // <-------------------------------------------
 
         for (Enemy enemy : enemies) {
             enemy.draw(g2);
@@ -117,9 +118,13 @@ public class EnemyGroup extends DefaultCritter {
         for (Missile missile : missiles) {
             missile.draw(g2);
         }
+
+        // Show Collision Boundary if Debugging: --->>
+        if (GlobalSettings.DEBUG)
+            getCollisionShape().draw(g2);
+        // <-------------------------------------------
     }
 
-    @Override
     public void update() {
 
         // if meanwhile an enemy has died, recalculate collision boundary of group
@@ -140,11 +145,12 @@ public class EnemyGroup extends DefaultCritter {
         }
 
         // calculate how much group center will translate and store
-        double dx = velocity.x + 0.5 * acceleration.x;
-        double dy = velocity.y + 0.5 * acceleration.y;
+        double dx = velocity.x;
+        double dy = velocity.y;
 
-        // update group position and velocity
-        super.update();
+        // update center point position
+        position.x += dx;
+        position.y += dy;
 
         // update each child with same translation
         for (Enemy enemy : enemies) {
@@ -211,5 +217,61 @@ public class EnemyGroup extends DefaultCritter {
             default:
                 break;
         }
+    }
+
+    // creates link for one way communication between this EnemyGroup object and the
+    // powerUpManagerObject
+    public void createReferenceFor(PowerUpManager powerUpManager) {
+        powerUpManagerRef = powerUpManager;
+    }
+
+    @Override
+    public Shape getCollisionShape() {
+        return new Rectangle(position.x, position.y, width, height);
+    }
+
+    @Override
+    public boolean isCollidingWith(Collidable otherCollidable) {
+        // first check if other collidable is actually colliding with bouding rectangle,
+        // then check children and stop at first true
+        if (this.getCollisionShape().intersects(otherCollidable.getCollisionShape())) {
+            for (Enemy enemy : enemies) {
+                if (enemy.isCollidingWith(otherCollidable)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void handleCollisionWith(Collidable otherCollidable) {
+        for (Enemy enemy : enemies) {
+            if (enemy.isCollidingWith(otherCollidable)) {
+                if (otherCollidable instanceof Missile) {
+                    Missile missile = (Missile) otherCollidable;
+                    missile.explode();
+                    enemy.takeDamage(Missile.DEFAULT_DAMAGE_POINTS);
+
+                    if (missile.owner instanceof Shooter) {
+                        Shooter shooter = (Shooter) missile.owner;
+                        shooter.score.addPoints(Missile.DEFAULT_DAMAGE_POINTS, position);
+                    }
+
+                    if (Math.random() <= POWERUP_SPAWN_PROBABILITY) {
+                        powerUpManagerRef.spawnRandomTypeAt(enemy.position);
+                    }
+
+                } else {
+                    // if not colliding with a missile pass down to child class to handle
+                    enemy.handleCollisionWith(otherCollidable);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean mayBeDisposed() {
+        return enemies.size() <= 0;
     }
 }

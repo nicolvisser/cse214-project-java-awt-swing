@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 public class Enemy extends DefaultCritter {
 
     private static final ImageIcon IMAGE_ICON_SINGLE_ENEMY = new ImageIcon("resources/enemy.png");
+    public static final int DEFAULT_COLLISION_RADIUS = GlobalSettings.vmin * 2 / 100;
 
     public enum EnemyState {
         ALIVE, EXPLODING, DEAD;
@@ -21,8 +22,6 @@ public class Enemy extends DefaultCritter {
 
     public Enemy(double x, double y, double radius, double orientation) {
         super(x, y, radius, orientation);
-
-        //// angularVelocity = 0.1 + Math.random() / 10;
     }
 
     public void takeDamage(int damagePoints) {
@@ -75,7 +74,7 @@ public class Enemy extends DefaultCritter {
         }
 
         // Show Collision Boundary for Debugging: --->>
-        if (InvadersFrame.DEBUG)
+        if (GlobalSettings.DEBUG)
             super.draw(g2);
         // <-------------------------------------------
     }
@@ -90,11 +89,11 @@ public class Enemy extends DefaultCritter {
     }
 
     @Override
-    public boolean isCollidingWith(DefaultCritter critter) {
-        if (critter instanceof Missile) {
-            return isCollidingWith((Missile) critter);
+    public boolean isCollidingWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Missile) {
+            return isCollidingWith((Missile) otherCollidable);
         } else {
-            return super.isCollidingWith(critter);
+            return super.isCollidingWith(otherCollidable);
         }
     }
 
@@ -103,11 +102,11 @@ public class Enemy extends DefaultCritter {
     }
 
     @Override
-    public void handleCollisionWith(DefaultCritter critter) {
-        if (critter instanceof Missile) {
-            handleCollisionWith((Missile) critter);
+    public void handleCollisionWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Missile) {
+            handleCollisionWith((Missile) otherCollidable);
         } else {
-            super.handleCollisionWith(critter);
+            super.handleCollisionWith(otherCollidable);
         }
     }
 
@@ -116,7 +115,7 @@ public class Enemy extends DefaultCritter {
     }
 
     @Override
-    public boolean mayBeRemoved() {
+    public boolean mayBeDisposed() {
         return state == EnemyState.DEAD;
     }
 

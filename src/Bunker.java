@@ -5,50 +5,67 @@ import java.util.Iterator;
 
 import geom.Circle;
 import geom.Rectangle;
+import geom.Shape;
+import geom.Vector2D;
 
-public class Bunker extends DefaultCritter {
+public class Bunker implements Collidable, Disposable {
 
-    public class Block extends DefaultCritter {
+    public class Block implements Collidable {
+
+        private Rectangle rect;
         private Color color;
 
         public Block(double x, double y, double width, double height) {
-            super(x, y, width, height, 0);
+            rect = new Rectangle(new Vector2D(x, y), width, height);
             int r = 80 + (int) (Math.random() * 20);
             color = new Color(r, r, r);
         }
 
-        @Override
-        public void update() {
-            // dont call super does not move or rotate
-        }
-
-        @Override
         public void draw(Graphics2D g2) {
 
             g2.setColor(color);
             g2.fill(((Rectangle) getCollisionShape()).toRectangle2D());
 
             // Show Collision Boundary for Debugging: --->>
-            if (InvadersFrame.DEBUG)
-                super.draw(g2);
+            if (GlobalSettings.DEBUG) {
+                g2.setColor(Color.RED);
+                rect.draw(g2);
+            }
             // <-------------------------------------------
+        }
+
+        @Override
+        public Shape getCollisionShape() {
+            return rect;
+        }
+
+        @Override
+        public boolean isCollidingWith(Collidable otherCollidable) {
+            this.getCollisionShape().intersects(otherCollidable.getCollisionShape());
+            return false;
+        }
+
+        @Override
+        public void handleCollisionWith(Collidable otherCollidable) {
+            // don't handle here, but rather in Bunker class's handleCollitionWith method
         }
     }
 
-    int spacing = 1;
     ArrayList<Block> blocks = new ArrayList<>();
-    private int lastNumberOfBlocks = 0;
+    private Rectangle collisionRect;
+    private static final int SPACING = 1; // for small space between adjacent blocks
+    private int lastNumberOfBlocks = 0; // keeps track of number of blocks, if out of sync with actual then will trigger
+                                        // a resize in bounding shape
 
     public Bunker(double xcenter, double ycenter, double width, double height, int numRows, int numCols) {
-        super(xcenter, ycenter, width, height, 0);
-        double blockWidth = (width - (numCols - 1) * spacing) / numCols;
-        double blockHeight = (height - (numRows - 1) * spacing) / numRows;
+        collisionRect = new Rectangle(xcenter, ycenter, width, height);
 
-        Rectangle collisionRect = (Rectangle) getCollisionShape();
+        double blockWidth = (width - (numCols - 1) * SPACING) / numCols;
+        double blockHeight = (height - (numRows - 1) * SPACING) / numRows;
 
-        for (double x = collisionRect.xmin() + blockWidth / 2; x < collisionRect.xmax(); x += blockWidth + spacing) {
+        for (double x = collisionRect.xmin() + blockWidth / 2; x < collisionRect.xmax(); x += blockWidth + SPACING) {
             for (double y = collisionRect.ymin() + blockHeight / 2; y < collisionRect
-                    .ymax(); y += (blockHeight + spacing)) {
+                    .ymax(); y += (blockHeight + SPACING)) {
                 Block block = new Block(x, y, blockWidth, blockHeight);
                 blocks.add(block);
                 lastNumberOfBlocks++;
@@ -64,19 +81,20 @@ public class Bunker extends DefaultCritter {
         double ymax = Double.NEGATIVE_INFINITY;
 
         for (Block block : blocks) {
-            xmin = Math.min(xmin, block.position.x - block.width / 2);
-            xmax = Math.max(xmax, block.position.x + block.width / 2);
-            ymin = Math.min(ymin, block.position.y - block.height / 2);
-            ymax = Math.max(ymax, block.position.y + block.height / 2);
+            xmin = Math.min(xmin, block.rect.xmin());
+            xmax = Math.max(xmax, block.rect.xmax());
+            ymin = Math.min(ymin, block.rect.ymin());
+            ymax = Math.max(ymax, block.rect.ymax());
         }
 
-        this.width = xmax - xmin;
-        this.height = ymax - ymin;
-        this.position.x = xmin + this.width / 2;
-        this.position.y = ymin + this.height / 2;
+        double newWidth = xmax - xmin;
+        double newHeight = ymax - ymin;
+        double newX = xmin + newWidth / 2;
+        double newY = ymin + newHeight / 2;
+        this.collisionRect = new Rectangle(newX, newY, newWidth, newHeight);
+
     }
 
-    @Override
     public void update() {
 
         // if meanwhile an enemy has died, recalculate collision boundary of group
@@ -94,18 +112,26 @@ public class Bunker extends DefaultCritter {
         }
 
         // Show Collision Boundary for Debugging: --->>
-        if (InvadersFrame.DEBUG)
-            super.draw(g2);
+        if (GlobalSettings.DEBUG) {
+            g2.setColor(Color.RED);
+            collisionRect.draw(g2);
+        }
         // <-------------------------------------------
     }
 
+    // ============ METHODS ASSOCIATED WITH COLIDABLE INTERFACE ============= >>>
+
     @Override
-    public boolean isCollidingWith(DefaultCritter critter) {
-        if (critter instanceof Missile) {
-            return isCollidingWith((Missile) critter);
-        } else {
-            return super.isCollidingWith(critter);
+    public Shape getCollisionShape() {
+        return collisionRect;
+    }
+
+    @Override
+    public boolean isCollidingWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Missile) {
+            return isCollidingWith((Missile) otherCollidable);
         }
+        return false;
     }
 
     public boolean isCollidingWith(Missile missile) {
@@ -122,11 +148,9 @@ public class Bunker extends DefaultCritter {
     }
 
     @Override
-    public void handleCollisionWith(DefaultCritter critter) {
-        if (critter instanceof Missile) {
-            handleCollisionWith((Missile) critter);
-        } else {
-            super.handleCollisionWith(critter);
+    public void handleCollisionWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Missile) {
+            handleCollisionWith((Missile) otherCollidable);
         }
     }
 
@@ -142,8 +166,10 @@ public class Bunker extends DefaultCritter {
         }
     }
 
+    // ============ METHODS ASSOCIATED WITH DISPOSABLE INTERFACE ============= >>>
+
     @Override
-    public boolean mayBeRemoved() {
-        return blocks.size() == 0;
+    public boolean mayBeDisposed() {
+        return blocks.size() <= 0;
     }
 }

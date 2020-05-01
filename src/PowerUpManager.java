@@ -1,15 +1,22 @@
 import java.util.ArrayList;
+
+import geom.Vector2D;
+
 import java.awt.Graphics2D;
 
 public class PowerUpManager {
 
     ArrayList<PowerUp> powerUps = new ArrayList<>();
+    private PowerUp.PowerUpType[] types = PowerUp.PowerUpType.values(); // cache types of powerup in array form to be
+                                                                        // able to easily get random type
 
-    public PowerUpManager(int pWidth, int pHeight) {
-        powerUps.add(new PowerUp(0.5 * pWidth, -0.00 * pHeight, PowerUp.PowerUpType.FAST_RELOAD));
-        powerUps.add(new PowerUp(0.5 * pWidth, -0.25 * pHeight, PowerUp.PowerUpType.BLUE));
-        powerUps.add(new PowerUp(0.5 * pWidth, -0.50 * pHeight, PowerUp.PowerUpType.GREEN));
-        powerUps.add(new PowerUp(0.5 * pWidth, -0.75 * pHeight, PowerUp.PowerUpType.RED));
+    public PowerUpManager() {
+    }
+
+    public void spawnRandomTypeAt(Vector2D position) {
+        int randomIndex = (int) (Math.random() * types.length);
+        PowerUp.PowerUpType randomType = types[randomIndex];
+        powerUps.add(new PowerUp(position.x, position.y, randomType));
     }
 
     public void draw(Graphics2D g2) {
@@ -18,6 +25,8 @@ public class PowerUpManager {
     }
 
     public void update() {
+        // TODO check if out of bounds and kill off
+
         for (PowerUp powerUp : powerUps)
             powerUp.update();
     }

@@ -3,33 +3,11 @@ import java.awt.Graphics2D;
 
 import geom.Circle;
 import geom.LineSegment;
-import geom.Rectangle;
 import geom.Shape;
 import geom.Vector2D;
 
-public class DefaultCritter {
+public class DefaultCritter implements Collidable, Disposable {
 
-    protected static int vw = 800; // viewport width
-    protected static int vh = 800; // viewport width
-    protected static int vmin = 800; // viewport min dimension
-    protected static int vmax = 800; // viewport max dimension
-
-    protected static void setCanvasSize(final int w, final int h) {
-        vw = w;
-        vh = h;
-        vmin = Math.min(w, h);
-        vmax = Math.max(w, h);
-    }
-
-    protected static Rectangle getCanvasRect() {
-        return new Rectangle(vw / 2, vh / 2, vw, vh);
-    }
-
-    enum CollisionShape {
-        RECTANGLE, CIRCLE
-    }
-
-    private final CollisionShape boundingShape;
     public double width, height;
 
     // positive x to right, positive y to bottom (as with swing frame)
@@ -39,27 +17,10 @@ public class DefaultCritter {
     // i.e. radians clockwise from north, where north is at top of screen
     public double orientation, angularVelocity, angularAcceleration;
 
-    /**
-     * Creates rectangular critter
-     */
-    public DefaultCritter(double x, double y, double width, double height, double orientation) {
-        this(CollisionShape.RECTANGLE, x, y, width, height, orientation);
-    }
-
-    /**
-     * Creates circular critter
-     */
     public DefaultCritter(double x, double y, double radius, double orientation) {
-        this(CollisionShape.CIRCLE, x, y, 2 * radius, 2 * radius, orientation);
-    }
 
-    private DefaultCritter(CollisionShape boundingShape, double x, double y, double width, double height,
-            double orientation) {
-
-        this.boundingShape = boundingShape;
-
-        this.width = width;
-        this.height = height;
+        this.width = 2 * radius;
+        this.height = 2 * radius;
 
         position = new Vector2D(x, y);
         velocity = Vector2D.zero();
@@ -68,20 +29,6 @@ public class DefaultCritter {
         this.orientation = orientation;
         angularVelocity = 0;
         angularAcceleration = 0;
-
-    }
-
-    public Shape getCollisionShape() {
-        switch (boundingShape) {
-            case RECTANGLE:
-                return new Rectangle(position.x, position.y, width, height);
-
-            case CIRCLE:
-                return new Circle(position.x, position.y, width / 2);
-
-            default:
-                return null;
-        }
     }
 
     // =============== METHODS ASSOCIATED WITH POSITION =============== >>>
@@ -147,16 +94,26 @@ public class DefaultCritter {
         updateRotation();
     }
 
-    public boolean isCollidingWith(DefaultCritter critter) {
-        return this.getCollisionShape().intersects(critter.getCollisionShape());
+    // ============ METHODS ASSOCIATED WITH COLIDABLE INTERFACE ============= >>>
+
+    public Shape getCollisionShape() {
+        return new Circle(position.x, position.y, width / 2);
     }
 
-    public void handleCollisionWith(DefaultCritter critter) {
-        // Default do nothing
+    public boolean isCollidingWith(Collidable otherCollidable) {
+        // use geom package to check if collision shapes intersect
+        return this.getCollisionShape().intersects(otherCollidable.getCollisionShape());
     }
 
-    public boolean mayBeRemoved() {
-        return false; // Default to false
+    public void handleCollisionWith(Collidable otherCollidable) {
+        // defaults to nothing, need to implement in each sub class
+    }
+
+    // ============ METHODS ASSOCIATED WITH DISPOSABLE INTERFACE ============= >>>
+
+    @Override
+    public boolean mayBeDisposed() {
+        return false; // defaults to false, need to implement in each sub class
     }
 
 }

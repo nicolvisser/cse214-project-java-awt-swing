@@ -4,6 +4,11 @@ import geom.Vector2D;
 
 public class PowerUp extends DefaultCritter {
 
+    private static final int vw = GlobalSettings.vw;
+    //// private static final int vh = GlobalSettings.vh;
+    //// private static final int vmin = GlobalSettings.vmin;
+    //// private static final int vmax = GlobalSettings.vmax;
+
     enum PowerUpType {
         BLUE, RED, GREEN, FAST_RELOAD;
     }
@@ -69,7 +74,7 @@ public class PowerUp extends DefaultCritter {
         }
 
         // Show Collision Boundary for Debugging: --->>
-        if (InvadersFrame.DEBUG)
+        if (GlobalSettings.DEBUG)
             super.draw(g2);
         // <-------------------------------------------
     }
@@ -136,13 +141,13 @@ public class PowerUp extends DefaultCritter {
     }
 
     @Override
-    public boolean isCollidingWith(DefaultCritter critter) {
-        if (critter instanceof Shooter) {
-            return this.isCollidingWith((Shooter) critter);
-        } else if (critter instanceof Missile) {
-            return this.isCollidingWith((Missile) critter);
+    public boolean isCollidingWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Shooter) {
+            return this.isCollidingWith((Shooter) otherCollidable);
+        } else if (otherCollidable instanceof Missile) {
+            return this.isCollidingWith((Missile) otherCollidable);
         }
-        return super.isCollidingWith(critter);
+        return super.isCollidingWith(otherCollidable);
     }
 
     public boolean isCollidingWith(Shooter shooter) {
@@ -162,13 +167,13 @@ public class PowerUp extends DefaultCritter {
     }
 
     @Override
-    public void handleCollisionWith(DefaultCritter critter) {
-        if (critter instanceof Shooter) {
-            this.handleCollisionWith((Shooter) critter);
-        } else if (critter instanceof Missile) {
-            this.handleCollisionWith((Missile) critter);
+    public void handleCollisionWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Shooter) {
+            this.handleCollisionWith((Shooter) otherCollidable);
+        } else if (otherCollidable instanceof Missile) {
+            this.handleCollisionWith((Missile) otherCollidable);
         } else {
-            super.handleCollisionWith(critter);
+            super.handleCollisionWith(otherCollidable);
         }
     }
 
@@ -184,7 +189,8 @@ public class PowerUp extends DefaultCritter {
     }
 
     @Override
-    public boolean mayBeRemoved() {
+    public boolean mayBeDisposed() {
         return state == PowerUpState.DEAD;
     }
+
 }

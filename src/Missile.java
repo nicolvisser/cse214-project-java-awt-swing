@@ -7,6 +7,11 @@ import geom.Vector2D;
 
 public class Missile extends DefaultCritter {
 
+    private static final int vw = GlobalSettings.vw;
+    private static final int vh = GlobalSettings.vh;
+    private static final int vmin = GlobalSettings.vmin;
+    //// private static final int vmax = GlobalSettings.vmax;
+
     private static final int DEFAULT_RADIUS = vmin / 150;
     private static final double DEFAULT_SPEED = 0.01 * vmin;
     public static final int DEFAULT_DAMAGE_POINTS = 50;
@@ -20,12 +25,12 @@ public class Missile extends DefaultCritter {
 
     MissileState state = MissileState.ALIVE;
 
-    public final DefaultCritter owner;
+    public final Object owner;
 
     private AnimatedImage explosion;
     private double explosionOrientation = Math.random() * 3 * Math.PI;
 
-    public Missile(Vector2D position, Vector2D direction, DefaultCritter owner) {
+    public Missile(Vector2D position, Vector2D direction, Object owner) {
         super(position.x, position.y, DEFAULT_RADIUS, direction.getBearing());
         velocity = direction.normalize().scale(DEFAULT_SPEED);
         this.owner = owner;
@@ -39,7 +44,7 @@ public class Missile extends DefaultCritter {
     }
 
     public void explode() {
-        StdAudio.play("resources/Explosion+1.wav");
+        StdAudio.play("resources/Explosion+1.wav", GlobalSettings.volume);
         state = MissileState.EXPLODING;
     }
 
@@ -82,7 +87,7 @@ public class Missile extends DefaultCritter {
         }
 
         // Show Collision Boundary for Debugging: --->>
-        if (InvadersFrame.DEBUG)
+        if (GlobalSettings.DEBUG)
             super.draw(g2);
         // <-------------------------------------------
     }
@@ -98,7 +103,7 @@ public class Missile extends DefaultCritter {
                     velocity = velocity.scale(0.9);
                 }
 
-                if (!getCollisionShape().intersects(getCanvasRect())) {
+                if (position.x < 0 || position.x > vw || position.y < 0 || position.y > vh) {
                     state = MissileState.DEAD;
                 }
 
@@ -114,17 +119,17 @@ public class Missile extends DefaultCritter {
     }
 
     @Override
-    public boolean isCollidingWith(DefaultCritter critter) {
-        if (critter instanceof Enemy) {
-            return isCollidingWith((Enemy) critter);
-        } else if (critter instanceof Shooter) {
-            return isCollidingWith((Shooter) critter);
-        } else if (critter instanceof Bunker) {
-            return isCollidingWith((Bunker) critter);
-        } else if (critter instanceof PowerUp) {
-            return isCollidingWith((PowerUp) critter);
+    public boolean isCollidingWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Enemy) {
+            return isCollidingWith((Enemy) otherCollidable);
+        } else if (otherCollidable instanceof Shooter) {
+            return isCollidingWith((Shooter) otherCollidable);
+        } else if (otherCollidable instanceof Bunker) {
+            return isCollidingWith((Bunker) otherCollidable);
+        } else if (otherCollidable instanceof PowerUp) {
+            return isCollidingWith((PowerUp) otherCollidable);
         } else {
-            return super.isCollidingWith(critter);
+            return super.isCollidingWith(otherCollidable);
         }
     }
 
@@ -155,28 +160,20 @@ public class Missile extends DefaultCritter {
     }
 
     @Override
-    public void handleCollisionWith(DefaultCritter critter) {
-        if (critter instanceof Enemy) {
-            handleCollisionWith((Enemy) critter);
-        } else if (critter instanceof Shooter) {
-            handleCollisionWith((Shooter) critter);
-        } else if (critter instanceof Bunker) {
-            handleCollisionWith((Bunker) critter);
-        } else if (critter instanceof PowerUp) {
-            handleCollisionWith((PowerUp) critter);
-        } else {
-            super.handleCollisionWith(critter);
+    public void handleCollisionWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Enemy) {
+            handleCollisionWith((Enemy) otherCollidable);
+        } else if (otherCollidable instanceof Shooter) {
+            handleCollisionWith((Shooter) otherCollidable);
+        } else if (otherCollidable instanceof Bunker) {
+            handleCollisionWith((Bunker) otherCollidable);
+        } else if (otherCollidable instanceof PowerUp) {
+            handleCollisionWith((PowerUp) otherCollidable);
         }
     }
 
     public void handleCollisionWith(Enemy enemy) {
-        this.explode();
-        enemy.takeDamage(DEFAULT_DAMAGE_POINTS);
-
-        if (this.owner instanceof Shooter) {
-            Shooter shooter = (Shooter) this.owner;
-            shooter.score.addPoints(DEFAULT_DAMAGE_POINTS, position);
-        }
+        // handled in EnemyGroup class now
     }
 
     public void handleCollisionWith(Shooter shooter) {
@@ -193,7 +190,7 @@ public class Missile extends DefaultCritter {
     }
 
     @Override
-    public boolean mayBeRemoved() {
+    public boolean mayBeDisposed() {
         return state == MissileState.DEAD;
     }
 

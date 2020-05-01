@@ -333,7 +333,7 @@ public final class StdAudio {
     // JVM closes (see remedy in loop)
 
     // private static void stream(AudioInputStream ais) {
-    //     stream(ais, 100);
+    // stream(ais, 100);
     // }
 
     private static void stream(AudioInputStream ais, int loudnessPerc) {
@@ -369,13 +369,9 @@ public final class StdAudio {
                 volumePerc = (float) (100 + 10 * (Math.log(loudnessPerc / 100f) / Math.log(2)));
             }
 
-            System.out.println(volumePerc);
-
             // ensure volumePerc is between 0 and 100 after mapping
             volumePerc = Math.min(volumePerc, 100);
             volumePerc = Math.max(volumePerc, 0);
-
-            System.out.println(volumePerc);
 
             // use volumePerc to determine new volumne level
             float newVolumne = volumeControl.getMinimum()
@@ -383,8 +379,6 @@ public final class StdAudio {
 
             // set line volume to this volume
             volumeControl.setValue(newVolumne);
-
-            System.out.println(volumeControl.getValue());
 
             line.start();
             byte[] samples = new byte[BUFFER_SIZE];

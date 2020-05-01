@@ -11,15 +11,6 @@ public class InvadersFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    // static flag that other classes can use to know whether game is in visual
-    // debugging mode or not:
-    public static boolean DEBUG = false;
-
-    // if game could not run in fullscreen it will default to the following window
-    // size on startup:
-    private static final int DEFAULT_WIDTH = 800;
-    private static final int DEFAULT_HEIGHT = 800;
-
     // to store actual game frame size determined during runtime
     public static int width;
     public static int height;
@@ -82,7 +73,11 @@ public class InvadersFrame extends JFrame {
         // now get store and print the size of the frame
         width = getBounds().width;
         height = getBounds().height;
-        System.out.println("Fullscreen: " + width + " x " + height);
+
+        // also store size in GlobalSettings class in public static variable so that
+        // other classes can have easy access to it without having to pass it as
+        // argument via constructors to each class that needs it
+        GlobalSettings.setViewSize(width, height);
 
         // set a double buffer strategy
         try {
@@ -107,12 +102,13 @@ public class InvadersFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setIgnoreRepaint(true);
-        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        setPreferredSize(
+                new Dimension(GlobalSettings.DEFAULT_WINDOWED_MODE_WIDTH, GlobalSettings.DEFAULT_WINDOWED_MODE_HEIGHT));
         setLayout(null);
 
         // store and print the size of the frame
-        width = DEFAULT_WIDTH;
-        height = DEFAULT_HEIGHT;
+        width = GlobalSettings.DEFAULT_WINDOWED_MODE_WIDTH;
+        height = GlobalSettings.DEFAULT_WINDOWED_MODE_HEIGHT;
         System.out.println("Windowed: " + width + " x " + height);
 
         // create a new game panel and add to the frame
@@ -243,7 +239,7 @@ public class InvadersFrame extends JFrame {
                 runInFullscreen = true;
             }
             if (arg.equals("-d") || arg.equals("-debug")) {
-                InvadersFrame.DEBUG = true;
+                GlobalSettings.DEBUG = true;
             }
         }
 

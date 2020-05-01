@@ -15,8 +15,6 @@ public class InvaderGameState extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private int pWidth, pHeight;
-
     public boolean pauseFlag = false;
     public boolean gameOverFlag = false;
 
@@ -29,26 +27,26 @@ public class InvaderGameState extends JComponent {
     private ArrayList<Bunker> bunkers = new ArrayList<>();
     private PowerUpManager powerUpManager;
 
-    public InvaderGameState(int w, int h, int[] keyCodes) {
-        // before adding critters override canvas size --- NOT SURE IF THIS IS IDEAL
-        DefaultCritter.setCanvasSize(w, h);
+    int vw, vh;
 
-        this.pWidth = w;
-        this.pHeight = h;
+    public InvaderGameState(int[] keyCodes) {
+        vw = GlobalSettings.vw;
+        vh = GlobalSettings.vh;
 
         this.keyCodes = keyCodes;
 
-        score = new ScoreKeeper(w, h);
+        score = new ScoreKeeper(vw, vh);
 
         shooter = new Shooter(score);
 
-        enemyGroup = new EnemyGroup(0.2 * w, 0.15 * h, 0.4 * w, 0.3 * h, 6, 4, shooter);
+        enemyGroup = new EnemyGroup(0.2 * vw, 0.15 * vh, 0.4 * vw, 0.3 * vh, 6, 4, shooter);
 
-        bunkers.add(new Bunker(0.25 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
-        bunkers.add(new Bunker(0.50 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
-        bunkers.add(new Bunker(0.75 * w, 0.7 * h, 0.2 * w, 0.05 * h, 4, 16));
+        bunkers.add(new Bunker(0.25 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
+        bunkers.add(new Bunker(0.50 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
+        bunkers.add(new Bunker(0.75 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
 
-        powerUpManager = new PowerUpManager(w, h);
+        powerUpManager = new PowerUpManager();
+        enemyGroup.createReferenceFor(powerUpManager); // so that powerups can spawn on enemy kill
 
         addKeyListener(new GameKeyListener());
 
@@ -74,11 +72,10 @@ public class InvaderGameState extends JComponent {
         score.draw(g2);
 
         g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
-        drawStatusBar(g2, pWidth * 3 / 100, pHeight * 75 / 100, pWidth / 100, pHeight * 20 / 100,
-                shooter.getHealthPercentage());
+        drawStatusBar(g2, vw * 3 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooter.getHealthPercentage());
 
         g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
-        drawStatusBar(g2, pWidth * 5 / 100, pHeight * 75 / 100, pWidth / 100, pHeight * 20 / 100, 100);
+        drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, 100);
 
     }
 
@@ -111,13 +108,13 @@ public class InvaderGameState extends JComponent {
 
         powerUpManager.update();
 
-        removeDeadCritters(shooter.missiles);
-        removeDeadCritters(enemyGroup.enemies);
-        removeDeadCritters(enemyGroup.missiles);
-        removeDeadCritters(bunkers);
-        removeDeadCritters(powerUpManager.powerUps);
+        handleDisposing(shooter.missiles);
+        handleDisposing(enemyGroup.enemies);
+        handleDisposing(enemyGroup.missiles);
+        handleDisposing(bunkers);
+        handleDisposing(powerUpManager.powerUps);
 
-        checkAndHandleCollisions(shooter.missiles, enemyGroup.enemies);
+        checkAndHandleCollisions(enemyGroup, shooter.missiles);
         checkAndHandleCollisions(shooter, enemyGroup.missiles);
         checkAndHandleCollisions(bunkers, shooter.missiles);
         checkAndHandleCollisions(bunkers, enemyGroup.missiles);
@@ -125,53 +122,48 @@ public class InvaderGameState extends JComponent {
         checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
 
         if (enemyGroup.enemies.size() <= 0 || shooter.state == Shooter.ShooterState.DEAD) {
+            // TODO gameover on enemy touching player
             gameOverFlag = true;
         }
 
     }
 
-    public void removeDeadCritters(ArrayList<? extends DefaultCritter> group) {
-        Iterator<? extends DefaultCritter> critterIterator = group.iterator();
+    public void handleDisposing(ArrayList<? extends Disposable> group) {
+        Iterator<? extends Disposable> critterIterator = group.iterator();
         while (critterIterator.hasNext()) {
-            DefaultCritter critter = critterIterator.next();
-            if (critter.mayBeRemoved()) {
+            Disposable critter = critterIterator.next();
+            if (critter.mayBeDisposed()) {
                 critterIterator.remove();
             }
         }
     }
 
-    public void checkAndHandleCollisions(ArrayList<? extends DefaultCritter> group1,
-            ArrayList<? extends DefaultCritter> group2) {
+    // to crosscheck collidable in two different groups
+    public void checkAndHandleCollisions(ArrayList<? extends Collidable> group1,
+            ArrayList<? extends Collidable> group2) {
         try {
-            for (DefaultCritter critter1 : group1) {
-                for (DefaultCritter critter2 : group2) {
-                    if (critter1.isCollidingWith(critter2)) {
-                        critter1.handleCollisionWith(critter2);
+            for (Collidable collidable1 : group1) {
+                for (Collidable collidable2 : group2) {
+                    if (collidable1.isCollidingWith(collidable2)) {
+                        collidable1.handleCollisionWith(collidable2);
                     }
                 }
             }
         } catch (ConcurrentModificationException e) {
-            System.out.println("===== EXCEPTION IDENTIFIED: ================================");
-            e.printStackTrace();
-            System.out.println("------------------------------------------------------------");
-            System.out.println("Handled by skipping draw of some critters for a single frame");
-            System.out.println("============================================================");
+            // handled by skipping check for this frame;
         }
     }
 
-    public void checkAndHandleCollisions(DefaultCritter critter1, ArrayList<? extends DefaultCritter> group2) {
+    // to check single collidable against a group of collidables:
+    public void checkAndHandleCollisions(Collidable collidable1, ArrayList<? extends Collidable> group2) {
         try {
-            for (DefaultCritter critter2 : group2) {
-                if (critter1.isCollidingWith(critter2)) {
-                    critter1.handleCollisionWith(critter2);
+            for (Collidable collidable2 : group2) {
+                if (collidable1.isCollidingWith(collidable2)) {
+                    collidable1.handleCollisionWith(collidable2);
                 }
             }
         } catch (ConcurrentModificationException e) {
-            System.out.println("===== EXCEPTION IDENTIFIED: ================================");
-            e.printStackTrace();
-            System.out.println("------------------------------------------------------------");
-            System.out.println("Handled by skipping draw of some critters for a single frame");
-            System.out.println("============================================================");
+            // handled by skipping check for this frame;
         }
     }
 

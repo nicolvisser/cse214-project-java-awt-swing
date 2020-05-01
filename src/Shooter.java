@@ -15,22 +15,13 @@ public class Shooter extends DefaultCritter {
     private static final int DEFAULT_HEALTH_POINTS = 250;
     private static final int DEFAULT_ENERGY_POINTS = 100;
 
-    // The following class properties are defined relative the set view size via
-    // these super class propertiesL:
-    // vw - view width
-    // vh - view height
-    // vmin - minimum dimension of view
-    // vmax - maximum dimension of view
-    //
-    // --- EXAMPLE: --->
-    // DEFAULT_POSITION_Y = vh * 90 / 100
-    // means the y position will be at 90% of screen height from the top of screen
+    private static final int vw = GlobalSettings.vw;
+    private static final int vh = GlobalSettings.vh;
+    private static final int vmin = GlobalSettings.vmin;
+    //// private static final int vmax = GlobalSettings.vmax;
 
-    private static final int DEFAULT_WIDTH = vmin * 8 / 100;
-    private static final int DEFAULT_HEIGHT = vmin * 12 / 100;
-
-    private static final int DEFAULT_TURRET_WIDTH = DEFAULT_WIDTH * 3 / 4;
-    private static final int DEFAULT_TURRET_HEIGHT = DEFAULT_HEIGHT * 3 / 4;
+    private static final int DEFAULT_COLLISION_RADIUS = vmin * 3 / 100;
+    private static final int DEFAULT_TURRET_RADIUS = DEFAULT_COLLISION_RADIUS * 3 / 4; // TODO: ugly
 
     private static final int DEFAULT_POSITION_X = vw * 50 / 100;
     private static final int DEFAULT_POSITION_Y = vh * 90 / 100;
@@ -72,11 +63,11 @@ public class Shooter extends DefaultCritter {
     public ScoreKeeper score;
 
     public Shooter(ScoreKeeper score) {
-        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT, score);
+        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_COLLISION_RADIUS, score);
     }
 
-    public Shooter(double x, double y, double width, double height, ScoreKeeper score) {
-        super(x, y, width, height, 0);
+    public Shooter(double x, double y, double collisionRadius, ScoreKeeper score) {
+        super(x, y, collisionRadius, 0);
         this.score = score;
     }
 
@@ -98,7 +89,7 @@ public class Shooter extends DefaultCritter {
     public void shootMissile() {
         if (state == ShooterState.ALIVE) {
             if (reloadTimer >= currentReloadTime) {
-                StdAudio.play("resources/heartbeat.wav");
+                StdAudio.play("resources/heartbeat.wav", GlobalSettings.volume);
                 Missile missile = new Missile(position, lookVector(), this);
                 missiles.add(missile);
                 reloadTimer = 0;
@@ -165,8 +156,8 @@ public class Shooter extends DefaultCritter {
 
                 g2.rotate(orientation, position.x, position.y);
 
-                w = (int) (DEFAULT_TURRET_WIDTH);
-                h = (int) (DEFAULT_TURRET_HEIGHT);
+                w = (int) (2 * DEFAULT_TURRET_RADIUS);
+                h = (int) (2 * DEFAULT_TURRET_RADIUS);
                 x = (int) (position.x - w / 2);
                 y = (int) (position.y - h / 2 - h / 8);
 
@@ -196,15 +187,11 @@ public class Shooter extends DefaultCritter {
                 missile.draw(g2);
             }
         } catch (ConcurrentModificationException e) {
-            System.out.println("===== EXCEPTION IDENTIFIED: ================================");
-            e.printStackTrace();
-            System.out.println("------------------------------------------------------------");
-            System.out.println("Handled by skipping draw of missile for a single frame");
-            System.out.println("============================================================");
+            // handled by skipping draw for single frame
         }
 
         // Show Collision Boundary for Debugging: --->>
-        if (InvadersFrame.DEBUG)
+        if (GlobalSettings.DEBUG)
             super.draw(g2);
         // <-------------------------------------------
 
@@ -298,13 +285,13 @@ public class Shooter extends DefaultCritter {
     }
 
     @Override
-    public boolean isCollidingWith(DefaultCritter critter) {
-        if (critter instanceof Missile) {
-            return isCollidingWith((Missile) critter);
-        } else if (critter instanceof PowerUp) {
-            return isCollidingWith((PowerUp) critter);
+    public boolean isCollidingWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Missile) {
+            return isCollidingWith((Missile) otherCollidable);
+        } else if (otherCollidable instanceof PowerUp) {
+            return isCollidingWith((PowerUp) otherCollidable);
         } else {
-            return super.isCollidingWith(critter);
+            return super.isCollidingWith(otherCollidable);
         }
     }
 
@@ -317,13 +304,13 @@ public class Shooter extends DefaultCritter {
     }
 
     @Override
-    public void handleCollisionWith(DefaultCritter critter) {
-        if (critter instanceof Missile) {
-            handleCollisionWith((Missile) critter);
-        } else if (critter instanceof PowerUp) {
-            handleCollisionWith((PowerUp) critter);
+    public void handleCollisionWith(Collidable otherCollidable) {
+        if (otherCollidable instanceof Missile) {
+            handleCollisionWith((Missile) otherCollidable);
+        } else if (otherCollidable instanceof PowerUp) {
+            handleCollisionWith((PowerUp) otherCollidable);
         } else {
-            super.handleCollisionWith(critter);
+            super.handleCollisionWith(otherCollidable);
         }
     }
 

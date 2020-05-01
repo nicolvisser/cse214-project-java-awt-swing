@@ -16,9 +16,9 @@ public class EnemyGroup implements Collidable, Disposable {
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
 
     private static final double DEFAULT_MOVEMENT_SPEED = 0.002 * vmin;
-    private static final int DEFAULT_MOVE_DOWN_TIME = 10; // TODO Make this + logic in seconds not frames
+    private static final int DEFAULT_MOVE_DOWN_TIME = 10;
 
-    private static final double POWERUP_SPAWN_PROBABILITY = 0.1;
+    private static final double POWERUP_SPAWN_PROBABILITY = 0.2;
 
     private enum MoveState {
         LEFT, RIGHT, DOWN_BEFORE_LEFT, DOWN_BEFORE_RIGHT;

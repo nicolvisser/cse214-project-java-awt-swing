@@ -52,7 +52,7 @@ public class PowerUp extends DefaultCritter {
                 filename = "resources/powerUpYellow";
                 break;
         }
-        animatedPowerUpSprite = new AnimatedImage(filename, "png", 6, AnimatedImage.AnimationType.LOOP);
+        animatedPowerUpSprite = new AnimatedImage(filename, "png", 6, AnimatedImage.AnimationType.LOOP, 2);
     }
 
     @Override

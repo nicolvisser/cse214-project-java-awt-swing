@@ -265,23 +265,6 @@ public class Shooter extends DefaultCritter {
             missile.update();
         }
 
-        try {
-            Iterator<Missile> missileIter = missiles.iterator();
-            while (missileIter.hasNext()) {
-                Missile missile = missileIter.next();
-                missile.update();
-                if (missile.state == Missile.MissileState.DEAD) {
-                    missileIter.remove();
-                }
-            }
-        } catch (ConcurrentModificationException e) {
-            System.out.println("===== EXCEPTION IDENTIFIED: ================================");
-            e.printStackTrace();
-            System.out.println("------------------------------------------------------------");
-            System.out.println("Handled by skipping update/removal of missile this frame");
-            System.out.println("============================================================");
-        }
-
     }
 
     @Override

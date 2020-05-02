@@ -1,6 +1,7 @@
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.*;
 
 public class Utils {
 
@@ -65,4 +66,18 @@ public class Utils {
         g2.setFont(newFont);
     }
 
+    public static void drawRoundStatusBar(Graphics2D g2, double x, double y, double radius, double percentage) {
+        double w = 2 * radius;
+        double h = 2 * radius;
+        final double barwidth = radius / 5;
+
+        Area roundBar = new Area(new Ellipse2D.Double(x - radius, y - radius, w, h));
+
+        roundBar.subtract(new Area(new Ellipse2D.Double(x - radius + barwidth, y - radius + barwidth, w - 2 * barwidth,
+                h - 2 * barwidth)));
+
+        roundBar.subtract(new Area(new Arc2D.Double(x - radius - 5, y - radius - 5, w + 10, h + 10, 0,
+                (100 - percentage) / 100 * 360, Arc2D.PIE)));
+        g2.fill(roundBar);
+    }
 }

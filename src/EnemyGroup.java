@@ -32,7 +32,8 @@ public class EnemyGroup implements Collidable, Disposable {
 
     public ArrayList<Missile> missiles = new ArrayList<>();
     private DefaultCritter target;
-    private long lastTime = System.currentTimeMillis();
+    private long lastTime = -1;
+    private static final long DEFAULT_SHOOT_INTERVAL = 2000;
     private long counterAttackTimer = 0;
 
     private PowerUpManager powerUpManagerRef;
@@ -134,14 +135,25 @@ public class EnemyGroup implements Collidable, Disposable {
         }
 
         if (enemies.size() > 0) {
-            long currentTime = System.currentTimeMillis();
-            long delta = currentTime - lastTime;
-            counterAttackTimer += delta;
-            lastTime = currentTime;
-            if (counterAttackTimer > 1000) {
-                shootMissile();
-                counterAttackTimer = 0;
+
+            if (lastTime == -1) {
+                lastTime = System.currentTimeMillis();
+
+            } else {
+
+                long currentTime = System.currentTimeMillis();
+                long delta = currentTime - lastTime;
+                lastTime = currentTime;
+
+                counterAttackTimer += delta;
+
+                if (counterAttackTimer > DEFAULT_SHOOT_INTERVAL) {
+                    shootMissile();
+                    counterAttackTimer = 0;
+                }
+
             }
+
         }
 
         // calculate how much group center will translate and store

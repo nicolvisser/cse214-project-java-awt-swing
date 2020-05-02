@@ -13,7 +13,7 @@ public class Missile extends DefaultCritter {
     //// private static final int vmax = GlobalSettings.vmax;
 
     private static final int DEFAULT_RADIUS = vmin / 150;
-    private static final double DEFAULT_SPEED = 0.01 * vmin;
+    private static final double DEFAULT_SPEED = 0.015 * vmin;
     public static final int DEFAULT_DAMAGE_POINTS = 50;
 
     private static ImageIcon imgIcnBulletBlue = new ImageIcon("resources/bullet.png");
@@ -94,18 +94,23 @@ public class Missile extends DefaultCritter {
 
     @Override
     public void update() {
+
         switch (state) {
             case ALIVE:
-            case EXPLODING:
-                super.update();
 
-                if (state == MissileState.EXPLODING) {
-                    velocity = velocity.scale(0.9);
-                }
+                super.update();
 
                 if (position.x < 0 || position.x > vw || position.y < 0 || position.y > vh) {
                     state = MissileState.DEAD;
                 }
+
+                break;
+
+            case EXPLODING:
+
+                super.update();
+
+                velocity = velocity.scale(0.9);
 
                 if (explosion.isComplete) {
                     state = MissileState.DEAD;
@@ -116,6 +121,7 @@ public class Missile extends DefaultCritter {
             default:
                 break;
         }
+
     }
 
     @Override

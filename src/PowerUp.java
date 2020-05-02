@@ -6,9 +6,9 @@ import geom.Vector2D;
 public class PowerUp extends DefaultCritter {
 
     private static final int vw = GlobalSettings.vw;
-    //// private static final int vh = GlobalSettings.vh;
-    //// private static final int vmin = GlobalSettings.vmin;
-    //// private static final int vmax = GlobalSettings.vmax;
+    private static final int vh = GlobalSettings.vh;
+    private static final int vmin = GlobalSettings.vmin;
+    // private static final int vmax = GlobalSettings.vmax;
 
     enum PowerUpType {
         BLUE, RED, GREEN, FAST_RELOAD;
@@ -18,54 +18,84 @@ public class PowerUp extends DefaultCritter {
         ALIVE, ACTIVATED, DEAD;
     }
 
-    private static final long DEFAULT_LIFETIME_MS = 10000;
+    public static final long DEFAULT_LIFETIME_MS = 10000;
     private static final int DEFAULT_COLLISION_RADIUS = vw / 80;
 
-    public PowerUpState state = PowerUpState.ALIVE;
+    PowerUpType type;
+    PowerUpState state = PowerUpState.ALIVE;
 
-    private PowerUpType type;
-    private long lastTimeMillis = System.currentTimeMillis();
-    private long remainingLifetime_ms = DEFAULT_LIFETIME_MS;
-    private Shooter shooter;
+    PowerUpManager powerUpManagerRef;
+    Shooter shooterRef; // stores reference to shooter once shooter obtained powerup
+
+    long remainingLifetime_ms = DEFAULT_LIFETIME_MS;
+    Color color;
+    String textOnActivation = "";
+
     private AnimatedImage animatedPowerUpSprite;
-    private TextAnimation textAnimationOnActivate;
-    private Color color = Color.WHITE;
 
-    // private Circle boundingCircle;
-
-    public PowerUp(double x, double y, PowerUpType type) {
+    public PowerUp(double x, double y, PowerUpType type, PowerUpManager powerUpManagerRef) {
         super(x, y, DEFAULT_COLLISION_RADIUS, 0);
 
-        velocity = new Vector2D(0, 1);
-
         this.type = type;
+        this.powerUpManagerRef = powerUpManagerRef;
+
+        velocity = new Vector2D(0, vh / 500f);
 
         String filename = "";
-        String activateText = "";
+
         switch (type) {
             case BLUE:
                 filename = "resources/powerUpBlue";
-                activateText = "BLUE POWER!";
+                textOnActivation = "BLUE POWER!";
                 color = Color.BLUE;
                 break;
             case RED:
                 filename = "resources/powerUpRed";
-                activateText = "RED POWER!";
+                textOnActivation = "RED POWER!";
                 color = Color.RED;
                 break;
             case GREEN:
                 filename = "resources/powerUpGreen";
-                activateText = "GREEN POWER!";
+                textOnActivation = "GREEN POWER!";
                 color = Color.GREEN;
                 break;
             case FAST_RELOAD:
                 filename = "resources/powerUpYellow";
-                activateText = "FAST RELOAD!";
+                textOnActivation = "FAST RELOAD!";
                 color = Color.YELLOW;
                 break;
         }
+
         animatedPowerUpSprite = new AnimatedImage(filename, "png", 6, AnimatedImage.AnimationType.LOOP, 2);
-        textAnimationOnActivate = new TextAnimation(activateText, GlobalSettings.vw / 2, GlobalSettings.vh / 2, 2000);
+
+    }
+
+    public void addEffectTo(Shooter shooter) {
+        switch (type) {
+            case BLUE:
+                break;
+            case RED:
+                break;
+            case GREEN:
+                break;
+            case FAST_RELOAD:
+                shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME / 8;
+                break;
+        }
+    }
+
+    public void removeEffectFromShooter() {
+        switch (type) {
+            case BLUE:
+                break;
+            case RED:
+                break;
+            case GREEN:
+                break;
+            case FAST_RELOAD:
+                shooterRef.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME;
+                break;
+        }
 
     }
 
@@ -85,56 +115,17 @@ public class PowerUp extends DefaultCritter {
 
             case ACTIVATED:
 
-                // draw animated text
-                if (!textAnimationOnActivate.finished) {
-                    g2.setColor(color);
-                    Utils.scaleFont(g2, 3.0f);
-                    textAnimationOnActivate.draw(g2);
-                    Utils.scaleFont(g2, 1 / 3.0f);
-                }
-
                 // draw a fading frame/border based on power up color
-                int frameWidthPixels = GlobalSettings.vmin / 20;
-                int spacing = 1;
-                switch (type) {
-                    case FAST_RELOAD:
+                int frameWidthPixels = vmin / 20;
 
-                        for (int i = 0; i < frameWidthPixels; i += spacing) {
-                            g2.setColor(new Color(255, 255, 0, 100 - 100 * i / frameWidthPixels));
-                            g2.drawRect(i, i, GlobalSettings.vw - 2 * i, GlobalSettings.vh - 2 * i);
-                        }
+                int r = color.getRed();
+                int g = color.getGreen();
+                int b = color.getBlue();
 
-                        break;
-
-                    case RED:
-
-                        for (int i = 0; i < frameWidthPixels; i += spacing) {
-                            g2.setColor(new Color(255, 0, 0, 100 - 100 * i / frameWidthPixels));
-                            g2.drawRect(i, i, GlobalSettings.vw - 2 * i, GlobalSettings.vh - 2 * i);
-                        }
-
-                        break;
-
-                    case BLUE:
-
-                        for (int i = 0; i < frameWidthPixels; i += spacing) {
-                            g2.setColor(new Color(0, 0, 255, 100 - 100 * i / frameWidthPixels));
-                            g2.drawRect(i, i, GlobalSettings.vw - 2 * i, GlobalSettings.vh - 2 * i);
-                        }
-
-                        break;
-
-                    case GREEN:
-
-                        for (int i = 0; i < frameWidthPixels; i += spacing) {
-                            g2.setColor(new Color(0, 255, 0, 100 - 100 * i / frameWidthPixels));
-                            g2.drawRect(i, i, GlobalSettings.vw - 2 * i, GlobalSettings.vh - 2 * i);
-                        }
-
-                        break;
-
-                    default:
-                        break;
+                for (int i = 0; i < frameWidthPixels; i++) {
+                    int a = 50 - 50 * i / frameWidthPixels;
+                    g2.setColor(new Color(r, g, b, a));
+                    g2.drawRect(i, i, vw - 2 * i, vh - 2 * i);
                 }
 
                 break;
@@ -157,57 +148,9 @@ public class PowerUp extends DefaultCritter {
                 super.update();
                 break;
 
-            case ACTIVATED:
-                long currentTimeMillis = System.currentTimeMillis();
-                remainingLifetime_ms -= (currentTimeMillis - lastTimeMillis);
-                lastTimeMillis = currentTimeMillis;
-                if (remainingLifetime_ms < 0) {
-                    deactivateEffect();
-                }
-                break;
-
             default:
                 break;
         }
-    }
-
-    public void addEffectTo(Shooter shooter) {
-        this.shooter = shooter;
-
-        lastTimeMillis = System.currentTimeMillis();
-
-        switch (type) {
-            case BLUE:
-                break;
-            case RED:
-                break;
-            case GREEN:
-                break;
-            case FAST_RELOAD:
-                shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME / 8;
-                System.out.println("fast reload time: " + shooter.currentReloadTime);
-                break;
-        }
-
-        state = PowerUpState.ACTIVATED;
-    }
-
-    public void deactivateEffect() {
-
-        switch (type) {
-            case BLUE:
-                break;
-            case RED:
-                break;
-            case GREEN:
-                break;
-            case FAST_RELOAD:
-                shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME;
-                System.out.println("default reload time: " + shooter.currentReloadTime);
-                break;
-        }
-
-        state = PowerUpState.DEAD;
     }
 
     @Override
@@ -248,19 +191,19 @@ public class PowerUp extends DefaultCritter {
     }
 
     public void handleCollisionWith(Shooter shooter) {
-        addEffectTo(shooter);
+        powerUpManagerRef.handleNewPowerUpEquipped(this, shooter);
     }
 
     public void handleCollisionWith(Missile missile) {
         if (missile.owner instanceof Shooter) {
             Shooter shooter = (Shooter) missile.owner;
-            addEffectTo(shooter);
+            powerUpManagerRef.handleNewPowerUpEquipped(this, shooter);
         }
     }
 
     @Override
     public boolean mayBeDisposed() {
-        return state == PowerUpState.DEAD;
+        return state == PowerUpState.DEAD || position.y < 0;
     }
 
 }

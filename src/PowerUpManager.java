@@ -19,8 +19,6 @@ public class PowerUpManager {
     private PowerUp[] activePowerUps = new PowerUp[numTypes];
     private TextAnimation[] textAnimationsOnActivate = new TextAnimation[numTypes];
 
-    private long lastTimeMillis = System.currentTimeMillis();
-
     public PowerUpManager() {
     }
 
@@ -68,19 +66,15 @@ public class PowerUpManager {
         }
     }
 
-    public void update() {
+    public void update(int dt) {
         for (PowerUp powerUp : powerUps)
-            powerUp.update();
-
-        long currentTimeMillis = System.currentTimeMillis();
-        long deltaTimeMillis = currentTimeMillis - lastTimeMillis;
-        lastTimeMillis = currentTimeMillis;
+            powerUp.update(dt);
 
         for (int i = 0; i < numTypes; i++) {
             if (activePowerUps[i] != null) {
                 PowerUp activePowerUp = activePowerUps[i];
                 if (activePowerUp.remainingLifetime_ms > 0) {
-                    activePowerUp.remainingLifetime_ms -= deltaTimeMillis;
+                    activePowerUp.remainingLifetime_ms -= dt;
                 } else {
                     activePowerUp.state = PowerUp.PowerUpState.DEAD;
                     handlePowerUpExpiry(activePowerUp);

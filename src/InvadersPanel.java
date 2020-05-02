@@ -33,8 +33,8 @@ public class InvadersPanel extends JPanel {
     public DisplayState activeDisplayState;
 
     // define the text for screens that make use of the default MenuScreen object
-    private static final String[] mainMenuScreenOptions = { "New Game", "Play Tutorial", "High Scores", "Settings",
-            "Quit Game" };
+    private static final String[] mainMenuScreenOptions = { "Play Quick Tutorial", "Start New Game", "High Scores",
+            "Settings", "Quit Game" };
     private static final String[] pauseScreenOptions = { "Resume Game", "Restart Game", "Quit To Main Menu" };
     private static final String[] settingsScreenOptions = { "Set Resolution", "Controls", "Back" };
     private static final String[] resolutionScreenOptions = { "600x600", "800x800", "1000x1000", "Cancel" };
@@ -103,13 +103,13 @@ public class InvadersPanel extends JPanel {
         });
     }
 
-    public void update() {
+    public void update(int dt) {
 
         // update starfield based on whether game is playing or menu is showing
         if (activeDisplayState == DisplayState.PLAYING)
-            starfield.update(loadedInvaderGameState.getVelocityForBackground());
+            starfield.update(dt, loadedInvaderGameState.getVelocityForBackground());
         else
-            starfield.update(new Vector2D(-width / 50, -height / 50));
+            starfield.update(dt, new Vector2D(-width / 50, -height / 50));
 
         // update active scren
         switch (activeDisplayState) {
@@ -127,21 +127,21 @@ public class InvadersPanel extends JPanel {
                     case -1: // not yet selected
                         break;
 
-                    case 0: // new game
-                        mainMenuScreen.resetSelection();
-                        removeAll();
-                        loadedInvaderGameState = new InvaderGameState(controlsScreen.getCurrentControlsConfig());
-                        add(loadedInvaderGameState);
-                        activeDisplayState = DisplayState.PLAYING;
-                        break;
-
-                    case 1: // play tutorial
+                    case 0: // play tutorial
                         mainMenuScreen.resetSelection();
                         removeAll();
                         tutorial = new Tutorial(controlsScreen.getCurrentControlsConfig(),
                                 controlsScreen.getCurrentControlsDescriptions());
                         add(tutorial);
                         activeDisplayState = DisplayState.TUTORIAL;
+                        break;
+
+                    case 1: // new game
+                        mainMenuScreen.resetSelection();
+                        removeAll();
+                        loadedInvaderGameState = new InvaderGameState(controlsScreen.getCurrentControlsConfig());
+                        add(loadedInvaderGameState);
+                        activeDisplayState = DisplayState.PLAYING;
                         break;
 
                     case 2: // high scores
@@ -176,7 +176,7 @@ public class InvadersPanel extends JPanel {
                 }
 
                 // update game state
-                loadedInvaderGameState.update();
+                loadedInvaderGameState.update(dt);
 
                 // if game state signals a pause, handle it
                 if (loadedInvaderGameState.pauseFlag) {
@@ -206,7 +206,7 @@ public class InvadersPanel extends JPanel {
                 }
 
                 // update tutorial state
-                tutorial.update();
+                tutorial.update(dt);
 
                 // if tutorial signals a exit, handle it
                 if (tutorial.exitFlag) {

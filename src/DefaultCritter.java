@@ -89,7 +89,7 @@ public class DefaultCritter implements Collidable, Disposable {
         line.draw(g);
     }
 
-    public void update() {
+    public void update(int dt) {
         updateTranslation();
         updateRotation();
     }

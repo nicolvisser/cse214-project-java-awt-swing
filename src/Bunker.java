@@ -95,7 +95,7 @@ public class Bunker implements Collidable, Disposable {
 
     }
 
-    public void update() {
+    public void update(int dt) {
 
         // if meanwhile an enemy has died, recalculate collision boundary of group
         if (lastNumberOfBlocks != blocks.size() && blocks.size() > 0) {

@@ -34,9 +34,9 @@ public class Tutorial extends JComponent {
         setFocusTraversalKeysEnabled(false);
     }
 
-    public void update() {
-        shooter.update();
-        enemy.update();
+    public void update(int dt) {
+        shooter.update(dt);
+        enemy.update(dt);
 
         if (!stage1Complete)
             stage1Complete = moveTarget.contains(shooter.getCollisionShape());

@@ -29,6 +29,26 @@ public class InvaderGameState extends JComponent {
 
     int vw, vh;
 
+    // VARIABLES CONCERNED WITH LEVELS ----->
+
+    int level = 0;
+
+    TextAnimation textAnimOnLevelStart;
+
+    final int interLevelWaitTime = 500;
+    long remainingWaitTimeBeforeLevelStarts = interLevelWaitTime;
+
+    // vars associated with each level
+    int enemyGroupBoxWidth = vw / 10;
+    int enemyGroupBoxHEight = vw / 10;
+    int numEnemiesInRow = 3;
+    int numEnemiesInColumn = 3;
+    int enemyShootInterval = 2000;
+    int enemyHitpoints = Missile.DEFAULT_DAMAGE_POINTS; // 50
+    double enemyMovementSpeedMultiplier = EnemyGroup.DEFAULT_MOVEMENT_SPEED; // 0.002 * vmin
+
+    // <---------------------------------------
+
     public InvaderGameState(int[] keyCodes) {
         vw = GlobalSettings.vw;
         vh = GlobalSettings.vh;
@@ -39,14 +59,13 @@ public class InvaderGameState extends JComponent {
 
         shooter = new Shooter(score);
 
-        enemyGroup = new EnemyGroup(0.2 * vw, 0.15 * vh, 0.4 * vw, 0.3 * vh, 6, 4, shooter);
+        enemyGroup = null;
 
         bunkers.add(new Bunker(0.25 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
         bunkers.add(new Bunker(0.50 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
         bunkers.add(new Bunker(0.75 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
 
         powerUpManager = new PowerUpManager();
-        enemyGroup.createReferenceFor(powerUpManager); // so that powerups can spawn on enemy kill
 
         addKeyListener(new GameKeyListener());
 
@@ -56,9 +75,27 @@ public class InvaderGameState extends JComponent {
 
     }
 
+    public void startNewLevel() {
+        level++;
+        enemyGroup = new EnemyGroup(0.2 * vw, 0.15 * vh, 0.4 * vw, 0.3 * vh, numEnemiesInRow + level,
+                numEnemiesInColumn + level, shooter);
+        enemyGroup.createReferenceFor(powerUpManager); // so that powerups can spawn on enemy kill
+        textAnimOnLevelStart = new TextAnimation("Level " + level, vw / 2, vh / 3, 2000);
+
+    }
+
     public void draw(Graphics2D g2) {
         shooter.draw(g2);
-        enemyGroup.draw(g2);
+
+        if (enemyGroup != null)
+            enemyGroup.draw(g2);
+
+        if (textAnimOnLevelStart != null && !textAnimOnLevelStart.finished) {
+            Utils.scaleFont(g2, 3f);
+            g2.setColor(Color.WHITE);
+            textAnimOnLevelStart.draw(g2);
+            Utils.scaleFont(g2, 1 / 3f);
+        }
 
         for (Bunker bunker : bunkers)
             bunker.draw(g2);
@@ -99,35 +136,60 @@ public class InvaderGameState extends JComponent {
 
     }
 
-    public void update() {
-        shooter.update();
-        enemyGroup.update();
+    public void update(int dt) {
+
+        if (enemyGroup == null) {
+
+            if (remainingWaitTimeBeforeLevelStarts <= 0) {
+                startNewLevel();
+            } else {
+                remainingWaitTimeBeforeLevelStarts -= dt;
+            }
+        } else {
+            if (enemyGroup.enemies.size() <= 0) {
+                enemyGroup = null;
+            }
+        }
+
+        shooter.update(dt);
+
+        if (enemyGroup != null)
+            enemyGroup.update(dt);
 
         for (Bunker bunker : bunkers)
-            bunker.update();
+            bunker.update(dt);
 
-        powerUpManager.update();
+        powerUpManager.update(dt);
 
         handleDisposing(shooter.missiles);
-        handleDisposing(enemyGroup.enemies);
-        handleDisposing(enemyGroup.missiles);
         handleDisposing(bunkers);
         handleDisposing(powerUpManager.powerUps);
+        if (enemyGroup != null) {
+            handleDisposing(enemyGroup.enemies);
+            handleDisposing(enemyGroup.missiles);
+        }
 
-        checkAndHandleCollisions(enemyGroup, shooter.missiles);
-        checkAndHandleCollisions(shooter, enemyGroup.missiles);
         checkAndHandleCollisions(bunkers, shooter.missiles);
-        checkAndHandleCollisions(bunkers, enemyGroup.missiles);
         checkAndHandleCollisions(shooter, powerUpManager.powerUps);
         checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
+        if (enemyGroup != null) {
+            checkAndHandleCollisions(enemyGroup, shooter.missiles);
+            checkAndHandleCollisions(shooter, enemyGroup.missiles);
+            checkAndHandleCollisions(bunkers, enemyGroup.missiles);
+        }
 
-        if (enemyGroup.enemies.size() <= 0 || shooter.state == Shooter.ShooterState.DEAD
-                || enemyGroup.isCollidingWith(shooter) || enemyGroup.hasReachedBottom()) {
+        if (shooter.state == Shooter.ShooterState.DEAD) {
             gameOverFlag = true;
+        }
+        if (enemyGroup != null) {
+            if (enemyGroup.isCollidingWith(shooter) || enemyGroup.hasReachedBottom()) {
+                gameOverFlag = true;
+            }
         }
 
     }
 
+    // remove reference if no longer needed so object can be garbage collected
     public void handleDisposing(ArrayList<? extends Disposable> group) {
         Iterator<? extends Disposable> critterIterator = group.iterator();
         while (critterIterator.hasNext()) {

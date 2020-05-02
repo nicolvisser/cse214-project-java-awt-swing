@@ -16,7 +16,7 @@ public class EnemyGroup implements Collidable, Disposable {
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
 
-    private static final double DEFAULT_MOVEMENT_SPEED = 0.002 * vmin;
+    public static final double DEFAULT_MOVEMENT_SPEED = 0.002 * vmin;
     private static final int DEFAULT_MOVE_DOWN_TIME = 10;
 
     private static final double POWERUP_SPAWN_PROBABILITY = 0.1;
@@ -33,7 +33,6 @@ public class EnemyGroup implements Collidable, Disposable {
 
     public ArrayList<Missile> missiles = new ArrayList<>();
     private DefaultCritter target;
-    private long lastTime = -1;
     private static final long DEFAULT_SHOOT_INTERVAL = 2000;
     private long counterAttackTimer = 0;
 
@@ -127,7 +126,7 @@ public class EnemyGroup implements Collidable, Disposable {
         // <-------------------------------------------
     }
 
-    public void update() {
+    public void update(int dt) {
 
         // if meanwhile an enemy has died, recalculate collision boundary of group
         if (lastNumberOfEnemies != enemies.size() && enemies.size() > 0) {
@@ -136,26 +135,15 @@ public class EnemyGroup implements Collidable, Disposable {
         }
 
         if (enemies.size() > 0) {
-
-            if (lastTime == -1) {
-                lastTime = System.currentTimeMillis();
-
-            } else {
-
-                long currentTime = System.currentTimeMillis();
-                long delta = currentTime - lastTime;
-                lastTime = currentTime;
-
-                counterAttackTimer += delta;
-
-                if (counterAttackTimer > DEFAULT_SHOOT_INTERVAL) {
-                    shootMissile();
-                    counterAttackTimer = 0;
-                }
-
+            counterAttackTimer += dt;
+            if (counterAttackTimer > DEFAULT_SHOOT_INTERVAL) {
+                shootMissile();
+                counterAttackTimer = 0;
             }
-
         }
+
+        // increase velocity over time
+        velocity = velocity.scale(1.0005);
 
         // calculate how much group center will translate and store
         double dx = velocity.x;
@@ -169,11 +157,11 @@ public class EnemyGroup implements Collidable, Disposable {
         for (Enemy enemy : enemies) {
             enemy.position.x += dx;
             enemy.position.y += dy;
-            enemy.update();
+            enemy.update(dt);
         }
 
         for (Missile missile : missiles) {
-            missile.update();
+            missile.update(dt);
         }
 
         switch (moveState) {
@@ -211,18 +199,18 @@ public class EnemyGroup implements Collidable, Disposable {
         switch (newState) {
             case LEFT:
                 moveState = newState;
-                velocity = new Vector2D(-DEFAULT_MOVEMENT_SPEED, 0);
+                velocity = new Vector2D(-velocity.magnitude(), 0);
                 break;
 
             case RIGHT:
                 moveState = newState;
-                velocity = new Vector2D(DEFAULT_MOVEMENT_SPEED, 0);
+                velocity = new Vector2D(velocity.magnitude(), 0);
                 break;
 
             case DOWN_BEFORE_LEFT:
             case DOWN_BEFORE_RIGHT:
                 moveState = newState;
-                velocity = new Vector2D(0, DEFAULT_MOVEMENT_SPEED);
+                velocity = new Vector2D(0, velocity.magnitude());
                 moveDownTimer = DEFAULT_MOVE_DOWN_TIME;
 
                 break;

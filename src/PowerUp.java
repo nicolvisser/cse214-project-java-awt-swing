@@ -124,11 +124,11 @@ public class PowerUp extends DefaultCritter {
     }
 
     @Override
-    public void update() {
+    public void update(int dt) {
 
         switch (state) {
             case ALIVE:
-                super.update();
+                super.update(dt);
                 break;
 
             default:

@@ -107,7 +107,7 @@ public class Shooter extends DefaultCritter {
         Ray aimRay = new Ray(start, lookVector());
         double lengthOfAimLine = vw + vh; // will always extend outside frame
 
-        if (enemyGroup.getCollisionShape().intersects(aimRay)) {
+        if (enemyGroup != null && enemyGroup.getCollisionShape().intersects(aimRay)) {
             for (Enemy enemy : enemyGroup.enemies) {
                 if (enemy.state == Enemy.EnemyState.ALIVE) {
                     Double lengthUntilCollision = aimRay.lengthUntilIntersection(enemy.getCollisionShape());
@@ -197,7 +197,7 @@ public class Shooter extends DefaultCritter {
     }
 
     @Override
-    public void update() {
+    public void update(int dt) {
 
         if (explosion.isComplete) {
             state = ShooterState.DEAD;
@@ -234,7 +234,7 @@ public class Shooter extends DefaultCritter {
         }
 
         // update movement via super class
-        super.update();
+        super.update(dt);
 
         // keep player within movement boundary
         if (position.x > MOVEMENT_BOUNDARY_XMAX) {
@@ -261,7 +261,7 @@ public class Shooter extends DefaultCritter {
         reloadTimer++;
 
         for (Missile missile : missiles) {
-            missile.update();
+            missile.update(dt);
         }
 
     }

@@ -22,7 +22,7 @@ public class Starfield {
             this.parallaxSensitivity = parallaxSensitivity;
         }
 
-        public void update() {
+        public void update(int dt) {
             position = position.add(velocity);
         }
     }
@@ -38,11 +38,11 @@ public class Starfield {
         }
     }
 
-    public void update(Vector2D observerVelocity) {
+    public void update(int dt, Vector2D observerVelocity) {
         for (Star star : stars) {
             // give parallax effect based on observer velocity
             star.velocity = observerVelocity.scale(-star.parallaxSensitivity);
-            star.update();
+            star.update(dt);
 
             // recycle stars that go out of x or bounds
             if (star.position.x < drawArea.xmin()) {

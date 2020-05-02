@@ -80,7 +80,7 @@ public class Enemy extends DefaultCritter {
     }
 
     @Override
-    public void update() {
+    public void update(int dt) {
         super.updateRotation();
 
         if (explosion.isComplete) {

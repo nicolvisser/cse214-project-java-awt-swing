@@ -93,12 +93,12 @@ public class Missile extends DefaultCritter {
     }
 
     @Override
-    public void update() {
+    public void update(int dt) {
 
         switch (state) {
             case ALIVE:
 
-                super.update();
+                super.update(dt);
 
                 if (position.x < 0 || position.x > vw || position.y < 0 || position.y > vh) {
                     state = MissileState.DEAD;
@@ -108,7 +108,7 @@ public class Missile extends DefaultCritter {
 
             case EXPLODING:
 
-                super.update();
+                super.update(dt);
 
                 velocity = velocity.scale(0.9);
 

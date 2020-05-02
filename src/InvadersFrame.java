@@ -144,7 +144,8 @@ public class InvadersFrame extends JFrame {
             long startTime = System.nanoTime();
 
             // UPDATE GAME
-            gameUpdate();
+            gameUpdate(TARGET_TIME_PER_FRAME / 1000000); // pass down approx time per frame for updates that might be
+                                                         // related to time - not very accurate, just an approximation
 
             // DRAW FRAME
             gameDraw();
@@ -186,7 +187,7 @@ public class InvadersFrame extends JFrame {
         gd.setFullScreenWindow(null);
     }
 
-    public void gameUpdate() {
+    public void gameUpdate(int dt) {
 
         if (panel.isReadyToQuit()) {
             // if the quit flag was raised inside the panel class, then stop the game loop
@@ -195,7 +196,7 @@ public class InvadersFrame extends JFrame {
 
         } else {
             // update state of panel
-            panel.update();
+            panel.update(dt);
 
         }
     }

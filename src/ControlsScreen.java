@@ -28,7 +28,6 @@ public class ControlsScreen extends MenuScreen {
         subtitle = DEFAULT_SUBTITLE;
         setKeysFromFile();
 
-
         setFocusTraversalKeysEnabled(false);
         // <--- this is to allow TAB key to be picked up by keyListener, see
         // https://stackoverflow.com/questions/8275204/how-can-i-listen-to-a-tab-key-pressed-typed-in-java
@@ -145,12 +144,12 @@ public class ControlsScreen extends MenuScreen {
 
         // TITLE
         g2.setColor(Color.ORANGE);
-        Utils.drawCenteredText(g2, XCENTER, y, title);
+        Utils.drawCenteredText(g2, XCENTER, y, title, 3);
 
         // SUBTITLE
         y += (BUTTON_HEIGHT + BUTTON_SPACING);
         g2.setColor(Color.YELLOW);
-        Utils.drawCenteredText(g2, XCENTER, y, subtitle);
+        Utils.drawCenteredText(g2, XCENTER, y, subtitle, 2);
 
         for (int i = 0; i < textOptions.length; i++) {
             y += (BUTTON_HEIGHT + BUTTON_SPACING);

@@ -34,14 +34,9 @@ public class InvadersPanel extends JPanel {
 
     // define the text for screens that make use of the default MenuScreen object
     private static final String[] mainMenuScreenOptions = { "New Game", "High Scores", "Settings", "Quit Game" };
-    private static final String[] pauseScreenOptions = { "Resume Game", "Quit To Main Menu" };
+    private static final String[] pauseScreenOptions = { "Resume Game", "Restart Game", "Quit To Main Menu" };
     private static final String[] settingsScreenOptions = { "Set Resolution", "Controls", "Back" };
-    private static final String[] resolutionScreenOptions = { "600x600", "800x800", "1000x1000", "Cancel" }; // TODO:
-                                                                                                             // Placeholders
-                                                                                                             // only,
-                                                                                                             // not
-                                                                                                             // functioning
-                                                                                                             // yet
+    private static final String[] resolutionScreenOptions = { "600x600", "800x800", "1000x1000", "Cancel" };
 
     // declare components different components that will at some point be drawn on
     // panel
@@ -214,7 +209,15 @@ public class InvadersPanel extends JPanel {
                         pauseScreen.selectOptionToGoBack();
                         break;
 
-                    case 1: // quit to main menu
+                    case 1: // restart game
+                        pauseScreen.resetSelection();
+                        removeAll();
+                        loadedInvaderGameState = new InvaderGameState(controlsScreen.getCurrentControlsConfig());
+                        add(loadedInvaderGameState);
+                        activeDisplayState = DisplayState.PLAYING;
+                        break;
+
+                    case 2: // quit to main menu
                         pauseScreen.resetSelection();
                         pauseScreen.resetHiglight();
                         activeDisplayState = DisplayState.MAIN_MENU;

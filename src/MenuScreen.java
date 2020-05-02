@@ -129,12 +129,12 @@ public class MenuScreen extends JComponent {
 
         // TITLE
         g2.setColor(Color.ORANGE);
-        Utils.drawCenteredText(g2, XCENTER, y, title);
+        Utils.drawCenteredText(g2, XCENTER, y, title, 3);
 
         // SUBTITLE
         y += (BUTTON_HEIGHT + BUTTON_SPACING);
         g2.setColor(Color.YELLOW);
-        Utils.drawCenteredText(g2, XCENTER, y, subtitle);
+        Utils.drawCenteredText(g2, XCENTER, y, subtitle, 2);
 
         // OPTIONS
         for (int i = 0; i < textOptions.length; i++) {

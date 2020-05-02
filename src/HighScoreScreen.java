@@ -56,12 +56,12 @@ public class HighScoreScreen extends MenuScreen {
 
         // TITLE
         g2.setColor(Color.ORANGE);
-        Utils.drawCenteredText(g2, XCENTER, y, title);
+        Utils.drawCenteredText(g2, XCENTER, y, title, 3);
 
         // SUBTITLE
         y += (BUTTON_HEIGHT + BUTTON_SPACING);
         g2.setColor(Color.YELLOW);
-        Utils.drawCenteredText(g2, XCENTER, y, subtitle);
+        Utils.drawCenteredText(g2, XCENTER, y, subtitle, 2);
 
         for (int i = 0; i < NUM_ENTRIES; i++) {
             y += g2.getFontMetrics().getHeight() * 3;

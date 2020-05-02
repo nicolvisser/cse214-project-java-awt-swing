@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import geom.Rectangle;
 import geom.Shape;
 import geom.Vector2D;
+import geom.Ray;
 
 public class EnemyGroup implements Collidable, Disposable {
 
     private static final int vw = GlobalSettings.vw;
-    //// private static final int vh = GlobalSettings.vh;
+    private static final int vh = GlobalSettings.vh;
     private static final int vmin = GlobalSettings.vmin;
     //// private static final int vmax = GlobalSettings.vmax;
 
@@ -285,5 +286,11 @@ public class EnemyGroup implements Collidable, Disposable {
     @Override
     public boolean mayBeDisposed() {
         return enemies.size() <= 0;
+    }
+
+    public boolean hasReachedBottom() {
+
+        Ray bottomOfScreenRay = new Ray(new Vector2D(0, vh), new Vector2D(1, 0));
+        return this.getCollisionShape().intersects(bottomOfScreenRay);
     }
 }

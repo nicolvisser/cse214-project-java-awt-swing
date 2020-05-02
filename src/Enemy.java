@@ -92,6 +92,8 @@ public class Enemy extends DefaultCritter {
     public boolean isCollidingWith(Collidable otherCollidable) {
         if (otherCollidable instanceof Missile) {
             return isCollidingWith((Missile) otherCollidable);
+        } else if (otherCollidable instanceof Shooter) {
+            return isCollidingWith((Shooter) otherCollidable);
         } else {
             return super.isCollidingWith(otherCollidable);
         }
@@ -99,6 +101,10 @@ public class Enemy extends DefaultCritter {
 
     public boolean isCollidingWith(Missile missile) {
         return missile.isCollidingWith(this); // reuse code from missile class
+    }
+
+    public boolean isCollidingWith(Shooter shooter) {
+        return this.state == EnemyState.ALIVE && getCollisionShape().intersects(shooter.getCollisionShape());
     }
 
     @Override

@@ -121,8 +121,8 @@ public class InvaderGameState extends JComponent {
         checkAndHandleCollisions(shooter, powerUpManager.powerUps);
         checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
 
-        if (enemyGroup.enemies.size() <= 0 || shooter.state == Shooter.ShooterState.DEAD) {
-            // TODO gameover on enemy touching player
+        if (enemyGroup.enemies.size() <= 0 || shooter.state == Shooter.ShooterState.DEAD
+                || enemyGroup.isCollidingWith(shooter) || enemyGroup.hasReachedBottom()) {
             gameOverFlag = true;
         }
 

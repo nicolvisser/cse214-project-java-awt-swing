@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import geom.Vector2D;
@@ -27,6 +28,8 @@ public class PowerUp extends DefaultCritter {
     private long remainingLifetime_ms = DEFAULT_LIFETIME_MS;
     private Shooter shooter;
     private AnimatedImage animatedPowerUpSprite;
+    private TextAnimation textAnimationOnActivate;
+    private Color color = Color.WHITE;
 
     // private Circle boundingCircle;
 
@@ -38,21 +41,32 @@ public class PowerUp extends DefaultCritter {
         this.type = type;
 
         String filename = "";
+        String activateText = "";
         switch (type) {
             case BLUE:
                 filename = "resources/powerUpBlue";
+                activateText = "BLUE POWER!";
+                color = Color.BLUE;
                 break;
             case RED:
                 filename = "resources/powerUpRed";
+                activateText = "RED POWER!";
+                color = Color.RED;
                 break;
             case GREEN:
                 filename = "resources/powerUpGreen";
+                activateText = "GREEN POWER!";
+                color = Color.GREEN;
                 break;
             case FAST_RELOAD:
                 filename = "resources/powerUpYellow";
+                activateText = "FAST RELOAD!";
+                color = Color.YELLOW;
                 break;
         }
         animatedPowerUpSprite = new AnimatedImage(filename, "png", 6, AnimatedImage.AnimationType.LOOP, 2);
+        textAnimationOnActivate = new TextAnimation(activateText, GlobalSettings.vw / 2, GlobalSettings.vh / 2, 2000);
+
     }
 
     @Override
@@ -67,6 +81,62 @@ public class PowerUp extends DefaultCritter {
                 y = (int) (position.y - h / 2);
 
                 animatedPowerUpSprite.draw(g2, x, y, w, (int) h);
+                break;
+
+            case ACTIVATED:
+
+                // draw animated text
+                if (!textAnimationOnActivate.finished) {
+                    g2.setColor(color);
+                    Utils.scaleFont(g2, 3.0f);
+                    textAnimationOnActivate.draw(g2);
+                    Utils.scaleFont(g2, 1 / 3.0f);
+                }
+
+                // draw a fading frame/border based on power up color
+                int frameWidthPixels = GlobalSettings.vmin / 20;
+                int spacing = 1;
+                switch (type) {
+                    case FAST_RELOAD:
+
+                        for (int i = 0; i < frameWidthPixels; i += spacing) {
+                            g2.setColor(new Color(255, 255, 0, 100 - 100 * i / frameWidthPixels));
+                            g2.drawRect(i, i, GlobalSettings.vw - 2 * i, GlobalSettings.vh - 2 * i);
+                        }
+
+                        break;
+
+                    case RED:
+
+                        for (int i = 0; i < frameWidthPixels; i += spacing) {
+                            g2.setColor(new Color(255, 0, 0, 100 - 100 * i / frameWidthPixels));
+                            g2.drawRect(i, i, GlobalSettings.vw - 2 * i, GlobalSettings.vh - 2 * i);
+                        }
+
+                        break;
+
+                    case BLUE:
+
+                        for (int i = 0; i < frameWidthPixels; i += spacing) {
+                            g2.setColor(new Color(0, 0, 255, 100 - 100 * i / frameWidthPixels));
+                            g2.drawRect(i, i, GlobalSettings.vw - 2 * i, GlobalSettings.vh - 2 * i);
+                        }
+
+                        break;
+
+                    case GREEN:
+
+                        for (int i = 0; i < frameWidthPixels; i += spacing) {
+                            g2.setColor(new Color(0, 255, 0, 100 - 100 * i / frameWidthPixels));
+                            g2.drawRect(i, i, GlobalSettings.vw - 2 * i, GlobalSettings.vh - 2 * i);
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+
                 break;
 
             default:

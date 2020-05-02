@@ -145,12 +145,12 @@ public class ControlsScreen extends MenuScreen {
 
         // TITLE
         g2.setColor(Color.ORANGE);
-        drawCenteredText(g2, XCENTER, y, title);
+        Utils.drawCenteredText(g2, XCENTER, y, title);
 
         // SUBTITLE
         y += (BUTTON_HEIGHT + BUTTON_SPACING);
         g2.setColor(Color.YELLOW);
-        drawCenteredText(g2, XCENTER, y, subtitle);
+        Utils.drawCenteredText(g2, XCENTER, y, subtitle);
 
         for (int i = 0; i < textOptions.length; i++) {
             y += (BUTTON_HEIGHT + BUTTON_SPACING);
@@ -170,8 +170,8 @@ public class ControlsScreen extends MenuScreen {
                         continue;
                     }
                 }
-                drawLeftAlignedText(g2, XCENTER - BUTTON_WIDTH / 2.5, y, textOptions[i]);
-                drawRightAlignedText(g2, XCENTER + BUTTON_WIDTH / 2.5, y, "" + currentKeyDescriptions[i]);
+                Utils.drawLeftAlignedText(g2, XCENTER - BUTTON_WIDTH / 2.5, y, textOptions[i]);
+                Utils.drawRightAlignedText(g2, XCENTER + BUTTON_WIDTH / 2.5, y, "" + currentKeyDescriptions[i]);
 
             } else {
                 // IS A DEFAULT TYPE OF MENU OPTION
@@ -182,7 +182,7 @@ public class ControlsScreen extends MenuScreen {
                 g2.setColor(i == highlightedOption ? Color.RED : Color.WHITE);
                 drawCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
 
-                drawCenteredText(g2, XCENTER, y, textOptions[i]);
+                Utils.drawCenteredText(g2, XCENTER, y, textOptions[i]);
             }
 
         }

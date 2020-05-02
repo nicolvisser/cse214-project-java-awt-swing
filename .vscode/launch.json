@@ -6,17 +6,17 @@
     "configurations": [
         {
             "type": "java",
-            "name": "RUN GAME: Windowed",
-            "request": "launch",
-            "mainClass": "InvadersFrame",
-            "projectName": "cse214-project-java-awt-swing"
-        },
-        {
-            "type": "java",
             "name": "RUN GAME: Fullscreen",
             "request": "launch",
             "mainClass": "InvadersFrame",
             "args": "-f",
+            "projectName": "cse214-project-java-awt-swing"
+        },
+        {
+            "type": "java",
+            "name": "RUN GAME: Windowed",
+            "request": "launch",
+            "mainClass": "InvadersFrame",
             "projectName": "cse214-project-java-awt-swing"
         },
         {

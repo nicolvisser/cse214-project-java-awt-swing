@@ -437,6 +437,9 @@ public class InvadersPanel extends JPanel {
 
     public void draw(Graphics2D g2) {
 
+        // scale text based on screen resolution / frame size
+        Utils.scaleFont(g2, GlobalSettings.vmin / 1000f);
+
         // draw black background
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, width, height);

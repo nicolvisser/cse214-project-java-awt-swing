@@ -215,7 +215,7 @@ public class InvadersFrame extends JFrame {
         // FPS count
         g2.setColor(Color.GREEN);
         g2.drawRect(0, 0, width, height);
-        g2.drawString("FPS: " + fps, 10, height - 10);
+        Utils.drawLeftAlignedText(g2, 10, height - 10, "FPS: " + fps);
 
         // dispose the graphicsobject (which is a buffer type object)
         g2.dispose();

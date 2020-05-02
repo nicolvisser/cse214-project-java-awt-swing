@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -130,12 +129,12 @@ public class MenuScreen extends JComponent {
 
         // TITLE
         g2.setColor(Color.ORANGE);
-        drawCenteredText(g2, XCENTER, y, title);
+        Utils.drawCenteredText(g2, XCENTER, y, title);
 
         // SUBTITLE
         y += (BUTTON_HEIGHT + BUTTON_SPACING);
         g2.setColor(Color.YELLOW);
-        drawCenteredText(g2, XCENTER, y, subtitle);
+        Utils.drawCenteredText(g2, XCENTER, y, subtitle);
 
         // OPTIONS
         for (int i = 0; i < textOptions.length; i++) {
@@ -147,34 +146,8 @@ public class MenuScreen extends JComponent {
             g2.setColor(i == highlightedOption ? Color.RED : Color.WHITE);
             drawCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
 
-            drawCenteredText(g2, XCENTER, y, textOptions[i]);
+            Utils.drawCenteredText(g2, XCENTER, y, textOptions[i]);
         }
-    }
-
-    protected void drawCenteredText(Graphics2D g2, double x, double y, String text) {
-        FontMetrics fm = g2.getFontMetrics();
-        int wStr = fm.stringWidth(text);
-        int hStr = fm.getHeight();
-        float xStr = (float) (x - wStr / 2);
-        float yStr = (float) (y + hStr / 3);
-        g2.drawString(text, xStr, yStr);
-    }
-
-    protected void drawLeftAlignedText(Graphics2D g2, double x, double y, String text) {
-        FontMetrics fm = g2.getFontMetrics();
-        int hStr = fm.getHeight();
-        float xStr = (float) (x);
-        float yStr = (float) (y + hStr / 3);
-        g2.drawString(text, xStr, yStr);
-    }
-
-    protected void drawRightAlignedText(Graphics2D g2, double x, double y, String text) {
-        FontMetrics fm = g2.getFontMetrics();
-        int wStr = fm.stringWidth(text);
-        int hStr = fm.getHeight();
-        float xStr = (float) (x - wStr);
-        float yStr = (float) (y + hStr / 3);
-        g2.drawString(text, xStr, yStr);
     }
 
     protected void drawCenteredRect(Graphics2D g2, double x, double y, double w, double h) {

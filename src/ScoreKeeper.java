@@ -16,7 +16,7 @@ public class ScoreKeeper {
     private int vw; // view width
     private int vh; // view height
 
-    private Queue<PointsAnimation> animations = new LinkedList<>();
+    private Queue<TextAnimation> animations = new LinkedList<>();
 
     ScoreKeeper(int w, int h) {
         vw = w;
@@ -41,7 +41,7 @@ public class ScoreKeeper {
      */
     void addPoints(int points, Vector2D pos) {
         score += points;
-        animations.add(new PointsAnimation(points, (int) pos.x, (int) pos.y));
+        animations.add(new TextAnimation("+ " + points, (int) pos.x, (int) pos.y, 500));
     }
 
     int getScore() {
@@ -49,49 +49,21 @@ public class ScoreKeeper {
     }
 
     void draw(Graphics2D g2) {
-        String str = "Score: " + score;
-        int strWidth = g2.getFontMetrics().stringWidth(str);
-        int x = vw * 95 / 100 - strWidth;
-        int y = vh * 95 / 100;
-        g2.setColor(Color.ORANGE);
-        g2.drawString(str, x, y);
 
-        Iterator<PointsAnimation> animIterator = animations.iterator();
+        Utils.scaleFont(g2, 2f);
+        String str = score + "    SCORE";
+        g2.setColor(Color.ORANGE);
+        int x = vw * 95 / 100;
+        int y = vh * 95 / 100;
+        Utils.drawRightAlignedText(g2, x, y, str);
+        Utils.scaleFont(g2, 0.5f);
+
+        Iterator<TextAnimation> animIterator = animations.iterator();
         while (animIterator.hasNext()) {
-            PointsAnimation anim = animIterator.next();
+            TextAnimation anim = animIterator.next();
             anim.draw(g2);
             if (anim.finished) {
                 animIterator.remove();
-            }
-        }
-    }
-
-    private class PointsAnimation {
-
-        private static final int DEFUALT_DURATION_MILLIS = 500;
-        private int points, x, y;
-        private int remainingMillis = DEFUALT_DURATION_MILLIS;
-        private long lastTimeMillis = System.currentTimeMillis();
-        boolean finished = false;
-
-        PointsAnimation(int points, int x, int y) {
-            this.points = points;
-            this.x = x;
-            this.y = y;
-        }
-
-        void draw(Graphics2D g2) {
-            if (remainingMillis > 0) {
-                float opacity = (float) remainingMillis / DEFUALT_DURATION_MILLIS;
-
-                long currentTileMillis = System.currentTimeMillis();
-                remainingMillis -= (int) (currentTileMillis - lastTimeMillis);
-                lastTimeMillis = currentTileMillis;
-
-                g2.setColor(new Color(0, 1, 0, opacity));
-                g2.drawString("+" + points, x, y);
-            } else {
-                finished = true;
             }
         }
     }

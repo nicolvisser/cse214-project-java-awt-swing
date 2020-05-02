@@ -124,12 +124,12 @@ public class GameOverScreen extends HighScoreScreen {
 
         // TITLE
         g2.setColor(Color.ORANGE);
-        drawCenteredText(g2, XCENTER, y, title);
+        Utils.drawCenteredText(g2, XCENTER, y, title);
 
         // SUBTITLE
         y += (BUTTON_HEIGHT + BUTTON_SPACING);
         g2.setColor(Color.YELLOW);
-        drawCenteredText(g2, XCENTER, y, subtitle);
+        Utils.drawCenteredText(g2, XCENTER, y, subtitle);
 
         for (int i = 0; i < NUM_ENTRIES; i++) {
             y += g2.getFontMetrics().getHeight() * 3;
@@ -147,9 +147,9 @@ public class GameOverScreen extends HighScoreScreen {
                 name = names[i];
             }
 
-            drawLeftAlignedText(g2, WIDTH * 0.2, y, "" + (i + 1));
-            drawLeftAlignedText(g2, WIDTH * 0.3, y, name);
-            drawRightAlignedText(g2, WIDTH * 0.8, y, "" + scores[i]);
+            Utils.drawLeftAlignedText(g2, WIDTH * 0.2, y, "" + (i + 1));
+            Utils.drawLeftAlignedText(g2, WIDTH * 0.3, y, name);
+            Utils.drawRightAlignedText(g2, WIDTH * 0.8, y, "" + scores[i]);
 
         }
 
@@ -162,7 +162,7 @@ public class GameOverScreen extends HighScoreScreen {
             g2.setColor(i == highlightedOption ? Color.RED : Color.WHITE);
             drawCenteredRect(g2, XCENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT);
 
-            drawCenteredText(g2, XCENTER, y, textOptions[i]);
+            Utils.drawCenteredText(g2, XCENTER, y, textOptions[i]);
         }
     }
 

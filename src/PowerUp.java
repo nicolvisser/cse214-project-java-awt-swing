@@ -7,7 +7,7 @@ public class PowerUp extends DefaultCritter {
 
     private static final int vw = GlobalSettings.vw;
     private static final int vh = GlobalSettings.vh;
-    private static final int vmin = GlobalSettings.vmin;
+    // private static final int vmin = GlobalSettings.vmin;
     // private static final int vmax = GlobalSettings.vmax;
 
     enum PowerUpType {
@@ -111,23 +111,6 @@ public class PowerUp extends DefaultCritter {
                 y = (int) (position.y - h / 2);
 
                 animatedPowerUpSprite.draw(g2, x, y, w, (int) h);
-                break;
-
-            case ACTIVATED:
-
-                // draw a fading frame/border based on power up color
-                int frameWidthPixels = vmin / 20;
-
-                int r = color.getRed();
-                int g = color.getGreen();
-                int b = color.getBlue();
-
-                for (int i = 0; i < frameWidthPixels; i++) {
-                    int a = 50 - 50 * i / frameWidthPixels;
-                    g2.setColor(new Color(r, g, b, a));
-                    g2.drawRect(i, i, vw - 2 * i, vh - 2 * i);
-                }
-
                 break;
 
             default:

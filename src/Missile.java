@@ -13,7 +13,7 @@ public class Missile extends DefaultCritter {
     //// private static final int vmax = GlobalSettings.vmax;
 
     private static final int DEFAULT_RADIUS = vmin / 150;
-    private static final double DEFAULT_SPEED = 0.015 * vmin;
+    private static final double DEFAULT_SPEED = 0.012 * vmin;
     public static final int DEFAULT_DAMAGE_POINTS = 50;
 
     private static ImageIcon imgIcnBulletBlue = new ImageIcon("resources/bullet.png");

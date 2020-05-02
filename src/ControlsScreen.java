@@ -136,6 +136,10 @@ public class ControlsScreen extends MenuScreen {
         return currentKeyCodes;
     }
 
+    public String[] getCurrentControlsDescriptions() {
+        return currentKeyDescriptions;
+    }
+
     // Override some methods from MenuScreen class:
 
     @Override

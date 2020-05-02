@@ -48,7 +48,7 @@ public class Shooter extends DefaultCritter {
     boolean isLeftThrusterActive = false;
     boolean isRightThrusterActive = false;
 
-    private static final double DEFAULT_ANGULAR_ACCELERATION = 0.005;
+    private static final double DEFAULT_ANGULAR_ACCELERATION = 0.003;
 
     boolean isRotatingLeft = false;
     boolean isRotatingRight = false;
@@ -134,7 +134,7 @@ public class Shooter extends DefaultCritter {
 
     public void drawAimLine(Graphics2D g2, EnemyGroup enemyGroup, ArrayList<Bunker> bunkers) {
         if (state == ShooterState.ALIVE) {
-            g2.setColor(new Color(0, 0.75f, 1, 0.25f));
+            g2.setColor(new Color(0, 0.75f, 1, 0.35f));
             getAimLine(enemyGroup, bunkers).draw(g2);
         }
     }

@@ -26,14 +26,15 @@ public class InvadersPanel extends JPanel {
     // defined different states panel can be in, which is used to determine what
     // component to display on panel at what time
     public enum DisplayState {
-        MAIN_MENU, PLAYING, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS, SET_RESOLUTION, GAME_OVER, QUIT;
+        MAIN_MENU, PLAYING, TUTORIAL, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS, SET_RESOLUTION, GAME_OVER, QUIT;
     }
 
     // stores current state the panel is in
     public DisplayState activeDisplayState;
 
     // define the text for screens that make use of the default MenuScreen object
-    private static final String[] mainMenuScreenOptions = { "New Game", "High Scores", "Settings", "Quit Game" };
+    private static final String[] mainMenuScreenOptions = { "New Game", "Play Tutorial", "High Scores", "Settings",
+            "Quit Game" };
     private static final String[] pauseScreenOptions = { "Resume Game", "Restart Game", "Quit To Main Menu" };
     private static final String[] settingsScreenOptions = { "Set Resolution", "Controls", "Back" };
     private static final String[] resolutionScreenOptions = { "600x600", "800x800", "1000x1000", "Cancel" };
@@ -42,6 +43,7 @@ public class InvadersPanel extends JPanel {
     // panel
     private Starfield starfield;
     private InvaderGameState loadedInvaderGameState;
+    private Tutorial tutorial;
     private MenuScreen mainMenuScreen;
     private MenuScreen pauseScreen;
     private MenuScreen settingsScreen;
@@ -133,7 +135,16 @@ public class InvadersPanel extends JPanel {
                         activeDisplayState = DisplayState.PLAYING;
                         break;
 
-                    case 1: // high scores
+                    case 1: // play tutorial
+                        mainMenuScreen.resetSelection();
+                        removeAll();
+                        tutorial = new Tutorial(controlsScreen.getCurrentControlsConfig(),
+                                controlsScreen.getCurrentControlsDescriptions());
+                        add(tutorial);
+                        activeDisplayState = DisplayState.TUTORIAL;
+                        break;
+
+                    case 2: // high scores
                         mainMenuScreen.resetSelection();
                         removeAll();
                         add(highScoreScreen);
@@ -141,14 +152,14 @@ public class InvadersPanel extends JPanel {
                         highScoreScreen.loadFromFile();
                         break;
 
-                    case 2: // settings
+                    case 3: // settings
                         mainMenuScreen.resetSelection();
                         removeAll();
                         add(settingsScreen);
                         activeDisplayState = DisplayState.SETTINGS;
                         break;
 
-                    case 3: // quit
+                    case 4: // quit
                         quitFlag = true;
                         break;
 
@@ -185,6 +196,27 @@ public class InvadersPanel extends JPanel {
                     gameOverScreen.loadFromFile();
                     break;
                 }
+                break;
+
+            case TUTORIAL:
+
+                // ensure the current screen has focus in order for keylistener to work
+                if (!tutorial.hasFocus()) {
+                    tutorial.requestFocusInWindow();
+                }
+
+                // update tutorial state
+                tutorial.update();
+
+                // if tutorial signals a exit, handle it
+                if (tutorial.exitFlag) {
+                    activeDisplayState = DisplayState.MAIN_MENU;
+                    tutorial = null;
+                    removeAll();
+                    add(mainMenuScreen);
+                    break;
+                }
+
                 break;
 
             case PAUSE:
@@ -457,6 +489,9 @@ public class InvadersPanel extends JPanel {
                 break;
             case PLAYING:
                 loadedInvaderGameState.draw(g2);
+                break;
+            case TUTORIAL:
+                tutorial.draw(g2);
                 break;
             case PAUSE:
                 pauseScreen.draw(g2);

@@ -62,6 +62,7 @@ public class InvaderGameState extends JComponent {
         bunkers.add(new Bunker(0.25 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
         bunkers.add(new Bunker(0.50 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
         bunkers.add(new Bunker(0.75 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
+        shooter.bunkersObstacle = bunkers; // pass shooter a reference to bunkers list
 
         powerUpManager = new PowerUpManager();
 
@@ -79,6 +80,8 @@ public class InvaderGameState extends JComponent {
                 numEnemiesInColumn + level, shooter);
         enemyGroup.createReferenceFor(powerUpManager); // so that powerups can spawn on enemy kill
         textAnimOnLevelStart = new TextAnimation("Level " + level, vw / 2, vh / 3, 2000);
+
+        shooter.enemyGroupObstacle = enemyGroup; // pass shooter a reference to the new enemyGroup for laser
 
     }
 
@@ -100,7 +103,7 @@ public class InvaderGameState extends JComponent {
 
         powerUpManager.draw(g2);
 
-        shooter.drawAimLine(g2, enemyGroup, bunkers);
+        shooter.drawAimLine(g2);
 
         // HUD
 
@@ -209,7 +212,7 @@ public class InvaderGameState extends JComponent {
             } else if (e.getKeyCode() == keyCodes[3]) { // Rotate Right
                 shooter.isRotatingRight = true;
             } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
-
+                shooter.onShootButtonPress();
             } else if (e.getKeyCode() == keyCodes[5]) { // Block
 
             }
@@ -226,7 +229,7 @@ public class InvaderGameState extends JComponent {
             } else if (e.getKeyCode() == keyCodes[3]) { // Rotate Right
                 shooter.isRotatingRight = false;
             } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
-                shooter.shootMissile();
+                shooter.onShootButtonRelease();
             } else if (e.getKeyCode() == keyCodes[5]) { // Block
 
             }

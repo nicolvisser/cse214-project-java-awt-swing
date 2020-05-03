@@ -128,7 +128,7 @@ public class Tutorial extends JComponent {
             } else if (e.getKeyCode() == keyCodes[3]) { // Rotate Right
                 shooter.isRotatingRight = true;
             } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
-
+                shooter.onShootButtonPress();
             } else if (e.getKeyCode() == keyCodes[5]) { // Block
 
             }
@@ -145,7 +145,7 @@ public class Tutorial extends JComponent {
             } else if (e.getKeyCode() == keyCodes[3]) { // Rotate Right
                 shooter.isRotatingRight = false;
             } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
-                shooter.shootMissile();
+                shooter.onShootButtonRelease();
             } else if (e.getKeyCode() == keyCodes[5]) { // Block
 
             }

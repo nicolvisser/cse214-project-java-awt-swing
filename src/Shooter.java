@@ -42,6 +42,12 @@ public class Shooter extends DefaultCritter {
 
     public ShooterState state = ShooterState.ALIVE;
 
+    public enum ActiveWeapon {
+        MISSILE_GUN, LASER_GUN;
+    }
+
+    public ActiveWeapon activeWeapon = ActiveWeapon.MISSILE_GUN;
+
     public double healthPoints = DEFAULT_HEALTH_POINTS;
     public double energyPoints = DEFAULT_ENERGY_POINTS;
 
@@ -63,6 +69,12 @@ public class Shooter extends DefaultCritter {
     public ArrayList<Missile> missiles = new ArrayList<>();
 
     public ScoreKeeper score;
+
+    // variables to do with aim line and laser:
+    EnemyGroup enemyGroupObstacle;
+    ArrayList<Bunker> bunkersObstacle;
+    boolean isLaserActive;
+    boolean isLaserActiveOnTarget;
 
     public Shooter(ScoreKeeper score) {
         this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_COLLISION_RADIUS, score);
@@ -88,7 +100,32 @@ public class Shooter extends DefaultCritter {
         return (int) Math.max(0, Math.round(energyPoints * 100 / (double) DEFAULT_ENERGY_POINTS));
     }
 
-    public void shootMissile() {
+    public void onShootButtonPress() {
+        switch (activeWeapon) {
+            case LASER_GUN:
+                isLaserActive = true;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void onShootButtonRelease() {
+        switch (activeWeapon) {
+            case MISSILE_GUN:
+                shootMissile();
+                break;
+            case LASER_GUN:
+                isLaserActive = false;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void shootMissile() {
         if (state == ShooterState.ALIVE) {
             if (reloadTimer >= currentReloadTime) {
                 StdAudio.play("resources/heartbeat.wav", GlobalSettings.volume);
@@ -96,6 +133,27 @@ public class Shooter extends DefaultCritter {
                 missiles.add(missile);
                 reloadTimer = 0;
             }
+        }
+    }
+
+    private void handleLaserCollision() {
+        if (state == ShooterState.ALIVE) {
+
+            // TODO add sound:
+            // StdAudio.play("resources/heartbeat.wav", GlobalSettings.volume);
+
+            Object target = getAimTarget();
+
+            System.out.println(target);
+
+            isLaserActiveOnTarget = target instanceof Enemy;
+
+            if (isLaserActiveOnTarget) {
+                System.out.println("Target is enemy");
+                Enemy enemy = (Enemy) target;
+                enemy.takeDamage(7);
+            }
+
         }
     }
 
@@ -110,14 +168,14 @@ public class Shooter extends DefaultCritter {
     // Possible future improvement: instead of explicity using enemyGroup and
     // bunkers as obstacles could make method more general and use collidable
     // interface
-    public LineSegment getAimLine(EnemyGroup enemyGroup, ArrayList<Bunker> bunkers) {
+    public LineSegment getAimLine() {
         Vector2D start = getTurretEndPosition();
 
         Ray aimRay = new Ray(start, lookVector());
         double lengthOfAimLine = vw + vh; // will always extend outside frame
 
-        if (enemyGroup != null && enemyGroup.getCollisionShape().intersects(aimRay)) {
-            for (Enemy enemy : enemyGroup.enemies) {
+        if (enemyGroupObstacle != null && enemyGroupObstacle.getCollisionShape().intersects(aimRay)) {
+            for (Enemy enemy : enemyGroupObstacle.enemies) {
                 if (enemy.state == Enemy.EnemyState.ALIVE) {
                     Double lengthUntilCollision = aimRay.lengthUntilIntersection(enemy.getCollisionShape());
                     if (Double.isFinite(lengthUntilCollision) && lengthUntilCollision < lengthOfAimLine) {
@@ -127,7 +185,7 @@ public class Shooter extends DefaultCritter {
             }
         }
 
-        for (Bunker bunker : bunkers) {
+        for (Bunker bunker : bunkersObstacle) {
             if (bunker.getCollisionShape().intersects(aimRay)) {
                 for (Bunker.Block block : bunker.blocks) {
                     Double lengthUntilCollision = aimRay.lengthUntilIntersection(block.getCollisionShape());
@@ -141,10 +199,52 @@ public class Shooter extends DefaultCritter {
         return new LineSegment(start, lookVector(), lengthOfAimLine);
     }
 
-    public void drawAimLine(Graphics2D g2, EnemyGroup enemyGroup, ArrayList<Bunker> bunkers) {
+    public Object getAimTarget() {
+        Vector2D start = getTurretEndPosition();
+
+        Ray aimRay = new Ray(start, lookVector());
+
+        Object target = null;
+
+        double lengthOfAimLine = vw + vh; // will always extend outside frame
+
+        if (enemyGroupObstacle != null && enemyGroupObstacle.getCollisionShape().intersects(aimRay)) {
+            for (Enemy enemy : enemyGroupObstacle.enemies) {
+                if (enemy.state == Enemy.EnemyState.ALIVE) {
+                    Double lengthUntilCollision = aimRay.lengthUntilIntersection(enemy.getCollisionShape());
+                    if (Double.isFinite(lengthUntilCollision) && lengthUntilCollision < lengthOfAimLine) {
+                        lengthOfAimLine = lengthUntilCollision;
+                        target = enemy;
+                    }
+                }
+            }
+        }
+
+        for (Bunker bunker : bunkersObstacle) {
+            if (bunker.getCollisionShape().intersects(aimRay)) {
+                for (Bunker.Block block : bunker.blocks) {
+                    Double lengthUntilCollision = aimRay.lengthUntilIntersection(block.getCollisionShape());
+                    if (Double.isFinite(lengthUntilCollision) && lengthUntilCollision < lengthOfAimLine) {
+                        lengthOfAimLine = lengthUntilCollision;
+                        target = block;
+                    }
+                }
+            }
+        }
+
+        return target;
+    }
+
+    public void drawAimLine(Graphics2D g2) {
         if (state == ShooterState.ALIVE) {
-            g2.setColor(new Color(0, 0.75f, 1, 0.35f));
-            getAimLine(enemyGroup, bunkers).draw(g2);
+            if (isLaserActive && isLaserActiveOnTarget) {
+                g2.setColor(Color.GREEN);
+            } else if (isLaserActive) {
+                g2.setColor(new Color(0, 1, 0, 0.35f));
+            } else {
+                g2.setColor(new Color(0, 0.75f, 1, 0.35f));
+            }
+            getAimLine().draw(g2);
         }
     }
 
@@ -207,6 +307,10 @@ public class Shooter extends DefaultCritter {
 
     @Override
     public void update(int dt) {
+
+        if (isLaserActive) {
+            handleLaserCollision();
+        }
 
         if (explosion.isComplete) {
             state = ShooterState.DEAD;

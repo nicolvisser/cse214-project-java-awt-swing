@@ -11,7 +11,7 @@ public class PowerUp extends DefaultCritter {
     // private static final int vmax = GlobalSettings.vmax;
 
     enum PowerUpType {
-        ENERGY_REGEN, HEALTH_REGEN, GREEN, FAST_RELOAD;
+        ENERGY_REGEN, HEALTH_REGEN, LASER_GUN, FAST_RELOAD;
     }
 
     enum PowerUpState {
@@ -54,9 +54,9 @@ public class PowerUp extends DefaultCritter {
                 textOnActivation = "HEALTH REGENERATION!";
                 color = Color.RED;
                 break;
-            case GREEN:
+            case LASER_GUN:
                 filename = "resources/powerUpGreen";
-                textOnActivation = "GREEN POWER!";
+                textOnActivation = "LASER GUN! Hold to fire.";
                 color = Color.GREEN;
                 break;
             case FAST_RELOAD:
@@ -78,7 +78,8 @@ public class PowerUp extends DefaultCritter {
             case HEALTH_REGEN:
                 shooter.healthPointsRegenerationPerSecond = 10;
                 break;
-            case GREEN:
+            case LASER_GUN:
+                shooter.activeWeapon = Shooter.ActiveWeapon.LASER_GUN;
                 break;
             case FAST_RELOAD:
                 shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME / 8;
@@ -94,7 +95,10 @@ public class PowerUp extends DefaultCritter {
             case HEALTH_REGEN:
                 shooterRef.healthPointsRegenerationPerSecond = 0;
                 break;
-            case GREEN:
+            case LASER_GUN:
+                shooterRef.isLaserActive = false;
+                shooterRef.isLaserActiveOnTarget = false;
+                shooterRef.activeWeapon = Shooter.ActiveWeapon.MISSILE_GUN;
                 break;
             case FAST_RELOAD:
                 shooterRef.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME;

@@ -25,6 +25,10 @@ public class PowerUpManager {
     public void spawnRandomTypeAt(Vector2D position) {
         int randomIndex = (int) (Math.random() * types.length);
         PowerUp.PowerUpType randomType = types[randomIndex];
+
+        // override for testing:
+        // randomType = PowerUp.PowerUpType.HEALTH_REGEN;
+
         powerUps.add(new PowerUp(position.x, position.y, randomType, this));
     }
 

@@ -42,8 +42,11 @@ public class Shooter extends DefaultCritter {
 
     public ShooterState state = ShooterState.ALIVE;
 
-    public int healthPoints = DEFAULT_HEALTH_POINTS;
-    public int energyPoints = DEFAULT_ENERGY_POINTS;
+    public double healthPoints = DEFAULT_HEALTH_POINTS;
+    public double energyPoints = DEFAULT_ENERGY_POINTS;
+
+    public double healthPointsRegenerationPerSecond = 0;
+    public double energyPointsRegenerationPerSecond = 0;
 
     boolean isLeftThrusterActive = false;
     boolean isRightThrusterActive = false;
@@ -270,6 +273,10 @@ public class Shooter extends DefaultCritter {
             missile.update(dt);
         }
 
+        // health regeneration
+        healthPoints = Math.min(DEFAULT_HEALTH_POINTS, healthPoints + healthPointsRegenerationPerSecond * dt / 1000.0);
+        // energy regeneration
+        energyPoints = Math.min(DEFAULT_ENERGY_POINTS, energyPoints + energyPointsRegenerationPerSecond * dt / 1000.0);
     }
 
     @Override

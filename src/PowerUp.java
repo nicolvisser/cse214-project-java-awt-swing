@@ -11,7 +11,7 @@ public class PowerUp extends DefaultCritter {
     // private static final int vmax = GlobalSettings.vmax;
 
     enum PowerUpType {
-        BLUE, RED, GREEN, FAST_RELOAD;
+        ENERGY_REGEN, HEALTH_REGEN, GREEN, FAST_RELOAD;
     }
 
     enum PowerUpState {
@@ -44,14 +44,14 @@ public class PowerUp extends DefaultCritter {
         String filename = "";
 
         switch (type) {
-            case BLUE:
+            case ENERGY_REGEN:
                 filename = "resources/powerUpBlue";
-                textOnActivation = "BLUE POWER!";
+                textOnActivation = "ENERGY REGENERATION!";
                 color = Color.BLUE;
                 break;
-            case RED:
+            case HEALTH_REGEN:
                 filename = "resources/powerUpRed";
-                textOnActivation = "RED POWER!";
+                textOnActivation = "HEALTH REGENERATION!";
                 color = Color.RED;
                 break;
             case GREEN:
@@ -72,9 +72,11 @@ public class PowerUp extends DefaultCritter {
 
     public void addEffectTo(Shooter shooter) {
         switch (type) {
-            case BLUE:
+            case ENERGY_REGEN:
+                shooter.energyPointsRegenerationPerSecond = 10;
                 break;
-            case RED:
+            case HEALTH_REGEN:
+                shooter.healthPointsRegenerationPerSecond = 10;
                 break;
             case GREEN:
                 break;
@@ -86,9 +88,11 @@ public class PowerUp extends DefaultCritter {
 
     public void removeEffectFromShooter() {
         switch (type) {
-            case BLUE:
+            case ENERGY_REGEN:
+                shooterRef.healthPointsRegenerationPerSecond = 0;
                 break;
-            case RED:
+            case HEALTH_REGEN:
+                shooterRef.healthPointsRegenerationPerSecond = 0;
                 break;
             case GREEN:
                 break;

@@ -81,11 +81,11 @@ public class GameAudio {
 
     // ===============================================================================================
 
-    private static synchronized void play(final String filename) {
+    public static synchronized void play(final String filename) {
         play(filename, GlobalSettings.volumeSounds);
     }
 
-    private static synchronized void play(final String filename, int volume) {
+    public static synchronized void play(final String filename, int volume) {
         new Thread(new Runnable() {
             public void run() {
                 AudioInputStream ais = getAudioInputStreamFromFile(filename);
@@ -93,6 +93,8 @@ public class GameAudio {
             }
         }).start();
     }
+
+    // ===============================================================================================
 
     private static void stream(AudioInputStream ais, int volume) {
         SourceDataLine line = null;

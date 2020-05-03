@@ -147,7 +147,6 @@ public class Shooter extends DefaultCritter {
             isLaserActiveOnTarget = target instanceof Enemy;
 
             if (isLaserActiveOnTarget) {
-                System.out.println("Target is enemy");
                 Enemy enemy = (Enemy) target;
                 enemy.takeDamage(7);
             }

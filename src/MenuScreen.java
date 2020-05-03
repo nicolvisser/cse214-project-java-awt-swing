@@ -111,8 +111,8 @@ public class MenuScreen extends JComponent {
         highlightedOption++;
         if (highlightedOption >= textOptions.length)
             highlightedOption -= textOptions.length;
-            GameAudio.playSoundMenuChange();
-        }
+        GameAudio.playSoundMenuChange();
+    }
 
     public void selectCurrentOption() {
         selectedOption = highlightedOption;

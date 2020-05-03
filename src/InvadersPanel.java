@@ -69,6 +69,8 @@ public class InvadersPanel extends JPanel {
 
         activeDisplayState = DisplayState.MAIN_MENU;
         add(mainMenuScreen);
+
+        GameAudio.loopMenuMusic();
     }
 
     private void setKeyBindings() {
@@ -139,6 +141,7 @@ public class InvadersPanel extends JPanel {
                         loadedInvaderGameState = new InvaderGameState(controlsScreen.getCurrentControlsConfig());
                         add(loadedInvaderGameState);
                         activeDisplayState = DisplayState.PLAYING;
+                        GameAudio.fadeOutMusicThenStartGameMusic();
                         break;
 
                     case 2: // high scores
@@ -181,6 +184,7 @@ public class InvadersPanel extends JPanel {
                     activeDisplayState = DisplayState.PAUSE;
                     removeAll();
                     add(pauseScreen);
+                    GameAudio.pauseBackgroundMusic();
                     break;
                 }
 
@@ -191,6 +195,7 @@ public class InvadersPanel extends JPanel {
                     removeAll();
                     add(gameOverScreen);
                     gameOverScreen.loadFromFile();
+                    GameAudio.fadeOutMusicThenStartMenuMusic();
                     break;
                 }
                 break;
@@ -230,7 +235,7 @@ public class InvadersPanel extends JPanel {
                         activeDisplayState = DisplayState.PLAYING;
                         removeAll();
                         add(loadedInvaderGameState);
-
+                        GameAudio.resumeBackgroundMusic();
                     case -1: // not yet selected
                         break;
 
@@ -252,6 +257,7 @@ public class InvadersPanel extends JPanel {
                         activeDisplayState = DisplayState.MAIN_MENU;
                         removeAll();
                         add(mainMenuScreen);
+                        GameAudio.fadeOutMusicThenStartMenuMusic();
                         break;
 
                     default:

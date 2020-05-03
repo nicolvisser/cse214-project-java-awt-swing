@@ -21,6 +21,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.Control;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
@@ -122,16 +123,22 @@ public final class StdAudio {
     }
 
     /**
-     * Plays an audio file (in .wav, .mid, or .au format) in a background thread.
-     *
-     * @param filename the name of the audio file
-     * @throws IllegalArgumentException if unable to play {@code filename}
-     * @throws IllegalArgumentException if {@code filename} is {@code null}
+     * Plays an audio file in a background thread. Plays at 100 % loudness.
+     * 
+     * @param filename Filename or path of audio file (in .wav, .mid, or .au format)
      */
     public static synchronized void play(final String filename) {
         play(filename, 100);
     }
 
+    /**
+     * Plays an audio file in a background thread. Plays at 100 % loudness. Takes
+     * percentage loudness (volume) as argument.
+     * 
+     * @param filename     Filename or path of audio file (in .wav, .mid, or .au
+     *                     format)
+     * @param loudnessPerc How loud audio clip should be played
+     */
     public static synchronized void play(final String filename, int loudnessPerc) {
         new Thread(new Runnable() {
             public void run() {
@@ -151,6 +158,44 @@ public final class StdAudio {
     // stream(ais, 100);
     // }
 
+    private static void setVolumeViaControl(Control control, int loudnessPerc) {
+        FloatControl volumeControl = (FloatControl) control;
+
+        // for this method we temporarily define loudness and volume as two different
+        // things to make code more readable
+        //
+        // loundnessPerc is a measure for perceived loudness of audio. (100 is
+        // full loudness and 50 is perceived as half as loud). Note this is approximate
+        // and subjective!!!!
+        //
+        // volumePerc corresponds to range of decibels of audio line as retreived from
+        // FloatControl MASTER_GAIN type: (100 is max volume in decibels, whereas 50 is
+        // half the range of decibels i.e. midway between max and min)
+        //
+        // assume that 'half as load' corresponds to 10 percentage points of decibel
+        // range
+        //
+        // now, map perceived loudness percentage to volume percentage ->
+        float volumePerc;
+        if (loudnessPerc <= 0.01) {
+            volumePerc = 0;
+        } else {
+            volumePerc = (float) (100 + 10 * (Math.log(loudnessPerc / 100f) / Math.log(2)));
+        }
+
+        // ensure volumePerc is between 0 and 100 after mapping
+        volumePerc = Math.min(volumePerc, 100);
+        volumePerc = Math.max(volumePerc, 0);
+
+        // use volumePerc to determine new volume level
+        float newVolumne = volumeControl.getMinimum()
+                + (volumeControl.getMaximum() - volumeControl.getMinimum()) * volumePerc / 100f;
+
+        // set line volume to this volume
+        volumeControl.setValue(newVolumne);
+
+    }
+
     private static void stream(AudioInputStream ais, int loudnessPerc) {
         SourceDataLine line = null;
         int BUFFER_SIZE = 4096; // 4K buffer
@@ -163,37 +208,7 @@ public final class StdAudio {
 
             line.open(audioFormat);
 
-            FloatControl volumeControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-
-            // loundnessPerc is a measure for perceived loudness of audio. (100 is
-            // full loudness and 50 is perceived as half as loud). Note this is approximate
-            // and subjective!!!!
-            //
-            // volumePerc corresponds to range of decibels of audio line as retreived from
-            // FloatControl MASTER_GAIN type: (100 is max volume in decibels, whereas 50 is
-            // half the range of decibels i.e. midway between max and min)
-            //
-            // assume that 'half as load' corresponds to 10 percentage points of decibel
-            // range
-            //
-            // now, map perceived loudness percentage to volume percentage ->
-            float volumePerc;
-            if (loudnessPerc <= 0.01) {
-                volumePerc = 0;
-            } else {
-                volumePerc = (float) (100 + 10 * (Math.log(loudnessPerc / 100f) / Math.log(2)));
-            }
-
-            // ensure volumePerc is between 0 and 100 after mapping
-            volumePerc = Math.min(volumePerc, 100);
-            volumePerc = Math.max(volumePerc, 0);
-
-            // use volumePerc to determine new volumne level
-            float newVolumne = volumeControl.getMinimum()
-                    + (volumeControl.getMaximum() - volumeControl.getMinimum()) * volumePerc / 100f;
-
-            // set line volume to this volume
-            volumeControl.setValue(newVolumne);
+            setVolumeViaControl(line.getControl(FloatControl.Type.MASTER_GAIN), loudnessPerc);
 
             line.start();
             byte[] samples = new byte[BUFFER_SIZE];
@@ -215,23 +230,29 @@ public final class StdAudio {
         }
     }
 
+    public static Clip backgroundMusic;
+    public static int backgroundMusicVolume = 100;
+
     /**
      * Loops an audio file (in .wav, .mid, or .au format) in a background thread.
      *
      * @param filename the name of the audio file
      * @throws IllegalArgumentException if {@code filename} is {@code null}
      */
-    public static synchronized void loop(String filename) {
+    public static synchronized void loop(String filename, int loudnessPerc) {
+        backgroundMusicVolume = loudnessPerc;
+
         if (filename == null)
             throw new IllegalArgumentException();
 
         final AudioInputStream ais = getAudioInputStreamFromFile(filename);
 
         try {
-            Clip clip = AudioSystem.getClip();
-            // Clip clip = (Clip) AudioSystem.getLine(new Line.Info(Clip.class));
-            clip.open(ais);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            backgroundMusic = AudioSystem.getClip();
+            backgroundMusic.open(ais);
+            setVolumeViaControl(backgroundMusic.getControl(FloatControl.Type.MASTER_GAIN), backgroundMusicVolume);
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+            backgroundMusic.start();
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -248,6 +269,29 @@ public final class StdAudio {
                         e.printStackTrace();
                     }
                 }
+            }
+        }).start();
+    }
+
+    public static synchronized void fadeBackgroundMusic(int durationMillis) {
+        // keep JVM open
+        new Thread(new Runnable() {
+            public void run() {
+                final int initialVolume = backgroundMusicVolume;
+                final int sleepDuration = 50;
+                int timer = durationMillis;
+                while (timer > 0) {
+                    try {
+                        setVolumeViaControl(backgroundMusic.getControl(FloatControl.Type.MASTER_GAIN),
+                                backgroundMusicVolume);
+                        backgroundMusicVolume -= initialVolume * sleepDuration / durationMillis;
+                        timer += 100;
+                        Thread.sleep(sleepDuration);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                backgroundMusic.close();
             }
         }).start();
     }

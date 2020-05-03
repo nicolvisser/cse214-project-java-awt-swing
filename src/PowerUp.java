@@ -45,22 +45,22 @@ public class PowerUp extends DefaultCritter {
 
         switch (type) {
             case ENERGY_REGEN:
-                filename = "resources/powerUpBlue";
+                filename = "resources/images/powerUpBlue";
                 textOnActivation = "ENERGY REGENERATION!";
                 color = Color.BLUE;
                 break;
             case HEALTH_REGEN:
-                filename = "resources/powerUpRed";
+                filename = "resources/images/powerUpRed";
                 textOnActivation = "HEALTH REGENERATION!";
                 color = Color.RED;
                 break;
             case LASER_GUN:
-                filename = "resources/powerUpGreen";
+                filename = "resources/images/powerUpGreen";
                 textOnActivation = "LASER GUN! Hold to fire.";
                 color = Color.GREEN;
                 break;
             case FAST_RELOAD:
-                filename = "resources/powerUpYellow";
+                filename = "resources/images/powerUpYellow";
                 textOnActivation = "FAST RELOAD!";
                 color = Color.YELLOW;
                 break;

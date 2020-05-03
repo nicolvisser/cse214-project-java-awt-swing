@@ -5,7 +5,7 @@ import javax.swing.ImageIcon;
 
 public class Enemy extends DefaultCritter {
 
-    private static final ImageIcon IMAGE_ICON_SINGLE_ENEMY = new ImageIcon("resources/enemy.png");
+    private static final ImageIcon IMAGE_ICON_SINGLE_ENEMY = new ImageIcon("resources/images/enemy.png");
     public static final int DEFAULT_COLLISION_RADIUS = GlobalSettings.vmin * 2 / 100;
 
     public enum EnemyState {
@@ -16,7 +16,7 @@ public class Enemy extends DefaultCritter {
 
     public EnemyState state = EnemyState.ALIVE;
 
-    private AnimatedImage explosion = new AnimatedImage("resources/redExplosion", "png", 17,
+    private AnimatedImage explosion = new AnimatedImage("resources/images/redExplosion", "png", 17,
             AnimatedImage.AnimationType.ONCE);
     private double explosionOrientation = Math.random() * 3 * Math.PI;
 

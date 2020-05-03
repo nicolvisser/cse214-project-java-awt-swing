@@ -16,8 +16,8 @@ public class Missile extends DefaultCritter {
     private static final double DEFAULT_SPEED = 0.012 * vmin;
     public static final int DEFAULT_DAMAGE_POINTS = 50;
 
-    private static ImageIcon imgIcnBulletBlue = new ImageIcon("resources/bullet.png");
-    private static ImageIcon imgIcnBulletRed = new ImageIcon("resources/bullet_red.png");
+    private static ImageIcon imgIcnBulletBlue = new ImageIcon("resources/images/bullet.png");
+    private static ImageIcon imgIcnBulletRed = new ImageIcon("resources/images/bullet_red.png");
 
     public enum MissileState {
         ALIVE, EXPLODING, DEAD;
@@ -36,15 +36,15 @@ public class Missile extends DefaultCritter {
         this.owner = owner;
 
         if (owner instanceof Shooter) {
-            explosion = new AnimatedImage("resources/blueExplosion", "png", 17, AnimatedImage.AnimationType.ONCE);
+            explosion = new AnimatedImage("resources/images/blueExplosion", "png", 17, AnimatedImage.AnimationType.ONCE);
         } else {
-            explosion = new AnimatedImage("resources/redExplosion", "png", 17, AnimatedImage.AnimationType.ONCE);
+            explosion = new AnimatedImage("resources/images/redExplosion", "png", 17, AnimatedImage.AnimationType.ONCE);
         }
 
     }
 
     public void explode() {
-        StdAudio.play("resources/Explosion+1.wav", GlobalSettings.volume);
+        GameAudio.playSoundExplosion();
         state = MissileState.EXPLODING;
     }
 

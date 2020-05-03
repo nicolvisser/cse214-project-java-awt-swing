@@ -102,7 +102,7 @@ public class EnemyGroup implements Collidable, Disposable {
     }
 
     public void shootMissile() {
-        StdAudio.play("resources/heartbeat.wav", GlobalSettings.volume);
+        GameAudio.playSoundPulse();
         int i = (int) (Math.random() * enemies.size());
         Enemy randomEnemy = enemies.get(i);
         Vector2D pos = new Vector2D(randomEnemy.position.x, randomEnemy.position.y);

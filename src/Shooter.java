@@ -30,10 +30,10 @@ public class Shooter extends DefaultCritter {
 
     private static final double DEFAULT_THRUSTER_ACCELERATION = vmax / 2000.0;
 
-    private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/carrier.png");
-    private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/destroyer.png");
+    private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/images/carrier.png");
+    private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/images/destroyer.png");
 
-    private AnimatedImage explosion = new AnimatedImage("resources/blueExplosion", "png", 17,
+    private AnimatedImage explosion = new AnimatedImage("resources/images/blueExplosion", "png", 17,
             AnimatedImage.AnimationType.ONCE);
 
     public enum ShooterState {
@@ -128,7 +128,7 @@ public class Shooter extends DefaultCritter {
     private void shootMissile() {
         if (state == ShooterState.ALIVE) {
             if (reloadTimer >= currentReloadTime) {
-                StdAudio.play("resources/heartbeat.wav", GlobalSettings.volume);
+                GameAudio.playSoundPulse();
                 Missile missile = new Missile(position, lookVector(), this);
                 missiles.add(missile);
                 reloadTimer = 0;
@@ -140,7 +140,6 @@ public class Shooter extends DefaultCritter {
         if (state == ShooterState.ALIVE) {
 
             // TODO add sound:
-            // StdAudio.play("resources/heartbeat.wav", GlobalSettings.volume);
 
             Object target = getAimTarget();
 

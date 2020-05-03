@@ -76,11 +76,14 @@ public class InvaderGameState extends JComponent {
 
     public void startNewLevel() {
         level++;
-        enemyGroup = new EnemyGroup(0.2 * vw, 0.15 * vh, 0.4 * vw, 0.3 * vh, numEnemiesInRow + level,
-                numEnemiesInColumn + level, shooter);
-        enemyGroup.createReferenceFor(powerUpManager); // so that powerups can spawn on enemy kill
         textAnimOnLevelStart = new TextAnimation("Level " + level, vw / 2, vh / 3, 2000);
 
+        enemyGroup = new EnemyGroup(0.2 * vw, 0.15 * vh, 0.4 * vw, 0.3 * vh, numEnemiesInRow + level,
+                numEnemiesInColumn + level, shooter);
+
+        enemyGroup.shootInterval = EnemyGroup.DEFAULT_SHOOT_INTERVAL * 90 / 100;
+
+        enemyGroup.createReferenceFor(powerUpManager); // so that powerups can spawn on enemy kill
         shooter.enemyGroupObstacle = enemyGroup; // pass shooter a reference to the new enemyGroup for laser
 
     }

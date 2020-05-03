@@ -33,7 +33,8 @@ public class EnemyGroup implements Collidable, Disposable {
 
     public ArrayList<Missile> missiles = new ArrayList<>();
     private DefaultCritter target;
-    private static final long DEFAULT_SHOOT_INTERVAL = 2000;
+    public static final long DEFAULT_SHOOT_INTERVAL = 2000;
+    long shootInterval = DEFAULT_SHOOT_INTERVAL;
     private long counterAttackTimer = 0;
 
     private PowerUpManager powerUpManagerRef;
@@ -136,7 +137,7 @@ public class EnemyGroup implements Collidable, Disposable {
 
         if (enemies.size() > 0) {
             counterAttackTimer += dt;
-            if (counterAttackTimer > DEFAULT_SHOOT_INTERVAL) {
+            if (counterAttackTimer > shootInterval) {
                 shootMissile();
                 counterAttackTimer = 0;
             }

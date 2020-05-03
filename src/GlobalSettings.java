@@ -11,7 +11,8 @@ public class GlobalSettings {
     static int vmin = Math.min(vw, vh); // viewport min dimension
     static int vmax = Math.max(vw, vh);; // viewport max dimension
 
-    static int volume = 10;
+    static int volumeSounds = 15;
+    static int volumeMusic = 100;
 
     static boolean DEBUG = false; // enable visual debugging mode or not
 

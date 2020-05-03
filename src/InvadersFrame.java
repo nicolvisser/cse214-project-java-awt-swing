@@ -258,6 +258,7 @@ public class InvadersFrame extends JFrame {
 
         game.run();
 
+        GameAudio.close();
         System.exit(0);
 
     }

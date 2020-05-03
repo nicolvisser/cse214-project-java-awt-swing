@@ -179,7 +179,10 @@ public class Missile extends DefaultCritter {
     }
 
     public void handleCollisionWith(Enemy enemy) {
-        // handled in EnemyGroup class now
+        // for game this is handled in EnemyGroup class, but for tutorial and testing it
+        // gets handled here
+        this.explode();
+        enemy.takeDamage(Missile.DEFAULT_DAMAGE_POINTS);
     }
 
     public void handleCollisionWith(Shooter shooter) {

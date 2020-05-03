@@ -158,6 +158,7 @@ public class EnemyGroup implements Collidable, Disposable {
             enemy.position.x += dx;
             enemy.position.y += dy;
             enemy.update(dt);
+            enemy.lookAt(target);
         }
 
         for (Missile missile : missiles) {

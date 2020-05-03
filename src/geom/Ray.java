@@ -72,12 +72,14 @@ public class Ray implements Shape {
     }
 
     public double lengthUntilIntersection(LineSegment lineSeg) {
-        // TODO Implement
+        // To be implemented in future to complete API. not necessary for game at
+        // current stage
         return Double.POSITIVE_INFINITY;
     }
 
     public double lengthUntilIntersection(Ray ray) {
-        // TODO Implement
+        // To be implemented in future to complete API. not necessary for game at
+        // current stage
         return Double.POSITIVE_INFINITY;
     }
 
@@ -103,12 +105,14 @@ public class Ray implements Shape {
     }
 
     public boolean intersects(LineSegment lineSeg) {
-        // TODO implement
+        // To be implemented in future to complete API. not necessary for game at
+        // current stage
         return false;
     }
 
     public boolean intersects(Ray ray) {
-        // TODO implement
+        // To be implemented in future to complete API. not necessary for game at
+        // current stage
         return false;
     }
 

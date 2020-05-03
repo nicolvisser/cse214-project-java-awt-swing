@@ -47,7 +47,8 @@ public class Circle implements BoundingShape {
     }
 
     private boolean intersects(LineSegment lineSeg) {
-        // TODO implement
+        // To be implemented in future to complete API. not necessary for game at
+        // current stage
         return false;
     }
 
@@ -117,7 +118,8 @@ public class Circle implements BoundingShape {
     }
 
     private boolean contains(LineSegment lineSeg) {
-        // TODO implement
+        // To be implemented in future to complete API. not necessary for game at
+        // current stage
         return false;
     }
 

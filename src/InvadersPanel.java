@@ -26,7 +26,7 @@ public class InvadersPanel extends JPanel {
     // defined different states panel can be in, which is used to determine what
     // component to display on panel at what time
     public enum DisplayState {
-        MAIN_MENU, PLAYING, TUTORIAL, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS, SET_RESOLUTION, GAME_OVER, QUIT;
+        MAIN_MENU, PLAYING, TUTORIAL, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS, GAME_OVER, QUIT;
     }
 
     // stores current state the panel is in
@@ -36,8 +36,7 @@ public class InvadersPanel extends JPanel {
     private static final String[] mainMenuScreenOptions = { "Play Quick Tutorial", "Start New Game", "High Scores",
             "Settings", "Quit Game" };
     private static final String[] pauseScreenOptions = { "Resume Game", "Restart Game", "Quit To Main Menu" };
-    private static final String[] settingsScreenOptions = { "Set Resolution", "Controls", "Back" };
-    private static final String[] resolutionScreenOptions = { "600x600", "800x800", "1000x1000", "Cancel" };
+    private static final String[] settingsScreenOptions = { "Customize Controls", "Back" };
 
     // declare components different components that will at some point be drawn on
     // panel
@@ -47,7 +46,6 @@ public class InvadersPanel extends JPanel {
     private MenuScreen mainMenuScreen;
     private MenuScreen pauseScreen;
     private MenuScreen settingsScreen;
-    private MenuScreen resolutionScreen;
     private HighScoreScreen highScoreScreen;
     private GameOverScreen gameOverScreen;
     private ControlsScreen controlsScreen;
@@ -65,7 +63,6 @@ public class InvadersPanel extends JPanel {
         mainMenuScreen = new MenuScreen(width, height, "Invaders", "Main Menu", mainMenuScreenOptions);
         pauseScreen = new MenuScreen(width, height, "Paused", pauseScreenOptions);
         settingsScreen = new MenuScreen(width, height, "Settings", settingsScreenOptions);
-        resolutionScreen = new MenuScreen(width, height, "Change Resolution", resolutionScreenOptions);
         highScoreScreen = new HighScoreScreen(width, height);
         gameOverScreen = new GameOverScreen(width, height);
         controlsScreen = new ControlsScreen(width, height);
@@ -75,7 +72,7 @@ public class InvadersPanel extends JPanel {
     }
 
     private void setKeyBindings() {
-        // TODO: Sort out issue with quit on Q press when renaming highscore
+        // TODO fix issue: When renaming higscore and typing Q, the game quits.
 
         // Using key binding for q key to quit.
         // The keybinding works whether panel has focus or not.
@@ -116,7 +113,7 @@ public class InvadersPanel extends JPanel {
             case MAIN_MENU:
 
                 // ensure the current screen has focus in order for keylistener to work
-                // TODO try and combine repeating code for every screen
+                // TODO try and combine this repeating code for every screen
                 if (!mainMenuScreen.hasFocus()) {
                     mainMenuScreen.requestFocusInWindow();
                 }
@@ -316,21 +313,14 @@ public class InvadersPanel extends JPanel {
                     case -1: // not yet selected
                         break;
 
-                    case 0: // set resolution
-                        settingsScreen.resetSelection();
-                        removeAll();
-                        add(resolutionScreen);
-                        activeDisplayState = DisplayState.SET_RESOLUTION;
-                        break;
-
-                    case 1: // controls
+                    case 0: // controls
                         settingsScreen.resetSelection();
                         removeAll();
                         add(controlsScreen);
                         activeDisplayState = DisplayState.CONTROLS;
                         break;
 
-                    case 2: // back
+                    case 1: // back
                         settingsScreen.selectOptionToGoBack();
                         break;
 
@@ -374,50 +364,6 @@ public class InvadersPanel extends JPanel {
 
                     case 7: // back
                         controlsScreen.selectOptionToGoBack();
-
-                    default:
-                        break;
-                }
-                break;
-
-            case SET_RESOLUTION:
-
-                // ensure the current screen has focus in order for keylistener to work
-                if (!resolutionScreen.hasFocus()) {
-                    resolutionScreen.requestFocusInWindow();
-                }
-
-                // decide what to do if user selected a option in the menu
-                switch (resolutionScreen.selectedOption) {
-                    case -2: // back (to setting screen)
-                        resolutionScreen.resetSelection();
-                        resolutionScreen.resetHiglight();
-                        removeAll();
-                        add(settingsScreen);
-                        activeDisplayState = DisplayState.SETTINGS;
-                        break;
-
-                    case -1: // not yet selected
-                        break;
-
-                    case 0: // 600x600
-                        // TODO: setupStdDrawCanvas(600, 600);
-                        resolutionScreen.resetSelection();
-                        break;
-
-                    case 1: // 800x800
-                        // TODO: setupStdDrawCanvas(800, 800);
-                        resolutionScreen.resetSelection();
-                        break;
-
-                    case 2: // 1000x1000
-                        // TODO: setupStdDrawCanvas(1000, 1000);
-                        resolutionScreen.resetSelection();
-                        break;
-
-                    case 3: // cancel
-                        resolutionScreen.selectOptionToGoBack();
-                        break;
 
                     default:
                         break;
@@ -504,9 +450,6 @@ public class InvadersPanel extends JPanel {
                 break;
             case CONTROLS:
                 controlsScreen.draw(g2);
-                break;
-            case SET_RESOLUTION:
-                resolutionScreen.draw(g2);
                 break;
             case GAME_OVER:
                 gameOverScreen.draw(g2);

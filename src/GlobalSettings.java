@@ -15,6 +15,8 @@ public class GlobalSettings {
 
     static boolean DEBUG = false; // enable visual debugging mode or not
 
+    public static boolean isFullscreen; // don't change here. change via frame object
+
     static void setViewSize(final int w, final int h) {
         vw = w;
         vh = h;

@@ -60,7 +60,7 @@ public class DefaultCritter implements Collidable, Disposable {
     }
 
     public void lookAt(DefaultCritter other) {
-        orientation = this.positionRelativeTo(other).getBearing(); // TODO Think there is an error here, TEST
+        orientation = other.positionRelativeTo(this).getBearing();
     }
 
     public void lookAt(double x, double y) {

@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 import geom.*;
@@ -18,7 +20,8 @@ public class Tutorial extends JComponent {
     public boolean exitFlag;
 
     private Shooter shooter = new Shooter(null);
-    private Enemy enemy = new Enemy(vw * 3 / 4, vh / 4, vh / 40, Math.PI);
+
+    private ArrayList<Enemy> enemies = new ArrayList<>();
 
     int tutorialStage = 0;
 
@@ -30,27 +33,27 @@ public class Tutorial extends JComponent {
         this.keyCodes = keyCodes;
         this.keyDescriptions = keyDescriptions;
 
+        enemies.add(new Enemy(vw * 3 / 4, vh / 4, vh / 40, Math.PI));
+        enemies.add(new Enemy(vw * 1 / 4, vh / 4, vh / 40, Math.PI));
+
         addKeyListener(new TutorialKeyListener());
         setFocusTraversalKeysEnabled(false);
     }
 
     public void update(int dt) {
         shooter.update(dt);
-        enemy.update(dt);
+
+        for (Enemy enemy : enemies)
+            enemy.update(dt);
 
         if (!stage1Complete)
             stage1Complete = moveTarget.contains(shooter.getCollisionShape());
-
         stage2Complete = Double.isFinite(getLengthOfAImLine());
-        stage3Complete = enemy.state == Enemy.EnemyState.DEAD;
+        stage3Complete = enemies.size() <= 0;
 
-        for (Missile missile : shooter.missiles) {
-            if (missile.getCollisionShape().intersects(enemy.getCollisionShape())) {
-                enemy.explode();
-                missile.explode();
-            }
-        }
-
+        Collidable.checkAndHandleCollisions(shooter.missiles, enemies);
+        Disposable.handleDisposing(shooter.missiles);
+        Disposable.handleDisposing(enemies);
     }
 
     private void drawKey(Graphics2D g2, int x, int y, String keyStr) {
@@ -85,7 +88,8 @@ public class Tutorial extends JComponent {
                 drawKey(g2, vw * 55 / 100, vh * 30 / 100, keyDescriptions[1]);
                 moveTarget.draw(g2);
             } else {
-                enemy.draw(g2);
+                for (Enemy enemy : enemies)
+                    enemy.draw(g2);
 
                 if (!stage2Complete) {
                     g2.setColor(Color.ORANGE);
@@ -151,7 +155,15 @@ public class Tutorial extends JComponent {
 
     private double getLengthOfAImLine() {
         Ray aimRay = new Ray(shooter.position, shooter.lookVector());
-        return aimRay.lengthUntilIntersection(enemy.getCollisionShape());
+        double lengthOfAimLine = Double.POSITIVE_INFINITY;
+
+        for (Enemy enemy : enemies) {
+            double x = aimRay.lengthUntilIntersection(enemy.getCollisionShape());
+            if (x < lengthOfAimLine)
+                lengthOfAimLine = x;
+        }
+
+        return lengthOfAimLine;
     }
 
     private LineSegment getAimLine() {

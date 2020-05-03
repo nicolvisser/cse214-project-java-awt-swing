@@ -4,8 +4,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 
 import javax.swing.JComponent;
 
@@ -161,21 +159,21 @@ public class InvaderGameState extends JComponent {
 
         powerUpManager.update(dt);
 
-        handleDisposing(shooter.missiles);
-        handleDisposing(bunkers);
-        handleDisposing(powerUpManager.powerUps);
+        Disposable.handleDisposing(shooter.missiles);
+        Disposable.handleDisposing(bunkers);
+        Disposable.handleDisposing(powerUpManager.powerUps);
         if (enemyGroup != null) {
-            handleDisposing(enemyGroup.enemies);
-            handleDisposing(enemyGroup.missiles);
+            Disposable.handleDisposing(enemyGroup.enemies);
+            Disposable.handleDisposing(enemyGroup.missiles);
         }
 
-        checkAndHandleCollisions(bunkers, shooter.missiles);
-        checkAndHandleCollisions(shooter, powerUpManager.powerUps);
-        checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
+        Collidable.checkAndHandleCollisions(bunkers, shooter.missiles);
+        Collidable.checkAndHandleCollisions(shooter, powerUpManager.powerUps);
+        Collidable.checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
         if (enemyGroup != null) {
-            checkAndHandleCollisions(enemyGroup, shooter.missiles);
-            checkAndHandleCollisions(shooter, enemyGroup.missiles);
-            checkAndHandleCollisions(bunkers, enemyGroup.missiles);
+            Collidable.checkAndHandleCollisions(enemyGroup, shooter.missiles);
+            Collidable.checkAndHandleCollisions(shooter, enemyGroup.missiles);
+            Collidable.checkAndHandleCollisions(bunkers, enemyGroup.missiles);
         }
 
         if (shooter.state == Shooter.ShooterState.DEAD) {
@@ -187,46 +185,6 @@ public class InvaderGameState extends JComponent {
             }
         }
 
-    }
-
-    // remove reference if no longer needed so object can be garbage collected
-    public void handleDisposing(ArrayList<? extends Disposable> group) {
-        Iterator<? extends Disposable> critterIterator = group.iterator();
-        while (critterIterator.hasNext()) {
-            Disposable critter = critterIterator.next();
-            if (critter.mayBeDisposed()) {
-                critterIterator.remove();
-            }
-        }
-    }
-
-    // to crosscheck collidable in two different groups
-    public void checkAndHandleCollisions(ArrayList<? extends Collidable> group1,
-            ArrayList<? extends Collidable> group2) {
-        try {
-            for (Collidable collidable1 : group1) {
-                for (Collidable collidable2 : group2) {
-                    if (collidable1.isCollidingWith(collidable2)) {
-                        collidable1.handleCollisionWith(collidable2);
-                    }
-                }
-            }
-        } catch (ConcurrentModificationException e) {
-            // handled by skipping check for this frame;
-        }
-    }
-
-    // to check single collidable against a group of collidables:
-    public void checkAndHandleCollisions(Collidable collidable1, ArrayList<? extends Collidable> group2) {
-        try {
-            for (Collidable collidable2 : group2) {
-                if (collidable1.isCollidingWith(collidable2)) {
-                    collidable1.handleCollisionWith(collidable2);
-                }
-            }
-        } catch (ConcurrentModificationException e) {
-            // handled by skipping check for this frame;
-        }
     }
 
     public void setGameKeys(int[] keyCodes) {

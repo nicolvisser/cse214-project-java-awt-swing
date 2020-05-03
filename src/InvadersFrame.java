@@ -78,6 +78,7 @@ public class InvadersFrame extends JFrame {
         // other classes can have easy access to it without having to pass it as
         // argument via constructors to each class that needs it
         GlobalSettings.setViewSize(width, height);
+        GlobalSettings.isFullscreen = true;
 
         // set a double buffer strategy
         try {
@@ -93,10 +94,12 @@ public class InvadersFrame extends JFrame {
     }
 
     private void initWindowedMode() {
-        // TODO Issue: (at least on MacOS) Title bar draws over drawing area. This is
+        // Small Issue: (at least on MacOS). Title bar draws over drawing area. This is
         // because we are not using swing's built in paint method but our own. Our own
-        // method is faster and better suited for active rendereing but can not yet
+        // method is faster and better suited for active rendering but can not yet
         // handle all window related stuff such as window clipping areas etc.
+        // This is not a major issue, and might not be addressed by project submission
+        // date.
 
         // set some properties of the frame:
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -127,6 +130,13 @@ public class InvadersFrame extends JFrame {
         }
 
         setVisible(true);
+    }
+
+    public void changeWindowSize(int width, int height) {
+        Dimension newSize = new Dimension(width, height);
+        setPreferredSize(newSize);
+        panel.setPreferredSize(newSize);
+        pack();
     }
 
     // Tutorial at

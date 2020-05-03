@@ -20,7 +20,7 @@ public class Shooter extends DefaultCritter {
     private static final int vmax = GlobalSettings.vmax;
 
     private static final int DEFAULT_COLLISION_RADIUS = vmin * 3 / 100;
-    private static final int DEFAULT_TURRET_RADIUS = DEFAULT_COLLISION_RADIUS * 3 / 4; // TODO: ugly
+    private static final int DEFAULT_TURRET_RADIUS = DEFAULT_COLLISION_RADIUS * 3 / 4; // for drawing purposes
 
     private static final int DEFAULT_POSITION_X = vw * 50 / 100;
     private static final int DEFAULT_POSITION_Y = vh * 90 / 100;
@@ -53,7 +53,7 @@ public class Shooter extends DefaultCritter {
     boolean isRotatingLeft = false;
     boolean isRotatingRight = false;
 
-    static final int DEFAULT_RELOAD_TIME = 20; // in number of frames as unit // TODO change to time based not frame
+    static final int DEFAULT_RELOAD_TIME = 300; // ms
     int currentReloadTime = DEFAULT_RELOAD_TIME;
     private int reloadTimer = currentReloadTime; // ready to shoot from start
 
@@ -100,9 +100,15 @@ public class Shooter extends DefaultCritter {
         state = ShooterState.EXPLODING;
     }
 
-    // TODO: Change parameters to be more general (obstacles)
+    private Vector2D getTurretEndPosition() {
+        return position.add(lookVector().scale(DEFAULT_TURRET_RADIUS));
+    }
+
+    // Possible future improvement: instead of explicity using enemyGroup and
+    // bunkers as obstacles could make method more general and use collidable
+    // interface
     public LineSegment getAimLine(EnemyGroup enemyGroup, ArrayList<Bunker> bunkers) {
-        Vector2D start = position; // TODO: change to end of turret position
+        Vector2D start = getTurretEndPosition();
 
         Ray aimRay = new Ray(start, lookVector());
         double lengthOfAimLine = vw + vh; // will always extend outside frame
@@ -145,7 +151,7 @@ public class Shooter extends DefaultCritter {
         switch (state) {
             case ALIVE:
 
-                // fine tune image position and size to fit collisionShape
+                // fine tune image position and size
                 int w = (int) (width * 1.2);
                 int h = (int) (height * 1.2);
                 int x = (int) (position.x - w / 2);
@@ -158,7 +164,7 @@ public class Shooter extends DefaultCritter {
                 w = (int) (2 * DEFAULT_TURRET_RADIUS);
                 h = (int) (2 * DEFAULT_TURRET_RADIUS);
                 x = (int) (position.x - w / 2);
-                y = (int) (position.y - h / 2 - h / 8);
+                y = (int) (position.y - h / 2);
 
                 g2.drawImage(IMAGE_ICON_TURRET.getImage(), x, y, w, h, null);
 
@@ -258,7 +264,7 @@ public class Shooter extends DefaultCritter {
             angularAcceleration = 0;
         }
 
-        reloadTimer++;
+        reloadTimer += dt;
 
         for (Missile missile : missiles) {
             missile.update(dt);

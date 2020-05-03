@@ -193,8 +193,7 @@ public class Rectangle implements BoundingShape {
     }
 
     private boolean contains(Ray ray) {
-        // TODO implement
-        return false;
+        return isInfinite();
     }
 
     private boolean contains(LineSegment lineSeg) {

@@ -76,13 +76,16 @@ public class Shooter extends DefaultCritter {
     boolean isLaserActive;
     boolean isLaserActiveOnTarget;
 
-    public Shooter(ScoreKeeper score) {
-        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_COLLISION_RADIUS, score);
+    Shakeable gameScreen;
+
+    public Shooter(ScoreKeeper score, Shakeable gameScreen) {
+        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_COLLISION_RADIUS, score, gameScreen);
     }
 
-    public Shooter(double x, double y, double collisionRadius, ScoreKeeper score) {
+    public Shooter(double x, double y, double collisionRadius, ScoreKeeper score, Shakeable gameScreen) {
         super(x, y, collisionRadius, 0);
         this.score = score;
+        this.gameScreen = gameScreen;
     }
 
     public void takeDamage(int damagePoints) {

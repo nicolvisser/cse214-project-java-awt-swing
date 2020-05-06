@@ -36,7 +36,8 @@ public class Missile extends DefaultCritter {
         this.owner = owner;
 
         if (owner instanceof Shooter) {
-            explosion = new AnimatedImage("resources/images/blueExplosion", "png", 17, AnimatedImage.AnimationType.ONCE);
+            explosion = new AnimatedImage("resources/images/blueExplosion", "png", 17,
+                    AnimatedImage.AnimationType.ONCE);
         } else {
             explosion = new AnimatedImage("resources/images/redExplosion", "png", 17, AnimatedImage.AnimationType.ONCE);
         }
@@ -188,6 +189,9 @@ public class Missile extends DefaultCritter {
     public void handleCollisionWith(Shooter shooter) {
         this.explode();
         shooter.takeDamage(DEFAULT_DAMAGE_POINTS);
+        if (shooter.gameScreen != null) {
+            shooter.gameScreen.shake();
+        }
     }
 
     public void handleCollisionWith(Bunker bunker) {

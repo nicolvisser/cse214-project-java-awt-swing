@@ -36,6 +36,10 @@ public class InvaderGameState extends JComponent {
     final int interLevelWaitTime = 500;
     long remainingWaitTimeBeforeLevelStarts = interLevelWaitTime;
 
+    // vars associated with view shake animation
+    double shakeTimer = Double.POSITIVE_INFINITY;
+    double xOffset = 0, yOffset = 0;
+
     // vars associated with each level
     int enemyGroupBoxWidth = vw / 10;
     int enemyGroupBoxHEight = vw / 10;
@@ -55,7 +59,11 @@ public class InvaderGameState extends JComponent {
 
         score = new ScoreKeeper(vw, vh);
 
-        shooter = new Shooter(score);
+        Shakeable shakeFunc = () -> {
+            shakeTimer = 0;
+        };
+
+        shooter = new Shooter(score, shakeFunc);
 
         enemyGroup = null;
 
@@ -89,35 +97,40 @@ public class InvaderGameState extends JComponent {
     }
 
     public void draw(Graphics2D g2) {
-        shooter.draw(g2);
 
-        if (enemyGroup != null)
-            enemyGroup.draw(g2);
+        g2.translate(xOffset, yOffset); // used to give screen a shake animation
+        {
+            shooter.draw(g2);
 
-        if (textAnimOnLevelStart != null && !textAnimOnLevelStart.finished) {
-            Utils.scaleFont(g2, 3f);
-            g2.setColor(Color.WHITE);
-            textAnimOnLevelStart.draw(g2);
-            Utils.scaleFont(g2, 1 / 3f);
+            if (enemyGroup != null)
+                enemyGroup.draw(g2);
+
+            if (textAnimOnLevelStart != null && !textAnimOnLevelStart.finished) {
+                Utils.scaleFont(g2, 3f);
+                g2.setColor(Color.WHITE);
+                textAnimOnLevelStart.draw(g2);
+                Utils.scaleFont(g2, 1 / 3f);
+            }
+
+            for (Bunker bunker : bunkers)
+                bunker.draw(g2);
+
+            powerUpManager.draw(g2);
+
+            shooter.drawAimLine(g2);
+
+            // HUD
+
+            score.draw(g2);
+
+            g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
+            drawStatusBar(g2, vw * 3 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooter.getHealthPercentage());
+
+            g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
+            drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, 100);
+
         }
-
-        for (Bunker bunker : bunkers)
-            bunker.draw(g2);
-
-        powerUpManager.draw(g2);
-
-        shooter.drawAimLine(g2);
-
-        // HUD
-
-        score.draw(g2);
-
-        g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
-        drawStatusBar(g2, vw * 3 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooter.getHealthPercentage());
-
-        g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
-        drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, 100);
-
+        g2.translate(-xOffset, -yOffset);
     }
 
     public void resetFlags() {
@@ -141,6 +154,12 @@ public class InvaderGameState extends JComponent {
     }
 
     public void update(int dt) {
+        // shake screen by setting draw offset to an exponentially damped sinusoidal
+        // curve for a few seconds
+        if (shakeTimer < 3) {
+            shakeTimer += dt / 1000.0;
+            xOffset = 50 * Math.sin(20 * Math.PI * shakeTimer) * Math.exp(-10 * shakeTimer);
+        }
 
         if (enemyGroup == null) {
 
@@ -242,5 +261,9 @@ public class InvaderGameState extends JComponent {
 
     public Vector2D getVelocityForBackground() {
         return shooter.velocity;
+    }
+
+    public void shake() {
+        shakeTimer = 0;
     }
 }

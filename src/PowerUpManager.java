@@ -27,7 +27,7 @@ public class PowerUpManager {
         PowerUp.PowerUpType randomType = types[randomIndex];
 
         // override for testing:
-        // randomType = PowerUp.PowerUpType.HEALTH_REGEN;
+        // randomType = PowerUp.PowerUpType.FAST_RELOAD;
 
         powerUps.add(new PowerUp(position.x, position.y, randomType, this));
     }
@@ -90,6 +90,24 @@ public class PowerUpManager {
     public void handleNewPowerUpEquipped(PowerUp powerUp, Shooter shooter) {
         powerUp.shooterRef = shooter;
         powerUp.state = PowerUp.PowerUpState.ACTIVATED;
+
+        switch (powerUp.type) {
+            case FAST_RELOAD:
+                GameAudio.playVoiceFastReload();
+                break;
+            case ENERGY_REGEN:
+                GameAudio.playVoiceEnergyRegen();
+                break;
+            case HEALTH_REGEN:
+                GameAudio.playVoiceHealthRegen();
+                break;
+            case LASER_GUN:
+                GameAudio.playVoiceLaserGun();
+                break;
+
+            default:
+                break;
+        }
 
         for (int i = 0; i < numTypes; i++) {
             if (types[i] == powerUp.type) {

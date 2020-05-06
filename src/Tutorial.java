@@ -19,7 +19,7 @@ public class Tutorial extends JComponent {
 
     public boolean exitFlag;
 
-    private Shooter shooter = new Shooter(null);
+    private Shooter shooter = new Shooter(null, null);
 
     private ArrayList<Enemy> enemies = new ArrayList<>();
 

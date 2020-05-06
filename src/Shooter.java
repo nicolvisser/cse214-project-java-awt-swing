@@ -32,6 +32,7 @@ public class Shooter extends DefaultCritter {
 
     private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/images/carrier.png");
     private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/images/destroyer.png");
+    private static final ImageIcon IMAGE_ICON_SHIELD = new ImageIcon("resources/images/shield.png");
 
     private AnimatedImage explosion = new AnimatedImage("resources/images/blueExplosion", "png", 17,
             AnimatedImage.AnimationType.ONCE);
@@ -75,14 +76,24 @@ public class Shooter extends DefaultCritter {
     ArrayList<Bunker> bunkersObstacle;
     boolean isLaserActive;
     boolean isLaserActiveOnTarget;
+    private int timeSinceLastPlayedLaserSound = 0;
+    private final int laserSoundDelay = 500;
 
-    public Shooter(ScoreKeeper score) {
-        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_COLLISION_RADIUS, score);
+    boolean isShieldActive;
+    private static final int SHIELD_COLLISION_RADIUS = 12;
+    private static final int SHIELD_ENERGY_USAGE_INITIAL = 10;
+    private static final double SHIELD_ENERGY_USAGE_PER_SECOND = 10;
+
+    Shakeable gameScreen;
+
+    public Shooter(ScoreKeeper score, Shakeable gameScreen) {
+        this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_COLLISION_RADIUS, score, gameScreen);
     }
 
-    public Shooter(double x, double y, double collisionRadius, ScoreKeeper score) {
+    public Shooter(double x, double y, double collisionRadius, ScoreKeeper score, Shakeable gameScreen) {
         super(x, y, collisionRadius, 0);
         this.score = score;
+        this.gameScreen = gameScreen;
     }
 
     public void takeDamage(int damagePoints) {
@@ -128,7 +139,7 @@ public class Shooter extends DefaultCritter {
     private void shootMissile() {
         if (state == ShooterState.ALIVE) {
             if (reloadTimer >= currentReloadTime) {
-                GameAudio.playSoundPulse();
+                GameAudio.playSoundMissileFire();
                 Missile missile = new Missile(position, lookVector(), this);
                 missiles.add(missile);
                 reloadTimer = 0;
@@ -148,6 +159,11 @@ public class Shooter extends DefaultCritter {
             if (isLaserActiveOnTarget) {
                 Enemy enemy = (Enemy) target;
                 enemy.takeDamage(7);
+
+                if (timeSinceLastPlayedLaserSound > laserSoundDelay) {
+                    GameAudio.playSoundBuzz();
+                    timeSinceLastPlayedLaserSound = 0;
+                }
             }
 
         }
@@ -155,6 +171,25 @@ public class Shooter extends DefaultCritter {
 
     public void explode() {
         state = ShooterState.EXPLODING;
+    }
+
+    public void activateShield() {
+        if (!isShieldActive && energyPoints > SHIELD_ENERGY_USAGE_INITIAL) {
+            GameAudio.playSoundShieldActivate();
+            // boundingCircle.radius = SHIELD_COLLISION_RADIUS; // Todo: Extend shield
+            // radius
+            energyPoints -= SHIELD_ENERGY_USAGE_INITIAL;
+            isShieldActive = true;
+        }
+    }
+
+    public void deactivateShield() {
+        if (isShieldActive) {
+            GameAudio.playSoundShieldDeactivate();
+            // boundingCircle.radius = DEFAULT_COLLISION_RADIUS; // Todo: Extend shield
+            // radius
+            isShieldActive = false;
+        }
     }
 
     private Vector2D getTurretEndPosition() {
@@ -269,6 +304,14 @@ public class Shooter extends DefaultCritter {
 
                 g2.rotate(-orientation, position.x, position.y);
 
+                w = (int) (width * 2);
+                h = (int) (height * 2);
+                x = (int) (position.x - w / 2);
+                y = (int) (position.y - h / 2);
+
+                if (isShieldActive)
+                    g2.drawImage(IMAGE_ICON_SHIELD.getImage(), x, y, w, h, null);
+
                 break;
 
             case EXPLODING:
@@ -304,8 +347,16 @@ public class Shooter extends DefaultCritter {
     @Override
     public void update(int dt) {
 
+        if (timeSinceLastPlayedLaserSound < laserSoundDelay) {
+            timeSinceLastPlayedLaserSound += dt;
+        }
+
         if (isLaserActive) {
             handleLaserCollision();
+        }
+
+        if (isShieldActive) {
+            energyPoints -= SHIELD_ENERGY_USAGE_PER_SECOND * dt / 1000;
         }
 
         if (explosion.isComplete) {

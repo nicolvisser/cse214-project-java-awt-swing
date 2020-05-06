@@ -51,8 +51,40 @@ public class GameAudio {
         play("resources/audio/explosion.wav");
     }
 
-    public static void playSoundPulse() {
-        play("resources/audio/pulse.wav");
+    public static void playSoundExplosionDistant() {
+        play("resources/audio/NenadSimic - Muffled Distant Explosion (1).wav");
+    }
+
+    public static void playSoundMissileFire() {
+        play("resources/audio/pulse.wav", GlobalSettings.volumeSounds * 3 / 2);
+    }
+
+    public static void playSoundBuzz() {
+        play("resources/audio/buzz.wav");
+    }
+
+    public static void playSoundShieldActivate() {
+        play("resources/audio/shieldUp.wav", 50);
+    }
+
+    public static void playSoundShieldDeactivate() {
+        play("resources/audio/shieldDown.wav", 50);
+    }
+
+    public static void playVoiceHealthRegen() {
+        play("resources/audio/Health-Regeneration.wav", 70);
+    }
+
+    public static void playVoiceEnergyRegen() {
+        play("resources/audio/Energy-Regeneration.wav", 70);
+    }
+
+    public static void playVoiceFastReload() {
+        play("resources/audio/Fast-Reload.wav", 70);
+    }
+
+    public static void playVoiceLaserGun() {
+        play("resources/audio/Laser-Gun.wav", 70);
     }
 
     public static void loopMenuMusic() {

@@ -63,6 +63,22 @@ public class GameAudio {
         play("resources/audio/buzz.wav");
     }
 
+    public static void playVoiceHealthRegen() {
+        play("resources/audio/Health-Regeneration.wav", 70);
+    }
+
+    public static void playVoiceEnergyRegen() {
+        play("resources/audio/Energy-Regeneration.wav", 70);
+    }
+
+    public static void playVoiceFastReload() {
+        play("resources/audio/Fast-Reload.wav", 70);
+    }
+
+    public static void playVoiceLaserGun() {
+        play("resources/audio/Laser-Gun.wav", 70);
+    }
+
     public static void loopMenuMusic() {
         loopMusic("resources/audio/Death Is Just Another Path.wav");
     }

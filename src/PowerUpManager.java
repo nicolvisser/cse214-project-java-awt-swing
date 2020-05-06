@@ -91,6 +91,24 @@ public class PowerUpManager {
         powerUp.shooterRef = shooter;
         powerUp.state = PowerUp.PowerUpState.ACTIVATED;
 
+        switch (powerUp.type) {
+            case FAST_RELOAD:
+                GameAudio.playVoiceFastReload();
+                break;
+            case ENERGY_REGEN:
+                GameAudio.playVoiceEnergyRegen();
+                break;
+            case HEALTH_REGEN:
+                GameAudio.playVoiceHealthRegen();
+                break;
+            case LASER_GUN:
+                GameAudio.playVoiceLaserGun();
+                break;
+
+            default:
+                break;
+        }
+
         for (int i = 0; i < numTypes; i++) {
             if (types[i] == powerUp.type) {
                 // if currently no powerup of same type in effect, then add effect to shooter

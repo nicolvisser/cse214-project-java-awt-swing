@@ -63,6 +63,14 @@ public class GameAudio {
         play("resources/audio/buzz.wav");
     }
 
+    public static void playSoundShieldActivate() {
+        play("resources/audio/shieldUp.wav", 50);
+    }
+
+    public static void playSoundShieldDeactivate() {
+        play("resources/audio/shieldDown.wav", 50);
+    }
+
     public static void playVoiceHealthRegen() {
         play("resources/audio/Health-Regeneration.wav", 70);
     }

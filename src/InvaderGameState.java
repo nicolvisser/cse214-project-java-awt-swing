@@ -127,7 +127,7 @@ public class InvaderGameState extends JComponent {
             drawStatusBar(g2, vw * 3 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooter.getHealthPercentage());
 
             g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
-            drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, 100);
+            drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooter.getEnergyPercentage());
 
         }
         g2.translate(-xOffset, -yOffset);
@@ -236,7 +236,7 @@ public class InvaderGameState extends JComponent {
             } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
                 shooter.onShootButtonPress();
             } else if (e.getKeyCode() == keyCodes[5]) { // Block
-
+                shooter.activateShield();
             }
         }
 
@@ -253,7 +253,7 @@ public class InvaderGameState extends JComponent {
             } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
                 shooter.onShootButtonRelease();
             } else if (e.getKeyCode() == keyCodes[5]) { // Block
-
+                shooter.deactivateShield();
             }
         }
 

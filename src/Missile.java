@@ -188,10 +188,16 @@ public class Missile extends DefaultCritter {
 
     public void handleCollisionWith(Shooter shooter) {
         this.explode();
-        shooter.takeDamage(DEFAULT_DAMAGE_POINTS);
-        if (shooter.gameScreen != null) {
-            shooter.gameScreen.shake();
+
+        if (shooter.isShieldActive) {
+
+        } else {
+            shooter.takeDamage(DEFAULT_DAMAGE_POINTS);
+            if (shooter.gameScreen != null) {
+                shooter.gameScreen.shake();
+            }
         }
+
     }
 
     public void handleCollisionWith(Bunker bunker) {

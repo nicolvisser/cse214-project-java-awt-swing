@@ -19,7 +19,7 @@ public class EnemyGroup implements Collidable, Disposable {
     public static final double DEFAULT_MOVEMENT_SPEED = 0.002 * vmin;
     private static final int DEFAULT_MOVE_DOWN_TIME = 10;
 
-    private static final double POWERUP_SPAWN_PROBABILITY = 0.1;
+    private static final double POWERUP_SPAWN_PROBABILITY = 0.15;
 
     private enum MoveState {
         LEFT, RIGHT, DOWN_BEFORE_LEFT, DOWN_BEFORE_RIGHT;
@@ -102,7 +102,7 @@ public class EnemyGroup implements Collidable, Disposable {
     }
 
     public void shootMissile() {
-        GameAudio.playSoundPulse();
+        GameAudio.playSoundMissileFire();
         int i = (int) (Math.random() * enemies.size());
         Enemy randomEnemy = enemies.get(i);
         Vector2D pos = new Vector2D(randomEnemy.position.x, randomEnemy.position.y);

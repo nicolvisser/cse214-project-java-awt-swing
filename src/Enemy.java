@@ -32,6 +32,7 @@ public class Enemy extends DefaultCritter {
     }
 
     public void explode() {
+        GameAudio.playSoundExplosion();
         state = EnemyState.EXPLODING;
     }
 

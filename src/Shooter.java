@@ -75,6 +75,8 @@ public class Shooter extends DefaultCritter {
     ArrayList<Bunker> bunkersObstacle;
     boolean isLaserActive;
     boolean isLaserActiveOnTarget;
+    private int timeSinceLastPlayedLaserSound = 0;
+    private final int laserSoundDelay = 500;
 
     Shakeable gameScreen;
 
@@ -131,7 +133,7 @@ public class Shooter extends DefaultCritter {
     private void shootMissile() {
         if (state == ShooterState.ALIVE) {
             if (reloadTimer >= currentReloadTime) {
-                GameAudio.playSoundPulse();
+                GameAudio.playSoundMissileFire();
                 Missile missile = new Missile(position, lookVector(), this);
                 missiles.add(missile);
                 reloadTimer = 0;
@@ -151,6 +153,11 @@ public class Shooter extends DefaultCritter {
             if (isLaserActiveOnTarget) {
                 Enemy enemy = (Enemy) target;
                 enemy.takeDamage(7);
+
+                if (timeSinceLastPlayedLaserSound > laserSoundDelay) {
+                    GameAudio.playSoundBuzz();
+                    timeSinceLastPlayedLaserSound = 0;
+                }
             }
 
         }
@@ -306,6 +313,10 @@ public class Shooter extends DefaultCritter {
 
     @Override
     public void update(int dt) {
+
+        if (timeSinceLastPlayedLaserSound < laserSoundDelay) {
+            timeSinceLastPlayedLaserSound += dt;
+        }
 
         if (isLaserActive) {
             handleLaserCollision();

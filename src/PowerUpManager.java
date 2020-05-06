@@ -27,7 +27,7 @@ public class PowerUpManager {
         PowerUp.PowerUpType randomType = types[randomIndex];
 
         // override for testing:
-        // randomType = PowerUp.PowerUpType.HEALTH_REGEN;
+        // randomType = PowerUp.PowerUpType.FAST_RELOAD;
 
         powerUps.add(new PowerUp(position.x, position.y, randomType, this));
     }

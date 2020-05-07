@@ -26,7 +26,7 @@ public class InvadersPanel extends JPanel {
     // defined different states panel can be in, which is used to determine what
     // component to display on panel at what time
     public enum DisplayState {
-        MAIN_MENU, PLAYING, TUTORIAL, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS, GAME_OVER, QUIT;
+        MAIN_MENU, PLAYING, TUTORIAL, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS_P1, CONTROLS_P2, GAME_OVER, QUIT;
     }
 
     // stores current state the panel is in
@@ -36,7 +36,7 @@ public class InvadersPanel extends JPanel {
     private static final String[] mainMenuScreenOptions = { "Play Quick Tutorial", "Start New Game", "High Scores",
             "Settings", "Quit Game" };
     private static final String[] pauseScreenOptions = { "Resume Game", "Restart Game", "Quit To Main Menu" };
-    private static final String[] settingsScreenOptions = { "Customize Controls", "Back" };
+    private static final String[] settingsScreenOptions = { "Customize Controls P1", "Customize Controls P2", "Back" };
 
     // declare components different components that will at some point be drawn on
     // panel
@@ -48,7 +48,8 @@ public class InvadersPanel extends JPanel {
     private MenuScreen settingsScreen;
     private HighScoreScreen highScoreScreen;
     private GameOverScreen gameOverScreen;
-    private ControlsScreen controlsScreen;
+    private ControlsScreen controlsScreenPlayer1;
+    private ControlsScreen controlsScreenPlayer2;
 
     public InvadersPanel(int width, int height) {
         this.width = width;
@@ -65,7 +66,8 @@ public class InvadersPanel extends JPanel {
         settingsScreen = new MenuScreen(width, height, "Settings", settingsScreenOptions);
         highScoreScreen = new HighScoreScreen(width, height);
         gameOverScreen = new GameOverScreen(width, height);
-        controlsScreen = new ControlsScreen(width, height);
+        controlsScreenPlayer1 = new ControlsScreen(width, height, "resources/keysP1.txt", GlobalSettings.DEFAULT_KEYCODES_P1);
+        controlsScreenPlayer2 = new ControlsScreen(width, height, "resources/keysP2.txt", GlobalSettings.DEFAULT_KEYCODES_P1);
 
         activeDisplayState = DisplayState.MAIN_MENU;
         add(mainMenuScreen);
@@ -129,8 +131,8 @@ public class InvadersPanel extends JPanel {
                     case 0: // play tutorial
                         mainMenuScreen.resetSelection();
                         removeAll();
-                        tutorial = new Tutorial(controlsScreen.getCurrentControlsConfig(),
-                                controlsScreen.getCurrentControlsDescriptions());
+                        tutorial = new Tutorial(controlsScreenPlayer1.getCurrentControlsConfig(),
+                                controlsScreenPlayer1.getCurrentControlsDescriptions());
                         add(tutorial);
                         activeDisplayState = DisplayState.TUTORIAL;
                         break;
@@ -138,7 +140,8 @@ public class InvadersPanel extends JPanel {
                     case 1: // new game
                         mainMenuScreen.resetSelection();
                         removeAll();
-                        loadedInvaderGameState = new InvaderGameState(controlsScreen.getCurrentControlsConfig());
+                        loadedInvaderGameState = new InvaderGameState(controlsScreenPlayer1.getCurrentControlsConfig(),
+                                controlsScreenPlayer2.getCurrentControlsConfig());
                         add(loadedInvaderGameState);
                         activeDisplayState = DisplayState.PLAYING;
                         GameAudio.fadeOutMusicThenStartGameMusic();
@@ -246,7 +249,8 @@ public class InvadersPanel extends JPanel {
                     case 1: // restart game
                         pauseScreen.resetSelection();
                         removeAll();
-                        loadedInvaderGameState = new InvaderGameState(controlsScreen.getCurrentControlsConfig());
+                        loadedInvaderGameState = new InvaderGameState(controlsScreenPlayer1.getCurrentControlsConfig(),
+                                controlsScreenPlayer2.getCurrentControlsConfig());
                         add(loadedInvaderGameState);
                         activeDisplayState = DisplayState.PLAYING;
                         break;
@@ -319,14 +323,21 @@ public class InvadersPanel extends JPanel {
                     case -1: // not yet selected
                         break;
 
-                    case 0: // controls
+                    case 0: // controls for player 1
                         settingsScreen.resetSelection();
                         removeAll();
-                        add(controlsScreen);
-                        activeDisplayState = DisplayState.CONTROLS;
+                        add(controlsScreenPlayer1);
+                        activeDisplayState = DisplayState.CONTROLS_P1;
                         break;
 
-                    case 1: // back
+                    case 1: // controls for player 2
+                        settingsScreen.resetSelection();
+                        removeAll();
+                        add(controlsScreenPlayer2);
+                        activeDisplayState = DisplayState.CONTROLS_P2;
+                        break;
+
+                    case 2: // back
                         settingsScreen.selectOptionToGoBack();
                         break;
 
@@ -335,18 +346,18 @@ public class InvadersPanel extends JPanel {
                 }
                 break;
 
-            case CONTROLS:
+            case CONTROLS_P1:
 
                 // ensure the current screen has focus in order for keylistener to work
-                if (!controlsScreen.hasFocus()) {
-                    controlsScreen.requestFocusInWindow();
+                if (!controlsScreenPlayer1.hasFocus()) {
+                    controlsScreenPlayer1.requestFocusInWindow();
                 }
 
                 // decide what to do if user selected a option in the menu
-                switch (controlsScreen.selectedOption) {
+                switch (controlsScreenPlayer1.selectedOption) {
                     case -2: // back (to setting screen)
-                        controlsScreen.resetSelection();
-                        controlsScreen.resetHiglight();
+                        controlsScreenPlayer1.resetSelection();
+                        controlsScreenPlayer1.resetHiglight();
                         removeAll();
                         add(settingsScreen);
                         activeDisplayState = DisplayState.SETTINGS;
@@ -364,12 +375,53 @@ public class InvadersPanel extends JPanel {
                         break;
 
                     case 6: // reset to defaults
-                        controlsScreen.resetSelection();
-                        controlsScreen.setDefaultKeys();
+                        controlsScreenPlayer1.resetSelection();
+                        controlsScreenPlayer1.setDefaultKeys();
                         break;
 
                     case 7: // back
-                        controlsScreen.selectOptionToGoBack();
+                        controlsScreenPlayer1.selectOptionToGoBack();
+
+                    default:
+                        break;
+                }
+                break;
+
+            case CONTROLS_P2:
+
+                // ensure the current screen has focus in order for keylistener to work
+                if (!controlsScreenPlayer2.hasFocus()) {
+                    controlsScreenPlayer2.requestFocusInWindow();
+                }
+
+                // decide what to do if user selected a option in the menu
+                switch (controlsScreenPlayer2.selectedOption) {
+                    case -2: // back (to setting screen)
+                        controlsScreenPlayer2.resetSelection();
+                        controlsScreenPlayer2.resetHiglight();
+                        removeAll();
+                        add(settingsScreen);
+                        activeDisplayState = DisplayState.SETTINGS;
+                        break;
+
+                    case -1: // not yet selected
+                        break;
+
+                    case 0: // edit corresponding control (handled inside controlScreen's class)
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        break;
+
+                    case 6: // reset to defaults
+                        controlsScreenPlayer2.resetSelection();
+                        controlsScreenPlayer2.setDefaultKeys();
+                        break;
+
+                    case 7: // back
+                        controlsScreenPlayer2.selectOptionToGoBack();
 
                     default:
                         break;
@@ -454,8 +506,11 @@ public class InvadersPanel extends JPanel {
             case SETTINGS:
                 settingsScreen.draw(g2);
                 break;
-            case CONTROLS:
-                controlsScreen.draw(g2);
+            case CONTROLS_P1:
+                controlsScreenPlayer1.draw(g2);
+                break;
+            case CONTROLS_P2:
+                controlsScreenPlayer2.draw(g2);
                 break;
             case GAME_OVER:
                 gameOverScreen.draw(g2);

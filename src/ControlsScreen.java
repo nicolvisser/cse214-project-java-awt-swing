@@ -15,17 +15,19 @@ public class ControlsScreen extends MenuScreen {
 
     // Constants relating to ControlsScreen class
     private static final int NUM_CONTROLS = 6;
-    private static final int[] DEFAULT_KEYCODES = { 65, 68, 37, 39, 38, 40 };
-    private static String FILENAME_KEY_CONFIG = "resources/keys.txt";
+    private final int[] defaultKeycodes;
     private static String FILENAME_KEY_LOOKUP = "resources/keyLookup.txt";
+    private String configFilename;
 
     private int[] currentKeyCodes = new int[NUM_CONTROLS];
     private String[] currentKeyDescriptions = new String[NUM_CONTROLS];
     private int currentlyEditingOption = -1; // used to let GUI menu option that is currently being edited flash
 
-    public ControlsScreen(int w, int h) {
+    public ControlsScreen(int w, int h, String configFilename, int[] defaultKeycodes) {
         super(w, h, "Controls", MENU_OPTIONS);
         subtitle = DEFAULT_SUBTITLE;
+        this.configFilename = configFilename;
+        this.defaultKeycodes = defaultKeycodes;
         setKeysFromFile();
 
         setFocusTraversalKeysEnabled(false);
@@ -49,8 +51,8 @@ public class ControlsScreen extends MenuScreen {
 
     public void setDefaultKeys() {
         for (int i = 0; i < NUM_CONTROLS; i++) {
-            currentKeyCodes[i] = DEFAULT_KEYCODES[i];
-            currentKeyDescriptions[i] = lookupKeyDescriptionFromFile(DEFAULT_KEYCODES[i]);
+            currentKeyCodes[i] = defaultKeycodes[i];
+            currentKeyDescriptions[i] = lookupKeyDescriptionFromFile(defaultKeycodes[i]);
         }
         saveKeysToFile();
     }
@@ -58,7 +60,7 @@ public class ControlsScreen extends MenuScreen {
     private void setKeysFromFile() {
         In in = null;
         try {
-            in = new In(FILENAME_KEY_CONFIG);
+            in = new In(configFilename);
             for (int i = 0; i < NUM_CONTROLS; i++) {
                 currentKeyCodes[i] = in.readInt();
                 currentKeyDescriptions[i] = lookupKeyDescriptionFromFile(currentKeyCodes[i]);
@@ -75,7 +77,7 @@ public class ControlsScreen extends MenuScreen {
     }
 
     private void saveKeysToFile() {
-        Out out = new Out(FILENAME_KEY_CONFIG);
+        Out out = new Out(configFilename);
         for (int key : currentKeyCodes) {
             out.println(key);
         }

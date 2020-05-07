@@ -32,7 +32,7 @@ public class EnemyGroup implements Collidable, Disposable {
     private int lastNumberOfEnemies = 0;
 
     public ArrayList<Missile> missiles = new ArrayList<>();
-    private DefaultCritter[] targets;
+    private Shooter[] targets;
     public static final long DEFAULT_SHOOT_INTERVAL = 2000;
     long shootInterval = DEFAULT_SHOOT_INTERVAL;
     private long counterAttackTimer = 0;
@@ -43,7 +43,7 @@ public class EnemyGroup implements Collidable, Disposable {
     double width, height;
 
     public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol,
-            DefaultCritter[] targets) {
+            Shooter[] targets) {
 
         position = new Vector2D(x, y);
         this.width = width;
@@ -106,7 +106,12 @@ public class EnemyGroup implements Collidable, Disposable {
         int i = (int) (Math.random() * enemies.size());
         Enemy randomEnemy = enemies.get(i);
         Vector2D pos = new Vector2D(randomEnemy.position.x, randomEnemy.position.y);
-        DefaultCritter randomTarget = targets[(int) (Math.random() * targets.length)];
+        int j = (int) (Math.random() * targets.length);
+        Shooter randomTarget = targets[j];
+        if (randomTarget.state == Shooter.ShooterState.DEAD) {
+            // shooter dead thus choose other target
+            randomTarget = targets[1 - j];
+        }
         Vector2D dir = randomTarget.positionRelativeTo(randomEnemy).normalize();
         Missile missile = new Missile(pos, dir, this);
         missiles.add(missile);

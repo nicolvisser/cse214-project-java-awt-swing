@@ -105,7 +105,8 @@ public class Enemy extends DefaultCritter {
     }
 
     public boolean isCollidingWith(Shooter shooter) {
-        return this.state == EnemyState.ALIVE && getCollisionShape().intersects(shooter.getCollisionShape());
+        return this.state == EnemyState.ALIVE && shooter.state == Shooter.ShooterState.ALIVE
+                && getCollisionShape().intersects(shooter.getCollisionShape());
     }
 
     @Override

@@ -16,75 +16,95 @@ public class InvaderGameState extends JComponent {
     public boolean pauseFlag = false;
     public boolean gameOverFlag = false;
 
+    // keyCodes for controls
     private int[] keyCodesP1, keyCodesP2;
 
+    // game objects
     public final ScoreKeeper score;
-
     private Shooter[] shooters;
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
     private PowerUpManager powerUpManager;
 
-    int vw, vh;
-
-    // VARIABLES CONCERNED WITH LEVELS ----->
-
-    int level = 0;
-
-    TextAnimation textAnimOnLevelStart;
-
-    final int interLevelWaitTime = 500;
-    long remainingWaitTimeBeforeLevelStarts = interLevelWaitTime;
+    // vars associated with viewport size
+    int vw = GlobalSettings.vw;
+    int vh = GlobalSettings.vh;
 
     // vars associated with view shake animation
-    double shakeTimer = Double.POSITIVE_INFINITY;
-    double xOffset = 0, yOffset = 0;
+    Shakeable shakeFunc = () -> {
+        shakeTimer = 0;
+    };
+    private double shakeTimer = Double.POSITIVE_INFINITY;
+    private double xOffset = 0, yOffset = 0;
 
-    // vars associated with each level
-    int enemyGroupBoxWidth = vw / 10;
-    int enemyGroupBoxHEight = vw / 10;
-    int numEnemiesInRow = 3;
-    int numEnemiesInColumn = 3;
-    int enemyShootInterval = 2000;
-    int enemyHitpoints = Missile.DEFAULT_DAMAGE_POINTS; // 50
-    double enemyMovementSpeedMultiplier = EnemyGroup.DEFAULT_MOVEMENT_SPEED; // 0.002 * vmin
+    // vars associated with levels
+    private static final int interLevelWaitTime = 500;
+    private long remainingWaitTimeBeforeLevelStarts = interLevelWaitTime;
+    private TextAnimation textAnimOnLevelStart;
+    private int level = 0;
+    private int numEnemiesInRow = 3;
+    private int numEnemiesInColumn = 3;
 
-    // <---------------------------------------
+    // Todo tweak level difficulty increase using the following
+    // int enemyGroupBoxWidth = vw / 10;
+    // int enemyGroupBoxHEight = vw / 10;
+    // int enemyShootInterval = 2000;
+    // int enemyHitpoints = Missile.DEFAULT_DAMAGE_POINTS;
+    // double enemyMovementSpeedMultiplier = EnemyGroup.DEFAULT_MOVEMENT_SPEED;
 
+    /**
+     * Creates one player game
+     */
+    public InvaderGameState(int[] keyCodesP1) {
+        this.keyCodesP1 = keyCodesP1;
+
+        score = new ScoreKeeper(vw, vh);
+
+        shooters = new Shooter[1];
+        shooters[0] = new Shooter(score, shakeFunc);
+
+        commonInit();
+    }
+
+    /**
+     * Creates two player game
+     */
     public InvaderGameState(int[] keyCodesP1, int[] keyCodesP2) {
-        vw = GlobalSettings.vw;
-        vh = GlobalSettings.vh;
-
         this.keyCodesP1 = keyCodesP1;
         this.keyCodesP2 = keyCodesP2;
 
         score = new ScoreKeeper(vw, vh);
 
-        Shakeable shakeFunc = () -> {
-            shakeTimer = 0;
-        };
-
         shooters = new Shooter[2];
         shooters[0] = new Shooter(score, shakeFunc);
+        shooters[0].position.x -= vw / 6;
         shooters[1] = new Shooter(score, shakeFunc);
-        shooters[1].position.x += vw / 20;
+        shooters[1].position.x += vw / 6;
+
+        commonInit();
+    }
+
+    private void commonInit() {
 
         enemyGroup = null;
 
         bunkers.add(new Bunker(0.25 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
         bunkers.add(new Bunker(0.50 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
         bunkers.add(new Bunker(0.75 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
+
+        // pass shooter objects a reference to list of bunkers
+        // this is so that shooter aim line can see bunkers as obstacles
         for (Shooter shooter : shooters)
-            shooter.bunkersObstacle = bunkers; // pass shooter a reference to bunkers list
+            shooter.bunkersObstacle = bunkers;
 
         powerUpManager = new PowerUpManager();
 
         addKeyListener(new GameKeyListener());
 
-        setFocusTraversalKeysEnabled(false);
-        // <--- this is to allow TAB key to be picked up by keyListener, see
+        // allow TAB key to be picked up by keyListener if user chose TAB as a custom
+        // control key. see:
         // https://stackoverflow.com/questions/8275204/how-can-i-listen-to-a-tab-key-pressed-typed-in-java
-
+        setFocusTraversalKeysEnabled(false);
     }
 
     public void startNewLevel() {
@@ -94,11 +114,17 @@ public class InvaderGameState extends JComponent {
         enemyGroup = new EnemyGroup(0.2 * vw, 0.15 * vh, 0.4 * vw, 0.3 * vh, numEnemiesInRow + level,
                 numEnemiesInColumn + level, shooters);
 
+        // make enemies shoot more often every level
         enemyGroup.shootInterval = EnemyGroup.DEFAULT_SHOOT_INTERVAL * 90 / 100;
 
-        enemyGroup.createReferenceFor(powerUpManager); // so that powerups can spawn on enemy kill
+        // pass EnemyGroup object a reference to PowerUpManager
+        // this is so that EnemyGroup can spawn PowerUps on kill of enemy
+        enemyGroup.createReferenceFor(powerUpManager);
+
+        // pass shooter objects a reference to enemy group
+        // this is so that shooter aim line can see enemies as obstacles
         for (Shooter shooter : shooters)
-            shooter.enemyGroupObstacle = enemyGroup; // pass shooter a reference to the new enemyGroup for laser
+            shooter.enemyGroupObstacle = enemyGroup;
 
     }
 
@@ -127,17 +153,7 @@ public class InvaderGameState extends JComponent {
             for (Shooter shooter : shooters)
                 shooter.drawAimLine(g2);
 
-            // HUD
-
-            score.draw(g2);
-
-            g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
-            drawStatusBar(g2, vw * 3 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooters[0].getHealthPercentage());
-
-            g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
-            drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooters[0].getEnergyPercentage());
-
-            // TODO draw status bars for both shooters
+            drawHUD(g2);
 
         }
         g2.translate(-xOffset, -yOffset);
@@ -148,7 +164,27 @@ public class InvaderGameState extends JComponent {
         gameOverFlag = false;
     }
 
-    public void drawStatusBar(Graphics2D g2, int x, int y, int w, int h, int perc) {
+    private void drawHUD(Graphics2D g2) {
+        score.draw(g2);
+
+        // player 1
+        g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
+        drawStatusBar(g2, vw * 3 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooters[0].getHealthPercentage());
+
+        g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
+        drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooters[0].getEnergyPercentage());
+
+        // player 2
+        if (shooters.length > 1) {
+            g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
+            drawStatusBar(g2, vw * 97 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooters[1].getHealthPercentage());
+
+            g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
+            drawStatusBar(g2, vw * 95 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooters[1].getEnergyPercentage());
+        }
+    }
+
+    private void drawStatusBar(Graphics2D g2, int x, int y, int w, int h, int perc) {
         final int SPACING = 2;
 
         double innerHeight = (h - 2 * SPACING) * perc / 100.0;
@@ -218,13 +254,17 @@ public class InvaderGameState extends JComponent {
             Collidable.checkAndHandleCollisions(bunkers, enemyGroup.missiles);
         }
 
-        if (shooters.length == 1 && shooters[0].state == Shooter.ShooterState.DEAD) {
-            gameOverFlag = true;
-        } else if (shooters.length == 2 && shooters[0].state == Shooter.ShooterState.DEAD
-                && shooters[1].state == Shooter.ShooterState.DEAD) {
-            gameOverFlag = true;
+        // gameover conditions to do with shooter state
+        {
+            boolean condition1 = shooters.length == 1 && shooters[0].state == Shooter.ShooterState.DEAD;
+            boolean condition2 = shooters.length == 2 && shooters[0].state == Shooter.ShooterState.DEAD
+                    && shooters[1].state == Shooter.ShooterState.DEAD;
+            if (condition1 || condition2) {
+                gameOverFlag = true;
+            }
         }
 
+        // gameover conditions to do with enemygroup
         if (enemyGroup != null) {
             boolean condition1 = enemyGroup.hasReachedBottom();
             boolean condition2 = enemyGroup.isCollidingWith(shooters[0]);
@@ -236,14 +276,7 @@ public class InvaderGameState extends JComponent {
 
     }
 
-    public void setGameKeys(int[] keyCodes) {
-        this.keyCodesP1 = keyCodes;
-    }
-
     private class GameKeyListener extends KeyAdapter {
-
-        GameKeyListener() {
-        }
 
         @Override
         public void keyPressed(KeyEvent e) {
@@ -308,10 +341,13 @@ public class InvaderGameState extends JComponent {
     }
 
     public Vector2D getVelocityForBackground() {
-        return shooters[0].velocity; // TODO change for 2 players
+        if (shooters.length == 1)
+            return shooters[0].velocity;
+        else
+            return new Vector2D(0, -vh / 100);
     }
 
-    public void shake() {
-        shakeTimer = 0;
+    public int getNumberOfPlayers() {
+        return shooters.length;
     }
 }

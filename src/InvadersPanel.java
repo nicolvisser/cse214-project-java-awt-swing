@@ -33,8 +33,8 @@ public class InvadersPanel extends JPanel {
     public DisplayState activeDisplayState;
 
     // define the text for screens that make use of the default MenuScreen object
-    private static final String[] mainMenuScreenOptions = { "Play Quick Tutorial", "Start New Game", "High Scores",
-            "Settings", "Quit Game" };
+    private static final String[] mainMenuScreenOptions = { "Quick Tutorial", "Single Player", "Two Player",
+            "High Scores", "Settings", "Quit Game" };
     private static final String[] pauseScreenOptions = { "Resume Game", "Restart Game", "Quit To Main Menu" };
     private static final String[] settingsScreenOptions = { "Customize Controls P1", "Customize Controls P2", "Back" };
 
@@ -66,8 +66,10 @@ public class InvadersPanel extends JPanel {
         settingsScreen = new MenuScreen(width, height, "Settings", settingsScreenOptions);
         highScoreScreen = new HighScoreScreen(width, height);
         gameOverScreen = new GameOverScreen(width, height);
-        controlsScreenPlayer1 = new ControlsScreen(width, height, "resources/keysP1.txt", GlobalSettings.DEFAULT_KEYCODES_P1);
-        controlsScreenPlayer2 = new ControlsScreen(width, height, "resources/keysP2.txt", GlobalSettings.DEFAULT_KEYCODES_P1);
+        controlsScreenPlayer1 = new ControlsScreen(width, height, "resources/keysP1.txt",
+                GlobalSettings.DEFAULT_KEYCODES_P1);
+        controlsScreenPlayer2 = new ControlsScreen(width, height, "resources/keysP2.txt",
+                GlobalSettings.DEFAULT_KEYCODES_P2);
 
         activeDisplayState = DisplayState.MAIN_MENU;
         add(mainMenuScreen);
@@ -128,7 +130,7 @@ public class InvadersPanel extends JPanel {
                     case -1: // not yet selected
                         break;
 
-                    case 0: // play tutorial
+                    case 0: // tutorial
                         mainMenuScreen.resetSelection();
                         removeAll();
                         tutorial = new Tutorial(controlsScreenPlayer1.getCurrentControlsConfig(),
@@ -137,7 +139,16 @@ public class InvadersPanel extends JPanel {
                         activeDisplayState = DisplayState.TUTORIAL;
                         break;
 
-                    case 1: // new game
+                    case 1: // single player
+                        mainMenuScreen.resetSelection();
+                        removeAll();
+                        loadedInvaderGameState = new InvaderGameState(controlsScreenPlayer1.getCurrentControlsConfig());
+                        add(loadedInvaderGameState);
+                        activeDisplayState = DisplayState.PLAYING;
+                        GameAudio.fadeOutMusicThenStartGameMusic();
+                        break;
+
+                    case 2: // two player
                         mainMenuScreen.resetSelection();
                         removeAll();
                         loadedInvaderGameState = new InvaderGameState(controlsScreenPlayer1.getCurrentControlsConfig(),
@@ -147,7 +158,7 @@ public class InvadersPanel extends JPanel {
                         GameAudio.fadeOutMusicThenStartGameMusic();
                         break;
 
-                    case 2: // high scores
+                    case 3: // high scores
                         mainMenuScreen.resetSelection();
                         removeAll();
                         add(highScoreScreen);
@@ -155,14 +166,14 @@ public class InvadersPanel extends JPanel {
                         highScoreScreen.loadFromFile();
                         break;
 
-                    case 3: // settings
+                    case 4: // settings
                         mainMenuScreen.resetSelection();
                         removeAll();
                         add(settingsScreen);
                         activeDisplayState = DisplayState.SETTINGS;
                         break;
 
-                    case 4: // quit
+                    case 5: // quit
                         quitFlag = true;
                         break;
 
@@ -249,8 +260,15 @@ public class InvadersPanel extends JPanel {
                     case 1: // restart game
                         pauseScreen.resetSelection();
                         removeAll();
-                        loadedInvaderGameState = new InvaderGameState(controlsScreenPlayer1.getCurrentControlsConfig(),
-                                controlsScreenPlayer2.getCurrentControlsConfig());
+                        if (loadedInvaderGameState.getNumberOfPlayers() == 2) {
+                            loadedInvaderGameState = new InvaderGameState(
+                                    controlsScreenPlayer1.getCurrentControlsConfig(),
+                                    controlsScreenPlayer2.getCurrentControlsConfig());
+                        } else {
+                            loadedInvaderGameState = new InvaderGameState(
+                                    controlsScreenPlayer1.getCurrentControlsConfig());
+                        }
+
                         add(loadedInvaderGameState);
                         activeDisplayState = DisplayState.PLAYING;
                         break;

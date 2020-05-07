@@ -50,12 +50,11 @@ public class ScoreKeeper {
 
     void draw(Graphics2D g2) {
 
-        Utils.scaleFont(g2, 2f);
-        String str = score + "    SCORE";
         g2.setColor(Color.ORANGE);
-        int x = vw * 95 / 100;
-        int y = vh * 95 / 100;
-        Utils.drawRightAlignedText(g2, x, y, str);
+        int x = vw / 2;
+        Utils.drawCenteredText(g2, x, vh * 94 / 100, "SCORE");
+        Utils.scaleFont(g2, 2f);
+        Utils.drawCenteredText(g2, x, vh * 97 / 100, "" + score);
         Utils.scaleFont(g2, 0.5f);
 
         Iterator<TextAnimation> animIterator = animations.iterator();

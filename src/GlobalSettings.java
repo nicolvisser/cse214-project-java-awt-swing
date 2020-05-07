@@ -18,6 +18,10 @@ public class GlobalSettings {
 
     public static boolean isFullscreen; // don't change here. change via frame object
 
+    // default key codes: used in reset to defaults or if key file becomes corrupt
+    public static final int[] DEFAULT_KEYCODES_P1 = { 65, 68, 37, 39, 38, 40 };
+    public static final int[] DEFAULT_KEYCODES_P2 = { 90, 67, 74, 76, 73, 75 };
+
     static void setViewSize(final int w, final int h) {
         vw = w;
         vh = h;

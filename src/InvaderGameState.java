@@ -20,7 +20,7 @@ public class InvaderGameState extends JComponent {
 
     public final ScoreKeeper score;
 
-    private Shooter shooter;
+    private Shooter[] shooters;
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
     private PowerUpManager powerUpManager;
@@ -63,14 +63,16 @@ public class InvaderGameState extends JComponent {
             shakeTimer = 0;
         };
 
-        shooter = new Shooter(score, shakeFunc);
+        shooters = new Shooter[1];
+        shooters[0] = new Shooter(score, shakeFunc);
 
         enemyGroup = null;
 
         bunkers.add(new Bunker(0.25 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
         bunkers.add(new Bunker(0.50 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
         bunkers.add(new Bunker(0.75 * vw, 0.7 * vh, 0.2 * vw, 0.05 * vh, 4, 16));
-        shooter.bunkersObstacle = bunkers; // pass shooter a reference to bunkers list
+        for (Shooter shooter : shooters)
+            shooter.bunkersObstacle = bunkers; // pass shooter a reference to bunkers list
 
         powerUpManager = new PowerUpManager();
 
@@ -87,12 +89,13 @@ public class InvaderGameState extends JComponent {
         textAnimOnLevelStart = new TextAnimation("Level " + level, vw / 2, vh / 3, 2000);
 
         enemyGroup = new EnemyGroup(0.2 * vw, 0.15 * vh, 0.4 * vw, 0.3 * vh, numEnemiesInRow + level,
-                numEnemiesInColumn + level, shooter);
+                numEnemiesInColumn + level, shooters);
 
         enemyGroup.shootInterval = EnemyGroup.DEFAULT_SHOOT_INTERVAL * 90 / 100;
 
         enemyGroup.createReferenceFor(powerUpManager); // so that powerups can spawn on enemy kill
-        shooter.enemyGroupObstacle = enemyGroup; // pass shooter a reference to the new enemyGroup for laser
+        for (Shooter shooter : shooters)
+            shooter.enemyGroupObstacle = enemyGroup; // pass shooter a reference to the new enemyGroup for laser
 
     }
 
@@ -100,7 +103,8 @@ public class InvaderGameState extends JComponent {
 
         g2.translate(xOffset, yOffset); // used to give screen a shake animation
         {
-            shooter.draw(g2);
+            for (Shooter shooter : shooters)
+                shooter.draw(g2);
 
             if (enemyGroup != null)
                 enemyGroup.draw(g2);
@@ -117,17 +121,20 @@ public class InvaderGameState extends JComponent {
 
             powerUpManager.draw(g2);
 
-            shooter.drawAimLine(g2);
+            for (Shooter shooter : shooters)
+                shooter.drawAimLine(g2);
 
             // HUD
 
             score.draw(g2);
 
             g2.setColor(new Color(0.6f, 0.2f, 0.2f, 0.9f));
-            drawStatusBar(g2, vw * 3 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooter.getHealthPercentage());
+            drawStatusBar(g2, vw * 3 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooters[0].getHealthPercentage());
 
             g2.setColor(new Color(0.2f, 0.5f, 0.7f, 0.9f));
-            drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooter.getEnergyPercentage());
+            drawStatusBar(g2, vw * 5 / 100, vh * 75 / 100, vw / 100, vh * 20 / 100, shooters[0].getEnergyPercentage());
+
+            // TODO draw status bars for both shooters
 
         }
         g2.translate(-xOffset, -yOffset);
@@ -174,7 +181,8 @@ public class InvaderGameState extends JComponent {
             }
         }
 
-        shooter.update(dt);
+        for (Shooter shooter : shooters)
+            shooter.update(dt);
 
         if (enemyGroup != null)
             enemyGroup.update(dt);
@@ -184,7 +192,8 @@ public class InvaderGameState extends JComponent {
 
         powerUpManager.update(dt);
 
-        Disposable.handleDisposing(shooter.missiles);
+        for (Shooter shooter : shooters)
+            Disposable.handleDisposing(shooter.missiles);
         Disposable.handleDisposing(bunkers);
         Disposable.handleDisposing(powerUpManager.powerUps);
         if (enemyGroup != null) {
@@ -192,20 +201,32 @@ public class InvaderGameState extends JComponent {
             Disposable.handleDisposing(enemyGroup.missiles);
         }
 
-        Collidable.checkAndHandleCollisions(bunkers, shooter.missiles);
-        Collidable.checkAndHandleCollisions(shooter, powerUpManager.powerUps);
-        Collidable.checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
+        for (Shooter shooter : shooters) {
+            Collidable.checkAndHandleCollisions(bunkers, shooter.missiles);
+            Collidable.checkAndHandleCollisions(shooter, powerUpManager.powerUps);
+            Collidable.checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
+        }
+
         if (enemyGroup != null) {
-            Collidable.checkAndHandleCollisions(enemyGroup, shooter.missiles);
-            Collidable.checkAndHandleCollisions(shooter, enemyGroup.missiles);
+            for (Shooter shooter : shooters) {
+                Collidable.checkAndHandleCollisions(enemyGroup, shooter.missiles);
+                Collidable.checkAndHandleCollisions(shooter, enemyGroup.missiles);
+            }
             Collidable.checkAndHandleCollisions(bunkers, enemyGroup.missiles);
         }
 
-        if (shooter.state == Shooter.ShooterState.DEAD) {
+        if (shooters.length == 1 && shooters[0].state == Shooter.ShooterState.DEAD) {
+            gameOverFlag = true;
+        } else if (shooters.length == 2 && shooters[0].state == Shooter.ShooterState.DEAD
+                && shooters[1].state == Shooter.ShooterState.DEAD) {
             gameOverFlag = true;
         }
+
         if (enemyGroup != null) {
-            if (enemyGroup.isCollidingWith(shooter) || enemyGroup.hasReachedBottom()) {
+            boolean condition1 = enemyGroup.hasReachedBottom();
+            boolean condition2 = enemyGroup.isCollidingWith(shooters[0]);
+            boolean condition3 = shooters.length == 2 && enemyGroup.isCollidingWith(shooters[1]);
+            if (condition1 || condition2 || condition3) {
                 gameOverFlag = true;
             }
         }
@@ -226,41 +247,41 @@ public class InvaderGameState extends JComponent {
             if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 pauseFlag = true;
             } else if (e.getKeyCode() == keyCodes[0]) { // Move Left
-                shooter.isLeftThrusterActive = true;
+                shooters[0].isLeftThrusterActive = true;
             } else if (e.getKeyCode() == keyCodes[1]) { // Move Right
-                shooter.isRightThrusterActive = true;
+                shooters[0].isRightThrusterActive = true;
             } else if (e.getKeyCode() == keyCodes[2]) { // Rotate Left
-                shooter.isRotatingLeft = true;
+                shooters[0].isRotatingLeft = true;
             } else if (e.getKeyCode() == keyCodes[3]) { // Rotate Right
-                shooter.isRotatingRight = true;
+                shooters[0].isRotatingRight = true;
             } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
-                shooter.onShootButtonPress();
+                shooters[0].onShootButtonPress();
             } else if (e.getKeyCode() == keyCodes[5]) { // Block
-                shooter.activateShield();
+                shooters[0].activateShield();
             }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
             if (e.getKeyCode() == keyCodes[0]) { // Move Left
-                shooter.isLeftThrusterActive = false;
+                shooters[0].isLeftThrusterActive = false;
             } else if (e.getKeyCode() == keyCodes[1]) { // Move Right
-                shooter.isRightThrusterActive = false;
+                shooters[0].isRightThrusterActive = false;
             } else if (e.getKeyCode() == keyCodes[2]) { // Rotate Left
-                shooter.isRotatingLeft = false;
+                shooters[0].isRotatingLeft = false;
             } else if (e.getKeyCode() == keyCodes[3]) { // Rotate Right
-                shooter.isRotatingRight = false;
+                shooters[0].isRotatingRight = false;
             } else if (e.getKeyCode() == keyCodes[4]) { // Shoot
-                shooter.onShootButtonRelease();
+                shooters[0].onShootButtonRelease();
             } else if (e.getKeyCode() == keyCodes[5]) { // Block
-                shooter.deactivateShield();
+                shooters[0].deactivateShield();
             }
         }
 
     }
 
     public Vector2D getVelocityForBackground() {
-        return shooter.velocity;
+        return shooters[0].velocity; // TODO change for 2 players
     }
 
     public void shake() {

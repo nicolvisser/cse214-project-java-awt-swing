@@ -90,7 +90,7 @@ public class PowerUp extends DefaultCritter {
     public void removeEffectFromShooter() {
         switch (type) {
             case ENERGY_REGEN:
-                shooterRef.healthPointsRegenerationPerSecond = 0;
+                shooterRef.energyPointsRegenerationPerSecond = 0;
                 break;
             case HEALTH_REGEN:
                 shooterRef.healthPointsRegenerationPerSecond = 0;

@@ -266,7 +266,10 @@ public class EnemyGroup implements Collidable, Disposable {
 
                     if (missile.owner instanceof Shooter) {
                         Shooter shooter = (Shooter) missile.owner;
-                        shooter.score.addPoints(Missile.DEFAULT_DAMAGE_POINTS, enemy.position);
+                        if (enemy.isHealthDepleted()) {
+                            // let shooter with final hit get the points
+                            shooter.score.addPoints(Enemy.DEFAULT_HEALTH_POINTS, enemy.position);
+                        }
                     }
 
                     if (Math.random() <= POWERUP_SPAWN_PROBABILITY) {

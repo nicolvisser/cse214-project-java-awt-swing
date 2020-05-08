@@ -12,7 +12,8 @@ public class Enemy extends DefaultCritter {
         ALIVE, EXPLODING, DEAD;
     }
 
-    private int healthPoints = 50;
+    public static final int DEFAULT_HEALTH_POINTS = 50;
+    private int healthPoints = DEFAULT_HEALTH_POINTS;
 
     public EnemyState state = EnemyState.ALIVE;
 
@@ -26,7 +27,7 @@ public class Enemy extends DefaultCritter {
 
     public void takeDamage(int damagePoints) {
         healthPoints -= damagePoints;
-        if (healthPoints <= 0) {
+        if (isHealthDepleted()) {
             explode();
         }
     }
@@ -125,6 +126,10 @@ public class Enemy extends DefaultCritter {
     @Override
     public boolean mayBeDisposed() {
         return state == EnemyState.DEAD;
+    }
+
+    public boolean isHealthDepleted() {
+        return healthPoints <= 0;
     }
 
 }

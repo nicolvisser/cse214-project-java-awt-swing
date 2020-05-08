@@ -86,7 +86,8 @@ public class Shooter extends DefaultCritter {
     private final int laserSoundDelay = 500;
 
     boolean isShieldActive;
-    private static final int SHIELD_COLLISION_RADIUS = 12;
+    // private static final int SHIELD_COLLISION_RADIUS = 12;
+    // TODO size up player collision radius when shield is active
     private static final int SHIELD_ENERGY_USAGE_INITIAL = 10;
     private static final double SHIELD_ENERGY_USAGE_PER_SECOND = 10;
 
@@ -155,16 +156,18 @@ public class Shooter extends DefaultCritter {
 
     private void handleLaserCollision() {
         if (state == ShooterState.ALIVE) {
-
-            // TODO add sound:
-
-            Object target = getAimTarget();
+            Object target = getAimTarget(); // TODO: maybe don't use Object class here, but create a new class or
+                                            // interface to do this
 
             isLaserActiveOnTarget = target instanceof Enemy;
 
             if (isLaserActiveOnTarget) {
                 Enemy enemy = (Enemy) target;
-                enemy.takeDamage(7);
+                enemy.takeDamage(7); // TODO: Fix hardcoding
+
+                if (enemy.isHealthDepleted()) {
+                    score.addPoints(Enemy.DEFAULT_HEALTH_POINTS, enemy.position);
+                }
 
                 if (timeSinceLastPlayedLaserSound > laserSoundDelay) {
                     GameAudio.playSoundBuzz();

@@ -60,7 +60,10 @@ public class ScoreKeeper {
         Iterator<TextAnimation> animIterator = animations.iterator();
         while (animIterator.hasNext()) {
             TextAnimation anim = animIterator.next();
+
+            g2.setColor(Color.GREEN);
             anim.draw(g2);
+
             if (anim.finished) {
                 animIterator.remove();
             }

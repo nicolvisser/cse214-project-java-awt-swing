@@ -124,3 +124,44 @@ NOTE: This interface is experimental and is probably not be the best way to impl
 Shakeable is a functional interface that can be used together with lambda expressions to 'pass a method' to another class via its constructor. The idea was to pass a method that 'shakes' the screen from the InvaderGameState class to the Shooter class such that when a missile hits the shooter, we can call the shake method of the InvadersGameState class from within the Shooter class.
 
 Idea gained from https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html
+
+
+
+## Class Inheritance
+
+
+
+
+
+## Summary of Additional Work
+
+
+
+## External Libraries
+
+
+
+## Class Structure Diagrams
+
+<img src="screenshots/inheritance-geom.png" width="100%" >
+
+<img src="screenshots/inheritance-game-objects.png" width="100%" >
+
+
+
+The following diagram should give a rough idea of the "parent-child" relationships that the classes might have. Note, this is not exact or exhaustive, but is helpful to understand the game and where to find implementations of the classes. You may read the diagram as follows. If `Missile` is a child of `EnemyGroup` it translates to 'there is a `Missile` instance declared somewhere in the class `EnemyGroup` .
+
+<img src="screenshots/relationships-game-objects.png" width="100%" >
+
+
+
+## External Sources
+
+
+
+
+
+
+
+
+

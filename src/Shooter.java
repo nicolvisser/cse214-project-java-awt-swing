@@ -31,8 +31,14 @@ public class Shooter extends DefaultCritter {
     private static final double DEFAULT_THRUSTER_ACCELERATION = vmax / 2000.0;
 
     private static final ImageIcon IMAGE_ICON_SHIP = new ImageIcon("resources/images/carrier.png");
+    private static final ImageIcon IMAGE_ICON_SHIP2 = new ImageIcon("resources/images/cargoship.png");
     private static final ImageIcon IMAGE_ICON_TURRET = new ImageIcon("resources/images/destroyer.png");
     private static final ImageIcon IMAGE_ICON_SHIELD = new ImageIcon("resources/images/shield.png");
+    private int shipType = 0;
+
+    public void changeShipType(int type) {
+        shipType = type;
+    }
 
     private AnimatedImage explosion = new AnimatedImage("resources/images/blueExplosion", "png", 17,
             AnimatedImage.AnimationType.ONCE);
@@ -291,7 +297,11 @@ public class Shooter extends DefaultCritter {
                 int x = (int) (position.x - w / 2);
                 int y = (int) (position.y - h / 2);
 
-                g2.drawImage(IMAGE_ICON_SHIP.getImage(), x, y, w, h, null);
+                if (shipType == 0) {
+                    g2.drawImage(IMAGE_ICON_SHIP.getImage(), x, y, w, h, null);
+                } else {
+                    g2.drawImage(IMAGE_ICON_SHIP2.getImage(), x, y, w, h, null);
+                }
 
                 g2.rotate(orientation, position.x, position.y);
 

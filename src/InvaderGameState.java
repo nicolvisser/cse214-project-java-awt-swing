@@ -80,6 +80,7 @@ public class InvaderGameState extends JComponent {
         shooters[0].position.x -= vw / 6;
         shooters[1] = new Shooter(score, shakeFunc);
         shooters[1].position.x += vw / 6;
+        shooters[1].changeShipType(1);
 
         commonInit();
     }

@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import geom.Circle;
 import geom.Rectangle;
-import geom.Shape;
+import geom.BoundingShape;
 import geom.Vector2D;
 
 public class Bunker implements Collidable, Disposable {
@@ -35,7 +35,7 @@ public class Bunker implements Collidable, Disposable {
         }
 
         @Override
-        public Shape getCollisionShape() {
+        public BoundingShape getCollisionShape() {
             return rect;
         }
 
@@ -122,7 +122,7 @@ public class Bunker implements Collidable, Disposable {
     // ============ METHODS ASSOCIATED WITH COLIDABLE INTERFACE ============= >>>
 
     @Override
-    public Shape getCollisionShape() {
+    public BoundingShape getCollisionShape() {
         return collisionRect;
     }
 

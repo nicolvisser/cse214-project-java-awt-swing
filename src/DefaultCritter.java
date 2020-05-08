@@ -3,7 +3,7 @@ import java.awt.Graphics2D;
 
 import geom.Circle;
 import geom.LineSegment;
-import geom.Shape;
+import geom.BoundingShape;
 import geom.Vector2D;
 
 public class DefaultCritter implements Collidable, Disposable {
@@ -96,7 +96,7 @@ public class DefaultCritter implements Collidable, Disposable {
 
     // ============ METHODS ASSOCIATED WITH COLIDABLE INTERFACE ============= >>>
 
-    public Shape getCollisionShape() {
+    public BoundingShape getCollisionShape() {
         return new Circle(position.x, position.y, width / 2);
     }
 

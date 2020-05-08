@@ -2,11 +2,11 @@
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
-import geom.Shape;
+import geom.BoundingShape;
 
 public interface Collidable {
 
-    public Shape getCollisionShape();
+    public BoundingShape getCollisionShape();
 
     public boolean isCollidingWith(Collidable otherCollidable);
 

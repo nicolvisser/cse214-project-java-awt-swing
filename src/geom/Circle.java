@@ -68,11 +68,6 @@ public class Circle implements BoundingShape {
     // ===== Methods related to BoundedShape interface =====>
 
     @Override
-    public Vector2D getCenter() {
-        return new Vector2D(center.x, center.y);
-    }
-
-    @Override
     public boolean contains(double x, double y) {
         double dx = this.center.x - x;
         double dy = this.center.y - y;

@@ -2,7 +2,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import geom.Rectangle;
-import geom.Shape;
+import geom.BoundingShape;
 import geom.Vector2D;
 import geom.Ray;
 
@@ -237,7 +237,7 @@ public class EnemyGroup implements Collidable, Disposable {
     }
 
     @Override
-    public Shape getCollisionShape() {
+    public BoundingShape getCollisionShape() {
         return new Rectangle(position.x, position.y, width, height);
     }
 

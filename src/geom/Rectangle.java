@@ -154,11 +154,6 @@ public class Rectangle implements BoundingShape {
     // ===== Methods related to BoundedShape interface =====>
 
     @Override
-    public Vector2D getCenter() {
-        return new Vector2D(center.x, center.y);
-    }
-
-    @Override
     public boolean contains(double x, double y) {
         return (x >= xmin()) && (x <= xmax()) && (y >= ymin()) && (y <= ymax());
     }

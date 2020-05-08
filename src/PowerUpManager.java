@@ -111,13 +111,19 @@ public class PowerUpManager {
 
         for (int i = 0; i < numTypes; i++) {
             if (types[i] == powerUp.type) {
-                // if currently no powerup of same type in effect, then add effect to shooter
-                if (activePowerUps[i] == null) {
-                    powerUp.addEffectTo(shooter);
-                }
-                // add reference to new powerup in effect
-                activePowerUps[i] = powerUp;
 
+                if (activePowerUps[i] == null) {
+                    // IF NONE OF SAME TYPE ALREADY IN EFFECT:
+                    // add new effect to shooter
+                    powerUp.addEffectTo(shooter);
+                } else {
+                    // IF SAME TYPE ALREADY IN EFFECT:
+                    // ready old power up for disposal
+                    activePowerUps[i].state = PowerUp.PowerUpState.DEAD;
+                }
+
+                // IN ANY CASE:
+                activePowerUps[i] = powerUp;
                 textAnimationsOnActivate[i] = new TextAnimation(powerUp.textOnActivation, vw * 50 / 100,
                         vh * (40 + i * 5) / 100, 2000);
             }
@@ -125,7 +131,7 @@ public class PowerUpManager {
     }
 
     public void handlePowerUpExpiry(PowerUp powerUp) {
-        // signal powerup for garbage collection
+        // signal powerup for disposal
         powerUp.state = PowerUp.PowerUpState.DEAD;
 
         // remove reference as active powerup
@@ -136,6 +142,5 @@ public class PowerUpManager {
         }
 
         powerUp.removeEffectFromShooter();
-
     }
 }

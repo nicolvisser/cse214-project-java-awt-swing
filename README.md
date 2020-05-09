@@ -18,13 +18,11 @@ The main class is `MainGame.java` and is located under `./src/` directory.
 > cd src
 ```
 
-### Compile
+### Compile:
 
 ```shell
 > javac MainGame.java
 ```
-
-### Compiling:
 
 ### Run:
 
@@ -68,7 +66,7 @@ It has two interfaces, the `Shape` interface and an extension of it, the `Boundi
 
 - drawing the shape on a `Graphics2D` object
   - `public boolean intersects(Shape shape);`
-- check whether or not the shape intersects another shape.
+- checking whether or not the shape intersects another shape.
   - `public void draw(Graphics2D g);`
 
 
@@ -103,7 +101,7 @@ Classes that implement `Collidable` have methods for:
 
 In addition the following static methods are available to be used for collission checking and handling
 
-In our game, the game objects are often stored in `ArrayLists` of the same type. Instead of creating an N body simulation where all `Collidables` are checked against eachother, we rather only check certain groups of `Collidables` with other groups of `Collidables` or an individual `Collidable`. For this approach, two static methods are available to check and handle collisions.
+In our game, the game objects are often stored in `ArrayLists` of the same type. Instead of creating an N body simulation where all `Collidables` are checked against eachother, we rather only check certain groups of `Collidables` with other groups of `Collidables` or an individual `Collidable`. For this approach, two <u>static methods</u> are available to check and handle collisions.
 
 - `public static void checkAndHandleCollisions(ArrayList<? extends Collidable> group1, ArrayList<? extends Collidable> group2) {`
 

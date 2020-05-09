@@ -1,10 +1,10 @@
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import geom.Rectangle;
 import geom.BoundingShape;
-import geom.Vector2D;
 import geom.Ray;
+import geom.Rectangle;
+import geom.Vector2D;
 
 public class EnemyGroup implements Collidable, Disposable {
 
@@ -13,34 +13,31 @@ public class EnemyGroup implements Collidable, Disposable {
     private static final int vmin = GlobalSettings.vmin;
     //// private static final int vmax = GlobalSettings.vmax;
 
+    ArrayList<Enemy> enemies = new ArrayList<>();
+    private int numberOfEnemies = 0;
+
     private static final int MOVEMENT_BOUNDARY_XMIN = vw * 5 / 100;
     private static final int MOVEMENT_BOUNDARY_XMAX = vw * 95 / 100;
-
-    public static final double DEFAULT_MOVEMENT_SPEED = 0.002 * vmin;
     private static final int DEFAULT_MOVE_DOWN_TIME = 10;
-
-    private static final double POWERUP_SPAWN_PROBABILITY = 0.15;
+    static final double DEFAULT_MOVEMENT_SPEED = 0.002 * vmin;
 
     private enum MoveState {
         LEFT, RIGHT, DOWN_BEFORE_LEFT, DOWN_BEFORE_RIGHT;
     }
 
     private MoveState moveState;
-    int moveDownTimer = 0;
+    private int moveDownTimer = 0;
+    private Vector2D position, velocity;
+    private double width, height;
 
-    public ArrayList<Enemy> enemies = new ArrayList<>();
-    private int lastNumberOfEnemies = 0;
-
-    public ArrayList<Missile> missiles = new ArrayList<>();
-    private Shooter[] targets;
-    public static final long DEFAULT_SHOOT_INTERVAL = 2000;
+    static final long DEFAULT_SHOOT_INTERVAL = 2000;
     long shootInterval = DEFAULT_SHOOT_INTERVAL;
+    ArrayList<Missile> missiles = new ArrayList<>();
+    private Shooter[] targets;
     private long counterAttackTimer = 0;
 
+    private static final double POWERUP_SPAWN_PROBABILITY = 0.15;
     private PowerUpManager powerUpManagerRef;
-
-    Vector2D position, velocity;
-    double width, height;
 
     public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol,
             Shooter[] targets) {
@@ -63,7 +60,7 @@ public class EnemyGroup implements Collidable, Disposable {
         for (double eX = xmin + r; eX < xmax; eX += xSpacing + 2 * r) {
             for (double eY = ymin + r; eY < ymax; eY += ySpacing + 2 * r) {
                 enemies.add(new Enemy(eX, eY, r, Math.PI));
-                lastNumberOfEnemies++;
+                numberOfEnemies++;
             }
         }
 
@@ -103,17 +100,21 @@ public class EnemyGroup implements Collidable, Disposable {
 
     public void shootMissile() {
         GameAudio.playSoundMissileFire();
+
         int i = (int) (Math.random() * enemies.size());
         Enemy randomEnemy = enemies.get(i);
-        Vector2D pos = new Vector2D(randomEnemy.position.x, randomEnemy.position.y);
+
         int j = (int) (Math.random() * targets.length);
         Shooter randomTarget = targets[j];
         if (randomTarget.state == Shooter.ShooterState.DEAD) {
             // shooter dead thus choose other target
             randomTarget = targets[1 - j];
         }
+
+        Vector2D pos = new Vector2D(randomEnemy.position.x, randomEnemy.position.y);
         Vector2D dir = randomTarget.positionRelativeTo(randomEnemy).normalize();
         Missile missile = new Missile(pos, dir, this);
+
         missiles.add(missile);
     }
 
@@ -127,20 +128,20 @@ public class EnemyGroup implements Collidable, Disposable {
             missile.draw(g2);
         }
 
-        // Show Collision Boundary if Debugging: --->>
+        // Show Collision Boundary if Debugging:
         if (GlobalSettings.DEBUG)
             getCollisionShape().draw(g2);
-        // <-------------------------------------------
     }
 
     public void update(int dt) {
 
         // if meanwhile an enemy has died, recalculate collision boundary of group
-        if (lastNumberOfEnemies != enemies.size() && enemies.size() > 0) {
+        if (numberOfEnemies != enemies.size() && enemies.size() > 0) {
             recalculateCollisionShape();
-            lastNumberOfEnemies = enemies.size();
+            numberOfEnemies = enemies.size();
         }
 
+        // counterattack periodically
         if (enemies.size() > 0) {
             counterAttackTimer += dt;
             if (counterAttackTimer > shootInterval) {
@@ -174,6 +175,7 @@ public class EnemyGroup implements Collidable, Disposable {
             missile.update(dt);
         }
 
+        // handle movement state changes
         switch (moveState) {
             case LEFT:
                 if (position.x - width / 2 < MOVEMENT_BOUNDARY_XMIN)
@@ -222,7 +224,6 @@ public class EnemyGroup implements Collidable, Disposable {
                 moveState = newState;
                 velocity = new Vector2D(0, velocity.magnitude());
                 moveDownTimer = DEFAULT_MOVE_DOWN_TIME;
-
                 break;
 
             default:
@@ -290,7 +291,7 @@ public class EnemyGroup implements Collidable, Disposable {
     }
 
     public boolean hasReachedBottom() {
-
+        // cast a ray along bottom of screen and see if it intersects with group
         Ray bottomOfScreenRay = new Ray(new Vector2D(0, vh), new Vector2D(1, 0));
         return this.getCollisionShape().intersects(bottomOfScreenRay);
     }

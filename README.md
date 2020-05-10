@@ -1,5 +1,58 @@
 # Computer Science E214 (2020) Project: Cosmic Conquistadors
 
+NOTE:
+
+The project will eventually be exported in a structure suitable for command line compiling and running. At the moment the structure is tailored to development in VS Code.
+
+Thus, **if you want to test in on the command line now**. You need to rearrange the folders into this structure:
+
+```
+src/
+	geom/
+		BoundingShape.java
+		...
+	resources/
+		audio/
+			ambientmain_0.wav
+			...
+		images/
+			blueExplosion00000.png
+			...
+		highscores.txt
+		...
+	AnimatedImage.java
+	Bunker.java
+	...
+```
+
+## NB TO DO's:
+
+### Code:
+
+- Shield stuff:
+  - include in tutorial
+  - make enemies shoot more often so that you need to use shield more often
+  - shield collision radius
+- Update updateable spelling to updatable... :/
+- Enemy visual damage based on hitpoints
+- Different enemy types --- quick fix ???
+
+### Documentation:
+
+- Write Class inheritance section
+- Complete additional work section
+- Complete sources section
+  - Get media sources from old repository and Google Chrome bookmarks
+- Add table of contents
+
+### Admin:
+
+- export and zip files
+- peer rating
+- submission
+
+
+
 <img src="screenshots/readme-screenshot.png" width="100%" >
 
 ## Group Members
@@ -99,7 +152,7 @@ public Vector2D getRandomPositionInside();
 
 ### Interfaces in the game (default package)
 
-#### Collidable Interface
+#### `Collidable` Interface
 
 `Collidable` aids with collision detection and handling.
 
@@ -175,9 +228,35 @@ Idea gained from https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpre
 
 ## Class Inheritance
 
-#### Inherit
+#### Swing Objects
 
-#### The Gameplay Object
+#### Gameplay Objects
+
+
+
+## Class Structure Diagrams
+
+**FIGURE 1** shows the class and interface inheritance of objects in the `geom` package. These objects form an important base for the 2D programming in other classes.
+
+![img](file:///Users/nicolvisser/Workspace/cse214-project-java-awt-swing/screenshots/inheritance-geom.png?lastModify=1589145090)
+
+
+
+**FIGURE 2** shows the class and interface inheritance of objects that directly or indirectly inherit from the `javax.swing` framework.
+
+![img](file:///Users/nicolvisser/Workspace/cse214-project-java-awt-swing/screenshots/inheritance-swing.png?lastModify=1589145090)
+
+
+
+**FIGURE 3** shows the class and interface inheritance of objects that relate to gameplay, such as missiles, shooters etc:
+
+![img](file:///Users/nicolvisser/Workspace/cse214-project-java-awt-swing/screenshots/inheritance-game-objects.png?lastModify=1589145090)
+
+
+
+The following diagram, **FIGURE 4**, should give a rough idea of the "parent-child" relationships that the classes might have. Note, this is not exact or exhaustive, but is helpful to understand the game and where to find implementations of the classes. You may read the diagram as follows. If `Missile` is a child of `EnemyGroup` it translates to 'there is a `Missile` instance declared somewhere in the class `EnemyGroup` .
+
+![img](file:///Users/nicolvisser/Workspace/cse214-project-java-awt-swing/screenshots/relationships-game-objects.png?lastModify=1589145090)
 
 
 
@@ -266,30 +345,6 @@ The class `GameAudio` is a trimmed down version of the booksite's `StdAudio` lib
 
 - volume control of sound
 - looping background music that can fade out and play a different track
-
-## Class Structure Diagrams
-
-**FIGURE 1** shows the class and interface inheritance of objects in the `geom` package. These objects form an important base for the 2D programming in other classes.
-
-<img src="screenshots/inheritance-geom.png" width="100%" >
-
-
-
-**FIGURE 2** shows the class and interface inheritance of objects that directly or indirectly inherit from the `javax.swing` framework.
-
-<img src="screenshots/inheritance-swing.png" width="100%" >
-
-
-
-**FIGURE 3** shows the class and interface inheritance of objects that relate to gameplay, such as missiles, shooters etc:
-
-<img src="screenshots/inheritance-game-objects.png" width="100%" >
-
-
-
-The following diagram, **FIGURE 4**, should give a rough idea of the "parent-child" relationships that the classes might have. Note, this is not exact or exhaustive, but is helpful to understand the game and where to find implementations of the classes. You may read the diagram as follows. If `Missile` is a child of `EnemyGroup` it translates to 'there is a `Missile` instance declared somewhere in the class `EnemyGroup` .
-
-<img src="screenshots/relationships-game-objects.png" width="100%" >
 
 
 

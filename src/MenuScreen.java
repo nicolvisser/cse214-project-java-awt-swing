@@ -122,6 +122,7 @@ public class MenuScreen extends DisplayComponent {
         GameAudio.playSoundMenuSelect();
     }
 
+    @Override
     public void draw(Graphics2D g2) {
         int y = HEIGHT / 4;
 

@@ -120,6 +120,7 @@ public class GameOverScreen extends HighScoreScreen {
         highlightedScore = -1;
     }
 
+    @Override
     public void draw(Graphics2D g2) {
         double y = 0.1 * HEIGHT;
 

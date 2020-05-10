@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * A class that implements this interface has a method `public boolean
+ * mayBeDisposed()` to check whether or not the item is ready to be disposed.
+ * 
+ * For convenience the `Disposable` interface contains a method that will
+ * iterate through an `ArrayList` of `Disposables`, checks whether any item is
+ * ready to be disposed and then removes that item from the list.
+ */
 public interface Disposable {
 
     public boolean mayBeDisposed();

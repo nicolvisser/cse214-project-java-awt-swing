@@ -6,7 +6,7 @@ import geom.LineSegment;
 import geom.BoundingShape;
 import geom.Vector2D;
 
-public class DefaultCritter implements Collidable, Disposable {
+public class DefaultCritter implements Collidable, Disposable, Updateable, Drawable {
 
     public double width, height;
 
@@ -76,6 +76,9 @@ public class DefaultCritter implements Collidable, Disposable {
         orientation += angularVelocity + 0.5 * angularAcceleration;
     }
 
+    // ============ METHODS ASSOCIATED WITH DRAWABLE INTERFACE ============= >>>
+
+    @Override
     public void draw(Graphics2D g) {
 
         g.setColor(Color.RED);
@@ -89,6 +92,9 @@ public class DefaultCritter implements Collidable, Disposable {
         line.draw(g);
     }
 
+    // ============ METHODS ASSOCIATED WITH UPDATEABLE INTERFACE ============= >>>
+
+    @Override
     public void update(int dt) {
         updateTranslation();
         updateRotation();

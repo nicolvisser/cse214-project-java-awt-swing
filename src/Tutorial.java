@@ -76,6 +76,7 @@ public class Tutorial extends DisplayComponent {
 
     }
 
+    @Override
     public void draw(Graphics2D g2) {
 
         g2.setColor(Color.gray);

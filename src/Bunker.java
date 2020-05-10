@@ -8,19 +8,20 @@ import geom.Rectangle;
 import geom.BoundingShape;
 import geom.Vector2D;
 
-public class Bunker implements Collidable, Disposable {
+public class Bunker implements Collidable, Disposable, Updateable, Drawable {
 
-    public class Block implements Collidable {
+    class Block implements Collidable, Drawable {
 
         private Rectangle rect;
         private Color color;
 
-        public Block(double x, double y, double width, double height) {
+        Block(double x, double y, double width, double height) {
             rect = new Rectangle(new Vector2D(x, y), width, height);
             int r = 80 + (int) (Math.random() * 20);
             color = new Color(r, r, r);
         }
 
+        @Override
         public void draw(Graphics2D g2) {
 
             g2.setColor(color);
@@ -95,6 +96,7 @@ public class Bunker implements Collidable, Disposable {
 
     }
 
+    @Override
     public void update(int dt) {
 
         // if meanwhile an enemy has died, recalculate collision boundary of group
@@ -106,6 +108,7 @@ public class Bunker implements Collidable, Disposable {
         // dont call super does not move or rotate
     }
 
+    @Override
     public void draw(Graphics2D g2) {
         for (Block block : blocks) {
             block.draw(g2);

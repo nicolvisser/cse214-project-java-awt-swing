@@ -51,6 +51,7 @@ public class HighScoreScreen extends MenuScreen {
         saveToFile();
     }
 
+    @Override
     public void draw(Graphics2D g2) {
         double y = 0.1 * HEIGHT;
 

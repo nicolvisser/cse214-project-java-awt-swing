@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import geom.Vector2D;
 
-public class InvaderGameState extends DisplayComponent {
+public class InvaderGameState extends DisplayComponent implements Updateable {
 
     private static final long serialVersionUID = 1L;
 
@@ -119,6 +119,7 @@ public class InvaderGameState extends DisplayComponent {
 
     }
 
+    @Override
     public void draw(Graphics2D g2) {
 
         g2.translate(xOffset, yOffset); // used to give screen a shake animation
@@ -191,6 +192,7 @@ public class InvaderGameState extends DisplayComponent {
 
     }
 
+    @Override
     public void update(int dt) {
         // shake screen by setting draw offset to an exponentially damped sinusoidal
         // curve for a few seconds

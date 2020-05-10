@@ -10,7 +10,7 @@ import geom.Vector2D;
  * score in one class and pass a reference to other classes that might want to
  * update it.
  */
-public class ScoreKeeper {
+public class ScoreKeeper implements Drawable {
 
     private int score = 0;
     private int vw; // view width
@@ -48,7 +48,8 @@ public class ScoreKeeper {
         return score;
     }
 
-    void draw(Graphics2D g2) {
+    @Override
+    public void draw(Graphics2D g2) {
 
         g2.setColor(Color.ORANGE);
         int x = vw / 2;

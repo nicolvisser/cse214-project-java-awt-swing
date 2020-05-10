@@ -5,7 +5,7 @@ import geom.Vector2D;
 
 import java.awt.Graphics2D;
 
-public class PowerUpManager {
+public class PowerUpManager implements Drawable, Updateable {
 
     private static final int vw = GlobalSettings.vw;
     private static final int vh = GlobalSettings.vh;
@@ -47,6 +47,7 @@ public class PowerUpManager {
         gamePowerUpsRef.add(new PowerUp(position.x, position.y, randomType, this));
     }
 
+    @Override
     public void draw(Graphics2D g2) {
         for (int i = 0; i < numTypes; i++) {
 
@@ -83,6 +84,7 @@ public class PowerUpManager {
         }
     }
 
+    @Override
     public void update(int dt) {
         for (int i = 0; i < numTypes; i++) {
             if (activePowerUps[i] != null) {

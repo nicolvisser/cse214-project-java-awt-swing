@@ -13,7 +13,7 @@ import javax.swing.KeyStroke;
 
 import geom.Vector2D;
 
-public class InvadersPanel extends JPanel {
+public class InvadersPanel extends JPanel implements Drawable {
 
     private static final long serialVersionUID = 1L;
 
@@ -447,6 +447,7 @@ public class InvadersPanel extends JPanel {
         }
     }
 
+    @Override
     public void draw(Graphics2D g2) {
 
         // scale text based on screen resolution / frame size

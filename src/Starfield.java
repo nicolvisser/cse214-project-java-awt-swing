@@ -1,10 +1,10 @@
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import geom.Rectangle;
 import geom.Vector2D;
 
-public class Starfield {
+public class Starfield implements Drawable {
 
     private static final int NUM_STARS = 600;
     private static final double STARS_PARALLAX_SENSITIVITY_MAX = 0.083;
@@ -58,14 +58,15 @@ public class Starfield {
         }
     }
 
-    public void draw(Graphics g) {
+    @Override
+    public void draw(Graphics2D g2) {
         // draw each star with a flicker effect
         for (Star star : stars) {
             int grayLevel = 130 + (int) (Math.random() * 126);
-            g.setColor(new Color(grayLevel, grayLevel, grayLevel));
+            g2.setColor(new Color(grayLevel, grayLevel, grayLevel));
             int x = (int) star.position.x;
             int y = (int) star.position.y;
-            g.drawLine(x, y, x, y);
+            g2.drawLine(x, y, x, y);
         }
     }
 }

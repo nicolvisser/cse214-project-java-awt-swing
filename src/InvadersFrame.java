@@ -77,7 +77,6 @@ public class InvadersFrame extends JFrame {
         // other classes can have easy access to it without having to pass it as
         // argument via constructors to each class that needs it
         GlobalSettings.setViewSize(width, height);
-        GlobalSettings.isFullscreen = true;
 
         // set a double buffer strategy
         try {
@@ -171,7 +170,7 @@ public class InvadersFrame extends JFrame {
             long endTime = System.nanoTime();
             timer += (endTime - startTime);
 
-            // if a second has passes, update fps counter and reset timer
+            // if a second has passed, update fps counter and reset timer
             if (timer > 1000000000) {
                 fps = fpsCounter;
                 fpsCounter = 0;

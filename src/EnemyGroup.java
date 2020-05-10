@@ -6,7 +6,7 @@ import geom.Ray;
 import geom.Rectangle;
 import geom.Vector2D;
 
-public class EnemyGroup implements Collidable, Disposable {
+public class EnemyGroup implements Collidable, Disposable, Drawable, Updateable {
 
     private static final int vw = GlobalSettings.vw;
     private static final int vh = GlobalSettings.vh;
@@ -117,6 +117,7 @@ public class EnemyGroup implements Collidable, Disposable {
         missiles.add(missile);
     }
 
+    @Override
     public void draw(Graphics2D g2) {
 
         for (Enemy enemy : enemies) {
@@ -132,6 +133,7 @@ public class EnemyGroup implements Collidable, Disposable {
             getCollisionShape().draw(g2);
     }
 
+    @Override
     public void update(int dt) {
 
         // if meanwhile an enemy has died, recalculate collision boundary of group

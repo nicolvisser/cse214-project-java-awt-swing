@@ -24,9 +24,6 @@ public class PowerUp extends DefaultCritter {
     PowerUpType type;
     PowerUpState state = PowerUpState.ALIVE;
 
-    PowerUpManager powerUpManagerRef;
-    Shooter shooterRef; // stores reference to shooter once shooter obtained powerup
-
     long remainingLifetime_ms = DEFAULT_LIFETIME_MS;
     Color color;
     String textOnActivation = "";
@@ -37,7 +34,6 @@ public class PowerUp extends DefaultCritter {
         super(x, y, DEFAULT_COLLISION_RADIUS, 0);
 
         this.type = type;
-        this.powerUpManagerRef = powerUpManagerRef;
 
         velocity = new Vector2D(0, vh / 500f);
 
@@ -87,21 +83,21 @@ public class PowerUp extends DefaultCritter {
         }
     }
 
-    public void removeEffectFromShooter() {
+    public void removeEffectFromShooter(Shooter shooter) {
         switch (type) {
             case ENERGY_REGEN:
-                shooterRef.energyPointsRegenerationPerSecond = 0;
+                shooter.energyPointsRegenerationPerSecond = 0;
                 break;
             case HEALTH_REGEN:
-                shooterRef.healthPointsRegenerationPerSecond = 0;
+                shooter.healthPointsRegenerationPerSecond = 0;
                 break;
             case LASER_GUN:
-                shooterRef.isLaserActive = false;
-                shooterRef.isLaserActiveOnTarget = false;
-                shooterRef.activeWeapon = Shooter.ActiveWeapon.MISSILE_GUN;
+                shooter.isLaserActive = false;
+                shooter.isLaserActiveOnTarget = false;
+                shooter.activeWeapon = Shooter.ActiveWeapon.MISSILE_GUN;
                 break;
             case FAST_RELOAD:
-                shooterRef.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME;
+                shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME;
                 break;
         }
 
@@ -182,13 +178,13 @@ public class PowerUp extends DefaultCritter {
     }
 
     public void handleCollisionWith(Shooter shooter) {
-        powerUpManagerRef.handleNewPowerUpEquipped(this, shooter);
+        shooter.getPowerUpManager().handleNewPowerUpEquipped(this);
     }
 
     public void handleCollisionWith(Missile missile) {
         if (missile.owner instanceof Shooter) {
             Shooter shooter = (Shooter) missile.owner;
-            powerUpManagerRef.handleNewPowerUpEquipped(this, shooter);
+            shooter.getPowerUpManager().handleNewPowerUpEquipped(this);
         }
     }
 

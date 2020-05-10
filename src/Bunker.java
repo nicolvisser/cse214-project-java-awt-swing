@@ -156,7 +156,7 @@ public class Bunker implements Collidable, Disposable {
 
     public void handleCollisionWith(Missile missile) {
         missile.explode();
-        Circle burstCircle = new Circle(missile.position, 20); // Todo fix hardcoding NB NB
+        Circle burstCircle = new Circle(missile.position, 20); // TODO fix hardcoding NB NB
         Iterator<Block> blockIterator = blocks.iterator();
         while (blockIterator.hasNext()) {
             Block block = blockIterator.next();

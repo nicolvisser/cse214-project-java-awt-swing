@@ -24,7 +24,7 @@ public class InvaderGameState extends JComponent {
     private Shooter[] shooters;
     private EnemyGroup enemyGroup;
     private ArrayList<Bunker> bunkers = new ArrayList<>();
-    private PowerUpManager powerUpManager;
+    private ArrayList<PowerUp> powerUps = new ArrayList<>(); // keeps all powerups in game
 
     // vars associated with viewport size
     int vw = GlobalSettings.vw;
@@ -45,13 +45,6 @@ public class InvaderGameState extends JComponent {
     private int numEnemiesInRow = 3;
     private int numEnemiesInColumn = 3;
 
-    // Todo tweak level difficulty increase using the following
-    // int enemyGroupBoxWidth = vw / 10;
-    // int enemyGroupBoxHEight = vw / 10;
-    // int enemyShootInterval = 2000;
-    // int enemyHitpoints = Missile.DEFAULT_DAMAGE_POINTS;
-    // double enemyMovementSpeedMultiplier = EnemyGroup.DEFAULT_MOVEMENT_SPEED;
-
     /**
      * Creates one player game
      */
@@ -62,6 +55,7 @@ public class InvaderGameState extends JComponent {
 
         shooters = new Shooter[1];
         shooters[0] = new Shooter(score, shakeFunc);
+        shooters[0].initializePowerUpManager(powerUps, PowerUpManager.LEFT);
 
         commonInit();
     }
@@ -76,10 +70,14 @@ public class InvaderGameState extends JComponent {
         score = new ScoreKeeper(vw, vh);
 
         shooters = new Shooter[2];
+
         shooters[0] = new Shooter(score, shakeFunc);
         shooters[0].position.x -= vw / 6;
+        shooters[0].initializePowerUpManager(powerUps, PowerUpManager.LEFT);
+
         shooters[1] = new Shooter(score, shakeFunc);
         shooters[1].position.x += vw / 6;
+        shooters[1].initializePowerUpManager(powerUps, PowerUpManager.RIGHT);
         shooters[1].changeShipType(1);
 
         commonInit();
@@ -98,8 +96,6 @@ public class InvaderGameState extends JComponent {
         for (Shooter shooter : shooters)
             shooter.bunkersObstacle = bunkers;
 
-        powerUpManager = new PowerUpManager();
-
         addKeyListener(new GameKeyListener());
 
         // allow TAB key to be picked up by keyListener if user chose TAB as a custom
@@ -117,10 +113,6 @@ public class InvaderGameState extends JComponent {
 
         // make enemies shoot more often every level
         enemyGroup.shootInterval = EnemyGroup.DEFAULT_SHOOT_INTERVAL * 90 / 100;
-
-        // pass EnemyGroup object a reference to PowerUpManager
-        // this is so that EnemyGroup can spawn PowerUps on kill of enemy
-        enemyGroup.createReferenceFor(powerUpManager);
 
         // pass shooter objects a reference to enemy group
         // this is so that shooter aim line can see enemies as obstacles
@@ -149,7 +141,8 @@ public class InvaderGameState extends JComponent {
             for (Bunker bunker : bunkers)
                 bunker.draw(g2);
 
-            powerUpManager.draw(g2);
+            for (PowerUp powerUp : powerUps)
+                powerUp.draw(g2);
 
             for (Shooter shooter : shooters)
                 shooter.drawAimLine(g2);
@@ -230,12 +223,13 @@ public class InvaderGameState extends JComponent {
         for (Bunker bunker : bunkers)
             bunker.update(dt);
 
-        powerUpManager.update(dt);
+        for (PowerUp powerUp : powerUps)
+            powerUp.update(dt);
 
         for (Shooter shooter : shooters)
             Disposable.handleDisposing(shooter.missiles);
         Disposable.handleDisposing(bunkers);
-        Disposable.handleDisposing(powerUpManager.powerUps);
+        Disposable.handleDisposing(powerUps);
         if (enemyGroup != null) {
             Disposable.handleDisposing(enemyGroup.enemies);
             Disposable.handleDisposing(enemyGroup.missiles);
@@ -243,8 +237,8 @@ public class InvaderGameState extends JComponent {
 
         for (Shooter shooter : shooters) {
             Collidable.checkAndHandleCollisions(bunkers, shooter.missiles);
-            Collidable.checkAndHandleCollisions(shooter, powerUpManager.powerUps);
-            Collidable.checkAndHandleCollisions(shooter.missiles, powerUpManager.powerUps);
+            Collidable.checkAndHandleCollisions(shooter, powerUps);
+            Collidable.checkAndHandleCollisions(shooter.missiles, powerUps);
         }
 
         if (enemyGroup != null) {

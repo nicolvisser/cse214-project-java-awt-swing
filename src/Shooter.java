@@ -93,6 +93,8 @@ public class Shooter extends DefaultCritter {
 
     Shakeable gameScreen;
 
+    PowerUpManager powerUpManager = null;
+
     public Shooter(ScoreKeeper score, Shakeable gameScreen) {
         this(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_COLLISION_RADIUS, score, gameScreen);
     }
@@ -185,7 +187,7 @@ public class Shooter extends DefaultCritter {
     public void activateShield() {
         if (!isShieldActive && energyPoints > SHIELD_ENERGY_USAGE_INITIAL) {
             GameAudio.playSoundShieldActivate();
-            // boundingCircle.radius = SHIELD_COLLISION_RADIUS; // Todo: Extend shield
+            // boundingCircle.radius = SHIELD_COLLISION_RADIUS; // TODO: Extend shield
             // radius
             energyPoints -= SHIELD_ENERGY_USAGE_INITIAL;
             isShieldActive = true;
@@ -195,7 +197,7 @@ public class Shooter extends DefaultCritter {
     public void deactivateShield() {
         if (isShieldActive) {
             GameAudio.playSoundShieldDeactivate();
-            // boundingCircle.radius = DEFAULT_COLLISION_RADIUS; // Todo: Extend shield
+            // boundingCircle.radius = DEFAULT_COLLISION_RADIUS; // TODO: Extend shield
             // radius
             isShieldActive = false;
         }
@@ -350,6 +352,8 @@ public class Shooter extends DefaultCritter {
             // handled by skipping draw for single frame
         }
 
+        powerUpManager.draw(g2);
+
         // Show Collision Boundary for Debugging: --->>
         if (GlobalSettings.DEBUG)
             super.draw(g2);
@@ -437,6 +441,8 @@ public class Shooter extends DefaultCritter {
             missile.update(dt);
         }
 
+        powerUpManager.update(dt);
+
         // health regeneration
         healthPoints = Math.min(DEFAULT_HEALTH_POINTS, healthPoints + healthPointsRegenerationPerSecond * dt / 1000.0);
         // energy regeneration
@@ -479,6 +485,14 @@ public class Shooter extends DefaultCritter {
 
     public void handleCollisionWith(PowerUp powerUp) {
         powerUp.handleCollisionWith(this); // reuse code in PowerUp class
+    }
+
+    public void initializePowerUpManager(ArrayList<PowerUp> gamePowerUps, int drawArea) {
+        this.powerUpManager = new PowerUpManager(this, gamePowerUps, drawArea);
+    }
+
+    public PowerUpManager getPowerUpManager() {
+        return powerUpManager;
     }
 
 }

@@ -37,7 +37,6 @@ public class EnemyGroup implements Collidable, Disposable {
     private long counterAttackTimer = 0;
 
     private static final double POWERUP_SPAWN_PROBABILITY = 0.15;
-    private PowerUpManager powerUpManagerRef;
 
     public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol,
             Shooter[] targets) {
@@ -231,12 +230,6 @@ public class EnemyGroup implements Collidable, Disposable {
         }
     }
 
-    // creates link for one way communication between this EnemyGroup object and the
-    // powerUpManagerObject
-    public void createReferenceFor(PowerUpManager powerUpManager) {
-        powerUpManagerRef = powerUpManager;
-    }
-
     @Override
     public BoundingShape getCollisionShape() {
         return new Rectangle(position.x, position.y, width, height);
@@ -270,11 +263,11 @@ public class EnemyGroup implements Collidable, Disposable {
                         if (enemy.isHealthDepleted()) {
                             // let shooter with final hit get the points
                             shooter.score.addPoints(Enemy.DEFAULT_HEALTH_POINTS, enemy.position);
-                        }
-                    }
 
-                    if (Math.random() <= POWERUP_SPAWN_PROBABILITY) {
-                        powerUpManagerRef.spawnRandomTypeAt(enemy.position);
+                            if (Math.random() <= POWERUP_SPAWN_PROBABILITY) {
+                                shooter.getPowerUpManager().spawnRandomTypeAt(enemy.position);
+                            }
+                        }
                     }
 
                 } else {

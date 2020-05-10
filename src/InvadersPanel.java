@@ -78,8 +78,6 @@ public class InvadersPanel extends JPanel {
     }
 
     private void setKeyBindings() {
-        // TODO fix issue: When renaming higscore and typing Q, the game quits.
-
         // Using key binding for q key to quit.
         // The keybinding works whether panel has focus or not.
         // Special thanks to https://www.youtube.com/watch?v=LNizNHaRV84&t=1484s

@@ -6,8 +6,8 @@
 
 |      | Name           | Student Number |
 | ---- | -------------- | -------------- |
-| #1   | Emi Dreckmeyr  |                |
-| #2   | Michael Knight |                |
+| #1   | Emi Dreckmeyr  | 21604754       |
+| #2   | Michael Knight | 23263962       |
 | #3   | Nicol Visser   | 16986431       |
 
 ## Execution Details
@@ -18,21 +18,29 @@ The main class is `MainGame.java` and is located under `./src/` directory.
 > cd src
 ```
 
-### Compile:
+### Compiling:
+
+#### 1. Compile all java files in the `./src/` directory.
 
 ```shell
-> javac MainGame.java
+> javac *.java
 ```
 
-### Run:
+#### 2. Compile all java files in the `./src/geom` directory.
 
-#### Windowed Mode:
+```shell
+> javac geom/*.java
+```
+
+### Running:
+
+#### 1. Run in Windowed Mode:
 
 ```shell
 > java MainGame
 ```
 
-#### Fullscreen Exclusive Mode (recommended):
+#### 2. Run in Fullscreen Exclusive Mode (recommended):
 
 Add the argument `-f` or `-fullscreen`.
 
@@ -40,15 +48,17 @@ Add the argument `-f` or `-fullscreen`.
 > java MainGame -f
 ```
 
-#### Visual Debugging Mode:
+##### * Visual Debugging Mode:
 
-Add the argument `-d` or `-debug`.
+Visual debugging mode shows the shapes used for collision. This is helpful to understand how collision detection works and to find bugs.
+
+To enable visual debugging mode, add the argument `-d` or `-debug` when running the game.
+
+e.g.
 
 ```shell
 > java MainGame -f -d
 ```
-
-
 
 ## Interface Inheritance
 

@@ -11,15 +11,30 @@ public class PowerUpManager {
     private static final int vh = GlobalSettings.vh;
     private static final int vmin = GlobalSettings.vmin;
 
-    ArrayList<PowerUp> powerUps = new ArrayList<>();
-    private PowerUp.PowerUpType[] types = PowerUp.PowerUpType.values(); // cache types of powerup in array form to be
-                                                                        // able to easily get random type
+    private static PowerUp.PowerUpType[] types = PowerUp.PowerUpType.values(); // cache types of powerup in array form
+                                                                               // to be able to easily get random type
 
-    private int numTypes = types.length;
-    private PowerUp[] activePowerUps = new PowerUp[numTypes];
-    private TextAnimation[] textAnimationsOnActivate = new TextAnimation[numTypes];
+    private static int numTypes = types.length;
+    private static TextAnimation[] textAnimationsOnActivate = new TextAnimation[numTypes];
 
-    public PowerUpManager() {
+    // where to draw status bars. e.g. for second player you might want to draw
+    // powerup indicators to the right (2) of the screen
+    static final int LEFT = 0;
+    static final int RIGHT = 1;
+    private int drawArea;
+
+    private ArrayList<PowerUp> gamePowerUpsRef; // reference to a list of all the game's powerups unequipped and
+                                                // equipped
+
+    private Shooter owner; // reference to the owner of this powerup manager
+    private PowerUp[] activePowerUps = new PowerUp[numTypes]; // array containing owner's active powerups. each entry
+                                                              // represents a different type. if that entry is null then
+                                                              // that type is not active
+
+    public PowerUpManager(Shooter shooter, ArrayList<PowerUp> powerUps, int drawArea) {
+        owner = shooter;
+        gamePowerUpsRef = powerUps;
+        this.drawArea = drawArea;
     }
 
     public void spawnRandomTypeAt(Vector2D position) {
@@ -29,22 +44,20 @@ public class PowerUpManager {
         // override for testing:
         // randomType = PowerUp.PowerUpType.FAST_RELOAD;
 
-        powerUps.add(new PowerUp(position.x, position.y, randomType, this));
+        gamePowerUpsRef.add(new PowerUp(position.x, position.y, randomType, this));
     }
 
     public void draw(Graphics2D g2) {
-        for (PowerUp powerUp : powerUps)
-            powerUp.draw(g2);
-
         for (int i = 0; i < numTypes; i++) {
 
             if (activePowerUps[i] != null && activePowerUps[i].remainingLifetime_ms > 0) {
 
                 // draw status bar to show remaining duration
+                int x = drawArea == 0 ? vw * (10 + 5 * i) / 100 : vw * (90 - 5 * i) / 100;
                 g2.setColor(activePowerUps[i].color);
                 double percentageLifeTime = 100.0 * activePowerUps[i].remainingLifetime_ms
                         / PowerUp.DEFAULT_LIFETIME_MS;
-                Utils.drawRoundStatusBar(g2, vw * (10 + 5 * i) / 100, vh * 90 / 100, vw / 80, percentageLifeTime);
+                Utils.drawRoundStatusBar(g2, x, vh * 90 / 100, vw / 80, percentageLifeTime);
 
                 // draw text to show effect is activated
                 if (textAnimationsOnActivate[i] != null && !textAnimationsOnActivate[i].finished) {
@@ -71,9 +84,6 @@ public class PowerUpManager {
     }
 
     public void update(int dt) {
-        for (PowerUp powerUp : powerUps)
-            powerUp.update(dt);
-
         for (int i = 0; i < numTypes; i++) {
             if (activePowerUps[i] != null) {
                 PowerUp activePowerUp = activePowerUps[i];
@@ -87,8 +97,7 @@ public class PowerUpManager {
         }
     }
 
-    public void handleNewPowerUpEquipped(PowerUp powerUp, Shooter shooter) {
-        powerUp.shooterRef = shooter;
+    public void handleNewPowerUpEquipped(PowerUp powerUp) {
         powerUp.state = PowerUp.PowerUpState.ACTIVATED;
 
         switch (powerUp.type) {
@@ -115,7 +124,7 @@ public class PowerUpManager {
                 if (activePowerUps[i] == null) {
                     // IF NONE OF SAME TYPE ALREADY IN EFFECT:
                     // add new effect to shooter
-                    powerUp.addEffectTo(shooter);
+                    powerUp.addEffectTo(owner);
                 } else {
                     // IF SAME TYPE ALREADY IN EFFECT:
                     // ready old power up for disposal
@@ -141,6 +150,6 @@ public class PowerUpManager {
             }
         }
 
-        powerUp.removeEffectFromShooter();
+        powerUp.removeEffectFromShooter(owner);
     }
 }

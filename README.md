@@ -167,6 +167,14 @@ The following diagram should give a rough idea of the "parent-child" relationshi
 
 
 
+Creating game loop in full screen exclusive mode:
+
+https://docs.oracle.com/javase/tutorial/extra/fullscreen/index.html
+
+"Setting Up Full-Screen Exclusive Mode" in https://www.oreilly.com/library/view/killer-game-programming/0596007302/ch04.htmlÏ
+
+
+
 
 
 

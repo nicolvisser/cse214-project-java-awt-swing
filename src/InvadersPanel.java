@@ -23,7 +23,7 @@ public class InvadersPanel extends JPanel {
     private final int width;
     private final int height;
 
-    // defined different states panel can be in, which is used to determine what
+    // define different states panel can be in, which is used to determine what
     // component to display on panel at what time
     public enum DisplayState {
         MAIN_MENU, PLAYING, TUTORIAL, PAUSE, HIGH_SCORES, SETTINGS, CONTROLS_P1, CONTROLS_P2, GAME_OVER, QUIT;
@@ -38,8 +38,7 @@ public class InvadersPanel extends JPanel {
     private static final String[] pauseScreenOptions = { "Resume Game", "Restart Game", "Quit To Main Menu" };
     private static final String[] settingsScreenOptions = { "Customize Controls P1", "Customize Controls P2", "Back" };
 
-    // declare components different components that will at some point be drawn on
-    // panel
+    // declare different components that will at some point be drawn on panel
     private Starfield starfield;
     private InvaderGameState loadedInvaderGameState;
     private Tutorial tutorial;
@@ -59,7 +58,9 @@ public class InvadersPanel extends JPanel {
         setIgnoreRepaint(true);
         setKeyBindings();
 
-        starfield = new Starfield(width, height);
+        GameAudio.loopMenuMusic();
+
+        starfield = new Starfield(width, height); // background
 
         mainMenuScreen = new MenuScreen(width, height, "Invaders", "Main Menu", mainMenuScreenOptions);
         pauseScreen = new MenuScreen(width, height, "Paused", pauseScreenOptions);
@@ -72,9 +73,7 @@ public class InvadersPanel extends JPanel {
                 GlobalSettings.DEFAULT_KEYCODES_P2);
 
         activeDisplayState = DisplayState.MAIN_MENU;
-        add(mainMenuScreen);
-
-        GameAudio.loopMenuMusic();
+        add(mainMenuScreen); //
     }
 
     private void setKeyBindings() {
@@ -84,10 +83,8 @@ public class InvadersPanel extends JPanel {
         // Also see https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html
         //
         // Considered using keybinding for other classes as well. It would have worked
-        // very nice for
-        // creating custom controls. However it seems that key bindings can't recognize
-        // a modifier key
-        // (shift, alt, control) press on its own.
+        // very nice for creating custom controls. However it seems that key bindings
+        // can't recognize a modifier key (shift, alt, control) press on its own.
 
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = getActionMap();

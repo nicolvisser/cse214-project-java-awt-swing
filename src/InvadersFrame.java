@@ -47,10 +47,9 @@ public class InvadersFrame extends JFrame {
         }
     }
 
-    // Resources used to build this game loop:
-    // 1 -
+    // Resources used for fullscreen exclusive mode: See official oracle tutorial
     // https://docs.oracle.com/javase/tutorial/extra/fullscreen/exclusivemode.html
-    // 2 -
+    // Also see part on "Setting Up Full-Screen Exclusive Mode" in
     // https://www.oreilly.com/library/view/killer-game-programming/0596007302/ch04.html
     private void initFullScreenMode() {
         // set some properties of the frame:
@@ -70,7 +69,7 @@ public class InvadersFrame extends JFrame {
         // make this frame fullscreen on default monitor
         gd.setFullScreenWindow(this);
 
-        // now get store and print the size of the frame
+        // store the new size of frame
         width = getBounds().width;
         height = getBounds().height;
 
@@ -101,7 +100,6 @@ public class InvadersFrame extends JFrame {
         // This is not a major issue, and might not be addressed by project submission
         // date.
 
-        // set some properties of the frame:
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setIgnoreRepaint(true);
@@ -112,7 +110,6 @@ public class InvadersFrame extends JFrame {
         // store and print the size of the frame
         width = GlobalSettings.DEFAULT_WINDOWED_MODE_WIDTH;
         height = GlobalSettings.DEFAULT_WINDOWED_MODE_HEIGHT;
-        System.out.println("Windowed: " + width + " x " + height);
 
         // create a new game panel and add to the frame
         panel = new InvadersPanel(width, height);
@@ -132,16 +129,11 @@ public class InvadersFrame extends JFrame {
         setVisible(true);
     }
 
-    public void changeWindowSize(int width, int height) {
-        Dimension newSize = new Dimension(width, height);
-        setPreferredSize(newSize);
-        panel.setPreferredSize(newSize);
-        pack();
-    }
-
     // Tutorial at
-    // https://docs.oracle.com/javase/tutorial/extra/fullscreen/rendering.html
+    // https://docs.oracle.com/javase/tutorial/extra/fullscreen/rendering.html on
+    // how to get graphics object and actively render
     // Also some credit to http://www.java-gaming.org/index.php?topic=24220.0
+    // regarding targeting a frame rate
     public void run() {
 
         // store buffer strategy to be used in loop
@@ -231,5 +223,4 @@ public class InvadersFrame extends JFrame {
         // dispose the graphicsobject (which is a buffer type object)
         g2.dispose();
     }
-
 }

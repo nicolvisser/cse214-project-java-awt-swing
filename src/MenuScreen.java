@@ -3,11 +3,9 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JComponent;
-
 import geom.Rectangle;
 
-public class MenuScreen extends JComponent {
+public class MenuScreen extends DisplayComponent {
 
     private static final long serialVersionUID = 1L;
 

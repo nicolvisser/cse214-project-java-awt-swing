@@ -5,11 +5,9 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
-import javax.swing.JComponent;
-
 import geom.Vector2D;
 
-public class InvaderGameState extends JComponent {
+public class InvaderGameState extends DisplayComponent {
 
     private static final long serialVersionUID = 1L;
 

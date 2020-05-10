@@ -352,7 +352,8 @@ public class Shooter extends DefaultCritter {
             // handled by skipping draw for single frame
         }
 
-        powerUpManager.draw(g2);
+        if (powerUpManager != null)
+            powerUpManager.draw(g2);
 
         // Show Collision Boundary for Debugging: --->>
         if (GlobalSettings.DEBUG)
@@ -441,7 +442,8 @@ public class Shooter extends DefaultCritter {
             missile.update(dt);
         }
 
-        powerUpManager.update(dt);
+        if (powerUpManager != null)
+            powerUpManager.update(dt);
 
         // health regeneration
         healthPoints = Math.min(DEFAULT_HEALTH_POINTS, healthPoints + healthPointsRegenerationPerSecond * dt / 1000.0);

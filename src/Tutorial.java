@@ -1,13 +1,15 @@
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import javax.swing.*;
-
-import geom.*;
+import geom.LineSegment;
+import geom.Ray;
 import geom.Rectangle;
+import geom.Vector2D;
 
-public class Tutorial extends JComponent {
+public class Tutorial extends DisplayComponent {
 
     private static final long serialVersionUID = 1L;
 

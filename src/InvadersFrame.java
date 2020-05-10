@@ -211,14 +211,14 @@ public class InvadersFrame extends JFrame {
         // draw contents of panel in the buffer
         panel.draw(g2);
 
+        // if in visual debug mode, draw fps count
+        if (GlobalSettings.DEBUG) {
+            g2.setColor(Color.GREEN);
+            Utils.drawLeftAlignedText(g2, 10, height - 10, "FPS: " + fps);
+        }
+
         // show the contents drawn in the previous frame (double buffering)
         bufferStrategy.show();
-
-        // draw a green rectangle for the frame's boundary as well as the most recent
-        // FPS count
-        g2.setColor(Color.GREEN);
-        g2.drawRect(0, 0, width, height);
-        Utils.drawLeftAlignedText(g2, 10, height - 10, "FPS: " + fps);
 
         // dispose the graphicsobject (which is a buffer type object)
         g2.dispose();

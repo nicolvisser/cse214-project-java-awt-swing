@@ -85,37 +85,47 @@ It has two interfaces, the `Shape` interface and an extension of it, the `Boundi
 `Rectangle` and `Circle`, by implementing the`BoundingShape` interface, also have methods for
 
 - checking whether or not the bounding shape contains a point
-  - `public boolean contains(double x, double y);`
-  - `public boolean contains(Vector2D point);`
-- checking whether or not the bounding shape completely contains another shape
-  - `public boolean contains(Shape shape);`
+- checking whether or not the bounding shape completely contains another shapeÏ
 - returning a random point inside the bounding shape
-  - `public Vector2D getRandomPositionInside();`
+
+```java
+public boolean contains(double x, double y);
+public boolean contains(Vector2D point);
+public boolean contains(Shape shape);
+public Vector2D getRandomPositionInside();
+```
 
 ##### Example:
 
 ### Interfaces in the game (default package)
 
-#### `Collidable` Interface
+#### Collidable Interface
 
 `Collidable` aids with collision detection and handling.
 
 Classes that implement `Collidable` have methods for:
 
 - returning the `BoundaryShape` used for collision
-  - `public Shape getCollisionShape();`
 - checking whether or not the object is colliding with another ` Collidable` object
-  - `public boolean isCollidingWith(Collidable otherCollidable);`
 - handling the collision with another ` Collidable` object, assuming they do collide
-  - `public void handleCollisionWith(Collidable otherCollidable);`
 
-In addition the following static methods are available to be used for collission checking and handling
+```java
+public Shape getCollisionShape();
+public boolean isCollidingWith(Collidable otherCollidable);
+public void handleCollisionWith(Collidable otherCollidable);
+```
 
 In our game, the game objects are often stored in `ArrayLists` of the same type. Instead of creating an N body simulation where all `Collidables` are checked against eachother, we rather only check certain groups of `Collidables` with other groups of `Collidables` or an individual `Collidable`. For this approach, two <u>static methods</u> are available to check and handle collisions.
 
-- `public static void checkAndHandleCollisions(ArrayList<? extends Collidable> group1, ArrayList<? extends Collidable> group2) {`
+```java
+public static void checkAndHandleCollisions(ArrayList<? extends Collidable> group1, ArrayList<? extends Collidable> group2) {
+  ...
+}
 
-- `public static void checkAndHandleCollisions(Collidable collidable1, ArrayList<? extends Collidable> group2)`
+public static void checkAndHandleCollisions(Collidable collidable1, ArrayList<? extends Collidable> group2) {
+  ...
+}
+```
 
 #### `Disposable` Interface
 
@@ -124,6 +134,34 @@ We mentioned that our game objects are often stored in `ArrayLists`. At some poi
 A class that implements this interface has a method `public boolean mayBeDisposed()` to check whether or not the item is ready to be disposed.
 
 For convenience the `Disposable` interface contains a method that will iterate through an `ArrayList` of `Disposables`, checks whether any item is ready to be disposed and then removes that item from the list.
+
+#### `Updateable` Interface
+
+Classes that implement the `Updateable` interface have an `update` method as follows:
+
+```java
+> public void update(int dt);
+```
+
+An updateable class 'wants' its `update` method to be called in <u>whenever</u> <u>the game updates its state in the game loop</u>. The argument `dt` is the targeted amount of time in milliseconds between frames.
+
+The idea is that in the game loop, once we know the timestep we call the `update` method of a component which is `Updateable`. Then in that component we have subcomponents which are also `Updateable` and we call them, untill the entire tree of updateable are drawn. This call tree can be seen in the following diagram:
+
+<img src="screenshots/calltree-update.png" width="100%" >
+
+#### `Drawable` Interface
+
+Classes that implement the `Drawable` interface have a `draw` method as follows:
+
+```java
+> public void draw(Graphics2D g2);
+```
+
+A drawable class 'wants' its `draw` method to be called in <u>whenever the game renders a frame</u>. The argument `g2` is the `Graphics2D` object onto which the object will draw its contents.
+
+The idea is that in the game loop, once we have the `Graphics2D` object to draw to, we call the `draw` method of a componet which is `Drawable`. Then in that component we have subcomponents which are also `Drawable` and we call them, untill the entire tree of drawables are drawn. This call tree can be seen in the following diagram:
+
+<img src="screenshots/calltree-draw.png" width="100%" >
 
 #### `Shakeable` (an experimental) Interface
 
@@ -137,27 +175,119 @@ Idea gained from https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpre
 
 ## Class Inheritance
 
+#### Inherit
 
+#### The Gameplay Object
 
 
 
 ## Summary of Additional Work
 
+#### From recommendations in Marking sheet
+
+##### Improved graphics
+
+- Starfield background with parallax effect depending on shooter velocity.
+- Various menu screens and functionality to switch between them.
+
+##### Add sounds
+
+- Volume control for programmer to change volume of sound without editing sound file.
+
+##### Add music
+
+- Two tracks, one for menus and one for gameplay. Menu music fades out befor game music starts.
+
+##### Leaderboard/high score screen
+
+- Save, view and reset high scores. Swop active keylisteners to listen for text input while entering name.
+
+##### Progressively harder levels
+
+##### Extra lives
+
+- Powerups for health as well as hitpoints made extra lives feel redundant. These alternatives especially with their visuals are at least as complicated as extra lives.
+
+##### Additional shooter
+
+- Competitive mode where two shooters can see who get the most points
+
+##### Enemies counterattack
+
+##### Bunkers Power-ups (1 or 2 ticks)
+
+##### Hit-points
+
+##### Different weapons
+
+Laser Gun or Regular Missiles. Missiles fired at bunkers burst and remove bunkers in a certain radius.
+
+##### Different enemy types
+
+- 
+
+#### Other:
+
+##### Customizable controls for both players
+
+##### Custom `geom` package that serves as API for 2D geometry. Includes intersection and containment methods.
+
+##### Better colission detection
+
+- Effective use of shapes (circles, rays, rectangles) instead of just a point and distance
+- Use of minimum bounding boxes to reduce amount of checks
+
+##### Animated text that fade away
+
+
+
+##### Fullscreen exclusive mode
+
+##### Allowing various window sizes by dynamically positioning in viewport.
+
+##### Tutorial
+
+- Helps player get to know the controls
+- Shows how careful programming lead to components being reuseable in a different environment with different objectives.
+
+**Screen shake animation**
+
+
+
+
+
 
 
 ## External Libraries
 
+The `In` and `Out` classes are used from the booksite's standard library, https://introcs.cs.princeton.edu/java/stdlib/. This was to simplify the process of reading and writing to text files due to some time constraints.
 
+The class `GameAudio` is a trimmed down version of the booksite's `StdAudio` library. With customizations such as:
+
+- volume control of sound
+- looping background music that can fade out and play a different track
 
 ## Class Structure Diagrams
 
+**FIGURE 1** shows the class and interface inheritance of objects in the `geom` package. These objects form an important base for the 2D programming in other classes.
+
 <img src="screenshots/inheritance-geom.png" width="100%" >
+
+
+
+**FIGURE 2** shows the class and interface inheritance of objects that directly or indirectly inherit from the `javax.swing` framework.
+
+<img src="screenshots/inheritance-swing.png" width="100%" >
+
+
+
+**FIGURE 3** shows the class and interface inheritance of objects that relate to gameplay, such as missiles, shooters etc:
 
 <img src="screenshots/inheritance-game-objects.png" width="100%" >
 
 
 
-The following diagram should give a rough idea of the "parent-child" relationships that the classes might have. Note, this is not exact or exhaustive, but is helpful to understand the game and where to find implementations of the classes. You may read the diagram as follows. If `Missile` is a child of `EnemyGroup` it translates to 'there is a `Missile` instance declared somewhere in the class `EnemyGroup` .
+The following diagram, **FIGURE 4**, should give a rough idea of the "parent-child" relationships that the classes might have. Note, this is not exact or exhaustive, but is helpful to understand the game and where to find implementations of the classes. You may read the diagram as follows. If `Missile` is a child of `EnemyGroup` it translates to 'there is a `Missile` instance declared somewhere in the class `EnemyGroup` .
 
 <img src="screenshots/relationships-game-objects.png" width="100%" >
 

@@ -73,7 +73,6 @@ public class Tutorial extends DisplayComponent {
 
         g2.setColor(Color.WHITE);
         Utils.drawCenteredText(g2, x, y, keyStr);
-
     }
 
     @Override

@@ -447,6 +447,8 @@ public class Shooter extends DefaultCritter {
         healthPoints = Math.min(DEFAULT_HEALTH_POINTS, healthPoints + healthPointsRegenerationPerSecond * dt / 1000.0);
         // energy regeneration
         energyPoints = Math.min(DEFAULT_ENERGY_POINTS, energyPoints + energyPointsRegenerationPerSecond * dt / 1000.0);
+
+        Disposable.handleDisposing(missiles);
     }
 
     @Override

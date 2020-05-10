@@ -226,14 +226,8 @@ public class InvaderGameState extends JComponent {
         for (PowerUp powerUp : powerUps)
             powerUp.update(dt);
 
-        for (Shooter shooter : shooters)
-            Disposable.handleDisposing(shooter.missiles);
         Disposable.handleDisposing(bunkers);
         Disposable.handleDisposing(powerUps);
-        if (enemyGroup != null) {
-            Disposable.handleDisposing(enemyGroup.enemies);
-            Disposable.handleDisposing(enemyGroup.missiles);
-        }
 
         for (Shooter shooter : shooters) {
             Collidable.checkAndHandleCollisions(bunkers, shooter.missiles);
@@ -336,7 +330,6 @@ public class InvaderGameState extends JComponent {
                 }
             }
         }
-
     }
 
     public Vector2D getVelocityForBackground() {

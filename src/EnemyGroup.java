@@ -204,6 +204,8 @@ public class EnemyGroup implements Collidable, Disposable {
                 break;
         }
 
+        Disposable.handleDisposing(enemies);
+        Disposable.handleDisposing(missiles);
     }
 
     public void setState(MoveState newState) {

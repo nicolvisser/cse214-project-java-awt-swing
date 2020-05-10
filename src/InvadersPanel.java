@@ -101,7 +101,12 @@ public class InvadersPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                quitFlag = true;
+                // don't allow quit key in game over screen or control editing screen, since
+                // user may use the key Q here
+                if (!(gameOverScreen.hasFocus() || controlsScreenPlayer1.hasFocus()
+                        || controlsScreenPlayer2.hasFocus())) {
+                    quitFlag = true;
+                }
             }
         });
     }

@@ -295,18 +295,20 @@ public class InvaderGameState extends JComponent {
                 shooters[0].onShootButtonPress();
             } else if (e.getKeyCode() == keyCodesP1[5]) { // P1 Block
                 shooters[0].activateShield();
-            } else if (e.getKeyCode() == keyCodesP2[0]) { // P2 Move Left
-                shooters[1].isLeftThrusterActive = true;
-            } else if (e.getKeyCode() == keyCodesP2[1]) { // P2 Move Right
-                shooters[1].isRightThrusterActive = true;
-            } else if (e.getKeyCode() == keyCodesP2[2]) { // P2 Rotate Left
-                shooters[1].isRotatingLeft = true;
-            } else if (e.getKeyCode() == keyCodesP2[3]) { // P2 Rotate Right
-                shooters[1].isRotatingRight = true;
-            } else if (e.getKeyCode() == keyCodesP2[4]) { // P2 Shoot
-                shooters[1].onShootButtonPress();
-            } else if (e.getKeyCode() == keyCodesP2[5]) { // P2 Block
-                shooters[1].activateShield();
+            } else if (shooters.length > 1) {
+                if (e.getKeyCode() == keyCodesP2[0]) { // P2 Move Left
+                    shooters[1].isLeftThrusterActive = true;
+                } else if (e.getKeyCode() == keyCodesP2[1]) { // P2 Move Right
+                    shooters[1].isRightThrusterActive = true;
+                } else if (e.getKeyCode() == keyCodesP2[2]) { // P2 Rotate Left
+                    shooters[1].isRotatingLeft = true;
+                } else if (e.getKeyCode() == keyCodesP2[3]) { // P2 Rotate Right
+                    shooters[1].isRotatingRight = true;
+                } else if (e.getKeyCode() == keyCodesP2[4]) { // P2 Shoot
+                    shooters[1].onShootButtonPress();
+                } else if (e.getKeyCode() == keyCodesP2[5]) { // P2 Block
+                    shooters[1].activateShield();
+                }
             }
         }
 
@@ -324,18 +326,20 @@ public class InvaderGameState extends JComponent {
                 shooters[0].onShootButtonRelease();
             } else if (e.getKeyCode() == keyCodesP1[5]) { // P1 Block
                 shooters[0].deactivateShield();
-            } else if (e.getKeyCode() == keyCodesP2[0]) { // P2 Move Left
-                shooters[1].isLeftThrusterActive = false;
-            } else if (e.getKeyCode() == keyCodesP2[1]) { // P2 Move Right
-                shooters[1].isRightThrusterActive = false;
-            } else if (e.getKeyCode() == keyCodesP2[2]) { // P2 Rotate Left
-                shooters[1].isRotatingLeft = false;
-            } else if (e.getKeyCode() == keyCodesP2[3]) { // P2 Rotate Right
-                shooters[1].isRotatingRight = false;
-            } else if (e.getKeyCode() == keyCodesP2[4]) { // P2 Shoot
-                shooters[1].onShootButtonRelease();
-            } else if (e.getKeyCode() == keyCodesP2[5]) { // P2 Block
-                shooters[1].deactivateShield();
+            } else if (shooters.length > 1) {
+                if (e.getKeyCode() == keyCodesP2[0]) { // P2 Move Left
+                    shooters[1].isLeftThrusterActive = false;
+                } else if (e.getKeyCode() == keyCodesP2[1]) { // P2 Move Right
+                    shooters[1].isRightThrusterActive = false;
+                } else if (e.getKeyCode() == keyCodesP2[2]) { // P2 Rotate Left
+                    shooters[1].isRotatingLeft = false;
+                } else if (e.getKeyCode() == keyCodesP2[3]) { // P2 Rotate Right
+                    shooters[1].isRotatingRight = false;
+                } else if (e.getKeyCode() == keyCodesP2[4]) { // P2 Shoot
+                    shooters[1].onShootButtonRelease();
+                } else if (e.getKeyCode() == keyCodesP2[5]) { // P2 Block
+                    shooters[1].deactivateShield();
+                }
             }
         }
 

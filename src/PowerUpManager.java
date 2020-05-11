@@ -118,6 +118,9 @@ public class PowerUpManager implements Drawable, Updateable {
             case LASER_GUN:
                 GameAudio.playVoiceLaserGun();
                 break;
+            case HEALTH_BOOST:
+                GameAudio.playVoiceHealthBoost();
+                break;
 
             default:
                 break;

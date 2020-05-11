@@ -87,6 +87,10 @@ public class GameAudio {
         play("resources/audio/Permanent-Fast-Reload.wav", 70);
     }
 
+    public static void playVoiceHealthBoost(){
+        play("resources/audio/Health-Boost.wav", 70);
+    }
+
     public static void playVoiceLaserGun() {
         play("resources/audio/Laser-Gun.wav", 70);
     }

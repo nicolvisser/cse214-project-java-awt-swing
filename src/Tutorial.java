@@ -13,8 +13,8 @@ public class Tutorial extends DisplayComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private final int vw = GlobalSettings.vw;
-    private final int vh = GlobalSettings.vh;
+    private final int vw = GameSettings.vw;
+    private final int vh = GameSettings.vh;
 
     private int[] keyCodes;
     private String[] keyDescriptions;

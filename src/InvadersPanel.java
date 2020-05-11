@@ -69,9 +69,9 @@ public class InvadersPanel extends JPanel implements Drawable {
         highScoreScreen = new HighScoreScreen(width, height);
         gameOverScreen = new GameOverScreen(width, height);
         controlsScreenPlayer1 = new ControlsScreen(width, height, "resources/keysP1.txt",
-                GlobalSettings.DEFAULT_KEYCODES_P1);
+                GameSettings.DEFAULT_KEYCODES_P1);
         controlsScreenPlayer2 = new ControlsScreen(width, height, "resources/keysP2.txt",
-                GlobalSettings.DEFAULT_KEYCODES_P2);
+                GameSettings.DEFAULT_KEYCODES_P2);
 
         goToNewState(DisplayState.MAIN_MENU);
     }
@@ -451,7 +451,7 @@ public class InvadersPanel extends JPanel implements Drawable {
     public void draw(Graphics2D g2) {
 
         // scale text based on screen resolution / frame size
-        Utils.scaleFont(g2, GlobalSettings.vmin / 1000f);
+        Utils.scaleFont(g2, GameSettings.vmin / 1000f);
 
         // draw black background
         g2.setColor(Color.BLACK);

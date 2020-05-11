@@ -18,7 +18,7 @@ public class MainGame {
                 runInFullscreen = true;
             }
             if (arg.equals("-d") || arg.equals("-debug")) {
-                GlobalSettings.DEBUG = true;
+                GameSettings.DEBUG = true;
             }
         }
 

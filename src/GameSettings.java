@@ -1,7 +1,7 @@
 /**
  * GlobalSettings
  */
-public class GlobalSettings {
+public class GameSettings {
 
     static final int DEFAULT_WINDOWED_MODE_WIDTH = 800;
     static final int DEFAULT_WINDOWED_MODE_HEIGHT = 800;

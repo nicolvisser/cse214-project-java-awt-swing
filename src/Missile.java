@@ -7,9 +7,9 @@ import geom.Vector2D;
 
 public class Missile extends DefaultCritter {
 
-    private static final int vw = GlobalSettings.vw;
-    private static final int vh = GlobalSettings.vh;
-    private static final int vmin = GlobalSettings.vmin;
+    private static final int vw = GameSettings.vw;
+    private static final int vh = GameSettings.vh;
+    private static final int vmin = GameSettings.vmin;
     //// private static final int vmax = GlobalSettings.vmax;
 
     private static final int DEFAULT_RADIUS = vmin / 150;
@@ -88,7 +88,7 @@ public class Missile extends DefaultCritter {
         }
 
         // Show Collision Boundary for Debugging: --->>
-        if (GlobalSettings.DEBUG)
+        if (GameSettings.DEBUG)
             super.draw(g2);
         // <-------------------------------------------
     }

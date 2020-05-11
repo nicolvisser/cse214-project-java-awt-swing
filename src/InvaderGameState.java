@@ -25,8 +25,8 @@ public class InvaderGameState extends DisplayComponent implements Updateable {
     private ArrayList<PowerUp> powerUps = new ArrayList<>(); // keeps all powerups in game
 
     // vars associated with viewport size
-    int vw = GlobalSettings.vw;
-    int vh = GlobalSettings.vh;
+    int vw = GameSettings.vw;
+    int vh = GameSettings.vh;
 
     // vars associated with view shake animation
     Shakeable shakeFunc = () -> {

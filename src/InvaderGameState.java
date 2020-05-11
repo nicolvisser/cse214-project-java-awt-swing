@@ -25,8 +25,8 @@ public class InvaderGameState extends DisplayComponent implements Updateable {
     private ArrayList<PowerUp> powerUps = new ArrayList<>(); // keeps all powerups in game
 
     // vars associated with viewport size
-    int vw = GlobalSettings.vw;
-    int vh = GlobalSettings.vh;
+    int vw = GameSettings.vw;
+    int vh = GameSettings.vh;
 
     // vars associated with view shake animation
     Shakeable shakeFunc = () -> {
@@ -110,7 +110,7 @@ public class InvaderGameState extends DisplayComponent implements Updateable {
                 numEnemiesInColumn + level, shooters);
 
         // make enemies shoot more often every level
-        enemyGroup.shootInterval = EnemyGroup.DEFAULT_SHOOT_INTERVAL * 90 / 100;
+        enemyGroup.shootInterval = EnemyGroup.DEFAULT_SHOOT_INTERVAL * 80 / 100;
 
         // pass shooter objects a reference to enemy group
         // this is so that shooter aim line can see enemies as obstacles

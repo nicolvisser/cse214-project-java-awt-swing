@@ -76,7 +76,7 @@ public class InvadersFrame extends JFrame {
         // also store size in GlobalSettings class in public static variable so that
         // other classes can have easy access to it without having to pass it as
         // argument via constructors to each class that needs it
-        GlobalSettings.setViewSize(width, height);
+        GameSettings.setViewSize(width, height);
 
         // set a double buffer strategy
         try {
@@ -103,12 +103,12 @@ public class InvadersFrame extends JFrame {
         setResizable(false);
         setIgnoreRepaint(true);
         setPreferredSize(
-                new Dimension(GlobalSettings.DEFAULT_WINDOWED_MODE_WIDTH, GlobalSettings.DEFAULT_WINDOWED_MODE_HEIGHT));
+                new Dimension(GameSettings.DEFAULT_WINDOWED_MODE_WIDTH, GameSettings.DEFAULT_WINDOWED_MODE_HEIGHT));
         setLayout(null);
 
         // store and print the size of the frame
-        width = GlobalSettings.DEFAULT_WINDOWED_MODE_WIDTH;
-        height = GlobalSettings.DEFAULT_WINDOWED_MODE_HEIGHT;
+        width = GameSettings.DEFAULT_WINDOWED_MODE_WIDTH;
+        height = GameSettings.DEFAULT_WINDOWED_MODE_HEIGHT;
 
         // create a new game panel and add to the frame
         panel = new InvadersPanel(width, height);
@@ -211,7 +211,7 @@ public class InvadersFrame extends JFrame {
         panel.draw(g2);
 
         // if in visual debug mode, draw fps count
-        if (GlobalSettings.DEBUG) {
+        if (GameSettings.DEBUG) {
             g2.setColor(Color.GREEN);
             Utils.drawLeftAlignedText(g2, 10, height - 10, "FPS: " + fps);
         }

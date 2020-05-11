@@ -7,9 +7,9 @@ import java.awt.Graphics2D;
 
 public class PowerUpManager implements Drawable, Updateable {
 
-    private static final int vw = GlobalSettings.vw;
-    private static final int vh = GlobalSettings.vh;
-    private static final int vmin = GlobalSettings.vmin;
+    private static final int vw = GameSettings.vw;
+    private static final int vh = GameSettings.vh;
+    private static final int vmin = GameSettings.vmin;
 
     private static PowerUp.PowerUpType[] types = PowerUp.PowerUpType.values(); // cache types of powerup in array form
                                                                                // to be able to easily get random type

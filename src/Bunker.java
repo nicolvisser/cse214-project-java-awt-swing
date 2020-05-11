@@ -28,7 +28,7 @@ public class Bunker implements Collidable, Disposable, Updateable, Drawable {
             g2.fill(((Rectangle) getCollisionShape()).toRectangle2D());
 
             // Show Collision Boundary for Debugging: --->>
-            if (GlobalSettings.DEBUG) {
+            if (GameSettings.DEBUG) {
                 g2.setColor(Color.RED);
                 rect.draw(g2);
             }
@@ -115,7 +115,7 @@ public class Bunker implements Collidable, Disposable, Updateable, Drawable {
         }
 
         // Show Collision Boundary for Debugging: --->>
-        if (GlobalSettings.DEBUG) {
+        if (GameSettings.DEBUG) {
             g2.setColor(Color.RED);
             collisionRect.draw(g2);
         }

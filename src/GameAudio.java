@@ -56,7 +56,7 @@ public class GameAudio {
     }
 
     public static void playSoundMissileFire() {
-        play("resources/audio/pulse.wav", GlobalSettings.volumeSounds * 3 / 2);
+        play("resources/audio/pulse.wav", GameSettings.volumeSounds * 3 / 2);
     }
 
     public static void playSoundBuzz() {
@@ -114,7 +114,7 @@ public class GameAudio {
     // ===============================================================================================
 
     public static synchronized void play(final String filename) {
-        play(filename, GlobalSettings.volumeSounds);
+        play(filename, GameSettings.volumeSounds);
     }
 
     public static synchronized void play(final String filename, int volume) {

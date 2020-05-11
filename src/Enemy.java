@@ -6,7 +6,7 @@ import javax.swing.ImageIcon;
 public class Enemy extends DefaultCritter {
 
     private static final ImageIcon IMAGE_ICON_SINGLE_ENEMY = new ImageIcon("resources/images/enemy.png");
-    public static final int DEFAULT_COLLISION_RADIUS = GlobalSettings.vmin * 2 / 100;
+    public static final int DEFAULT_COLLISION_RADIUS = GameSettings.vmin * 2 / 100;
 
     public enum EnemyState {
         ALIVE, EXPLODING, DEAD;
@@ -76,7 +76,7 @@ public class Enemy extends DefaultCritter {
         }
 
         // Show Collision Boundary for Debugging: --->>
-        if (GlobalSettings.DEBUG)
+        if (GameSettings.DEBUG)
             super.draw(g2);
         // <-------------------------------------------
     }

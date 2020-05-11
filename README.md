@@ -163,7 +163,7 @@ Classes that implement `Collidable` have methods for:
 - handling the collision with another ` Collidable` object, assuming they do collide
 
 ```java
-public Shape getCollisionShape();
+public BoundingShape getCollisionShape();
 public boolean isCollidingWith(Collidable otherCollidable);
 public void handleCollisionWith(Collidable otherCollidable);
 ```

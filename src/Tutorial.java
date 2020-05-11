@@ -66,7 +66,6 @@ public class Tutorial extends DisplayComponent {
 
         // Objective 4: Demonstrate the use of your shield
         shooter.energyPoints = 100; // ensure shooter always has enough energy to use shield
-        System.out.println(shooter.isShieldActive);
         if (shooter.isShieldActive)
             objective3Complete = true;
 

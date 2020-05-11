@@ -1,6 +1,6 @@
 # Computer Science E214 (2020) Project: Cosmic Conquistadors
 
-<img src="screenshots/readme-screenshot.png" width="100%" >
+<img src="screenshots/gameplay.png" width="100%" >
 
 ## Group Members
 
@@ -423,6 +423,8 @@ Custom geometry API
 
 
 
+
+
 ## External Libraries
 
 The `In` and `Out` classes are used from the booksite's standard library, https://introcs.cs.princeton.edu/java/stdlib/. This was to simplify the process of reading and writing to text files due to some time constraints.
@@ -431,8 +433,6 @@ The class `GameAudio` is a trimmed down version of the booksite's `StdAudio` lib
 
 - volume control of sound
 - looping background music that can fade out and play a different track
-
-
 
 ## External Sources
 

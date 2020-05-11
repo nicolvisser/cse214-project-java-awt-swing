@@ -1,5 +1,8 @@
 import java.awt.*;
 
+/**
+ * Helper class to draw fading text animation on a graphics object
+ */
 public class TextAnimation {
 
     private String text;

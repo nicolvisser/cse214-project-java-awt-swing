@@ -5,6 +5,8 @@ import java.util.ConcurrentModificationException;
 
 import javax.swing.ImageIcon;
 
+import geom.BoundingShape;
+import geom.Circle;
 import geom.LineSegment;
 import geom.Ray;
 import geom.Vector2D;
@@ -86,8 +88,7 @@ public class Shooter extends DefaultCritter {
     private final int laserSoundDelay = 500;
 
     boolean isShieldActive;
-    // private static final int SHIELD_COLLISION_RADIUS = 12;
-    // TODO size up player collision radius when shield is active
+    private static final int SHIELD_COLLISION_RADIUS = DEFAULT_COLLISION_RADIUS * 2;
     private static final int SHIELD_ENERGY_USAGE_INITIAL = 10;
     private static final double SHIELD_ENERGY_USAGE_PER_SECOND = 10;
 
@@ -325,7 +326,8 @@ public class Shooter extends DefaultCritter {
                 y = (int) (position.y - h / 2);
 
                 if (isShieldActive)
-                    g2.drawImage(IMAGE_ICON_SHIELD.getImage(), x, y, w, h, null);
+                    g2.drawImage(IMAGE_ICON_SHIELD.getImage(), x, y, 2 * SHIELD_COLLISION_RADIUS,
+                            2 * SHIELD_COLLISION_RADIUS, null);
 
                 break;
 
@@ -451,6 +453,15 @@ public class Shooter extends DefaultCritter {
         energyPoints = Math.min(DEFAULT_ENERGY_POINTS, energyPoints + energyPointsRegenerationPerSecond * dt / 1000.0);
 
         Disposable.handleDisposing(missiles);
+    }
+
+    @Override
+    public BoundingShape getCollisionShape() {
+        if (isShieldActive) {
+            return new Circle(position.x, position.y, SHIELD_COLLISION_RADIUS);
+        } else {
+            return super.getCollisionShape();
+        }
     }
 
     @Override

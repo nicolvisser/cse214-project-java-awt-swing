@@ -3,8 +3,8 @@
  */
 public class GameSettings {
 
-    static final int DEFAULT_WINDOWED_MODE_WIDTH = 800;
-    static final int DEFAULT_WINDOWED_MODE_HEIGHT = 800;
+    private static final int DEFAULT_WINDOWED_MODE_WIDTH = 800;
+    private static final int DEFAULT_WINDOWED_MODE_HEIGHT = 800;
 
     /**
      * These static variables allow other classes to easily access dimensions of the

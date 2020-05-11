@@ -103,12 +103,12 @@ public class InvadersFrame extends JFrame {
         setResizable(false);
         setIgnoreRepaint(true);
         setPreferredSize(
-                new Dimension(GameSettings.DEFAULT_WINDOWED_MODE_WIDTH, GameSettings.DEFAULT_WINDOWED_MODE_HEIGHT));
+                new Dimension(GameSettings.vw, GameSettings.vh));
         setLayout(null);
 
         // store and print the size of the frame
-        width = GameSettings.DEFAULT_WINDOWED_MODE_WIDTH;
-        height = GameSettings.DEFAULT_WINDOWED_MODE_HEIGHT;
+        width = GameSettings.vw;
+        height = GameSettings.vh;
 
         // create a new game panel and add to the frame
         panel = new InvadersPanel(width, height);

@@ -102,15 +102,18 @@ public class DefaultCritter implements Collidable, Disposable, Updateable, Drawa
 
     // ============ METHODS ASSOCIATED WITH COLIDABLE INTERFACE ============= >>>
 
+    @Override
     public BoundingShape getCollisionShape() {
         return new Circle(position.x, position.y, width / 2);
     }
 
+    @Override
     public boolean isCollidingWith(Collidable otherCollidable) {
         // use geom package to check if collision shapes intersect
         return this.getCollisionShape().intersects(otherCollidable.getCollisionShape());
     }
 
+    @Override
     public void handleCollisionWith(Collidable otherCollidable) {
         // defaults to nothing, need to implement in each sub class
     }

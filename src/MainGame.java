@@ -13,13 +13,33 @@ public class MainGame {
     public static void main(String[] args) {
         // handle arguments passed
         boolean runInFullscreen = false;
+        int w = -1, h = -1;
         for (String arg : args) {
             if (arg.equals("-f") || arg.equals("-fullscreen")) {
                 runInFullscreen = true;
-            }
-            if (arg.equals("-d") || arg.equals("-debug")) {
+            } else if (arg.equals("-d") || arg.equals("-debug")) {
                 GameSettings.DEBUG = true;
+            } else {
+                // try and parse arguments as integer and store
+                try {
+                    int num = Integer.parseInt(arg);
+                    if (w == -1) {
+                        w = num;
+                    } else if (h == -1) {
+                        h = num;
+                    }
+                } catch (NumberFormatException e) {
+                    // skip argument
+                }
             }
+        }
+
+        // if at least one size dimension was specified, change window size in
+        // GameSettings
+        if (w != -1 && h == -1) {
+            GameSettings.setViewSize(w, w); // square
+        } else if (w != -1 && h != -1) {
+            GameSettings.setViewSize(w, h);
         }
 
         InvadersFrame game = new InvadersFrame(runInFullscreen);

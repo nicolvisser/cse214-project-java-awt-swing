@@ -37,6 +37,22 @@
         },
         {
             "type": "java",
+            "name": "RUN GAME: Windowed 1000x500",
+            "request": "launch",
+            "mainClass": "MainGame",
+            "args": "1000 500",
+            "projectName": "cse214-project-java-awt-swing"
+        },
+        {
+            "type": "java",
+            "name": "RUN GAME: Windowed 1000x1000",
+            "request": "launch",
+            "mainClass": "MainGame",
+            "args": "1000",
+            "projectName": "cse214-project-java-awt-swing"
+        },
+        {
+            "type": "java",
             "name": "RUN CURRENT FILE",
             "request": "launch",
             "mainClass": "${file}"

@@ -336,6 +336,16 @@ The following diagram, **FIGURE 4**, should give a rough idea relationships that
 
 ## Summary of Additional Work
 
+
+
+
+
+
+
+
+
+
+
 #### From recommendations in Marking sheet
 
 ##### Improved graphics
@@ -383,7 +393,9 @@ Laser Gun or Regular Missiles. Missiles fired at bunkers burst and remove bunker
 
 ##### Customizable controls for both players
 
-##### Custom `geom` package that serves as API for 2D geometry. Includes intersection and containment methods.
+Custom geometry API
+
+##### Custom `geom` package that serves as API for 2D geometry. Includes many methods for checking intersection and containment between different shapes.
 
 ##### Better colission detection
 
@@ -468,9 +480,10 @@ Fo the following sounds we used a free online text-to-speech converter whose out
     - https://stackoverflow.com/questions/16203760/how-to-check-if-line-segment-intersects-a-rectangle
 - Key Listener
   - http://www.java2s.com/Tutorials/Java/Swing_How_to/JFrame/Use_KeyListener_with_JFrame.htm
+  - Allow `TAB` key to be picked up by keyListener
+    - https://stackoverflow.com/questions/8275204/how-can-i-listen-to-a-tab-key-pressed-typed-in-java
 - Key Bindings for Q (quit key)
   - https://www.youtube.com/watch?v=LNizNHaRV84
-- Deleting a file
 - Removing objects from array list
   - https://www.java67.com/2018/12/how-to-remove-objects-or-elements-while-iterating-Arraylist-java.html
 - Queue interface for points animations

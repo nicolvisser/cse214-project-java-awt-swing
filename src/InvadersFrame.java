@@ -102,8 +102,7 @@ public class InvadersFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setIgnoreRepaint(true);
-        setPreferredSize(
-                new Dimension(GameSettings.vw, GameSettings.vh));
+        setPreferredSize(new Dimension(GameSettings.vw, GameSettings.vh));
         setLayout(null);
 
         // store and print the size of the frame
@@ -133,6 +132,8 @@ public class InvadersFrame extends JFrame {
     // how to get graphics object and actively render
     // Also some credit to http://www.java-gaming.org/index.php?topic=24220.0
     // regarding targeting a frame rate
+    // also credit to https://gafferongames.com/post/fix_your_timestep/ for
+    // explaining timesteps very simply
     public void run() {
 
         // store buffer strategy to be used in loop

@@ -106,6 +106,9 @@ public class PowerUpManager implements Drawable, Updateable {
             case FAST_RELOAD:
                 GameAudio.playVoiceFastReload();
                 break;
+            case PERMANENT_FAST_RELOAD:
+                GameAudio.playVoicePermanentFastReload();
+                break;
             case ENERGY_REGEN:
                 GameAudio.playVoiceEnergyRegen();
                 break;

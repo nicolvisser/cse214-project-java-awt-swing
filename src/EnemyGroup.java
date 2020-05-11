@@ -36,7 +36,7 @@ public class EnemyGroup implements Collidable, Disposable, Drawable, Updateable 
     private Shooter[] targets;
     private long counterAttackTimer = 0;
 
-    private static final double POWERUP_SPAWN_PROBABILITY = 0.15;
+    private static final double POWERUP_SPAWN_PROBABILITY = 0.5;
 
     public EnemyGroup(double x, double y, double width, double height, int numEnemiesInRow, int numEnemiesInCol,
             Shooter[] targets) {

@@ -11,7 +11,7 @@ public class PowerUp extends DefaultCritter {
     // private static final int vmax = GlobalSettings.vmax;
 
     enum PowerUpType {
-        ENERGY_REGEN, HEALTH_REGEN, LASER_GUN, FAST_RELOAD;
+        ENERGY_REGEN, HEALTH_REGEN, LASER_GUN, FAST_RELOAD, PERMANENT_FAST_RELOAD;
     }
 
     enum PowerUpState {
@@ -60,6 +60,11 @@ public class PowerUp extends DefaultCritter {
                 textOnActivation = "FAST RELOAD!";
                 color = Color.YELLOW;
                 break;
+            case PERMANENT_FAST_RELOAD:
+                filename = "resources/images/powerUpYellow";
+                textOnActivation = "PERMANENT FAST RELOAD";
+                color = Color.YELLOW;
+                break;
         }
 
         animatedPowerUpSprite = new AnimatedImage(filename, "png", 6, AnimatedImage.AnimationType.LOOP, 2);
@@ -80,6 +85,11 @@ public class PowerUp extends DefaultCritter {
             case FAST_RELOAD:
                 shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME / 8;
                 break;
+            case PERMANENT_FAST_RELOAD:
+                for(int i = 2; i <= 8; i++){
+                    shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME / i;
+                }
+                break;
         }
     }
 
@@ -98,6 +108,12 @@ public class PowerUp extends DefaultCritter {
                 break;
             case FAST_RELOAD:
                 shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME;
+                break;
+            case PERMANENT_FAST_RELOAD:
+                for(int i = 2; i <= 8; i++){
+                    shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME / i;
+                    remainingLifetime_ms = Integer.MAX_VALUE;
+                }
                 break;
         }
 

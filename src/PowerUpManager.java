@@ -42,7 +42,7 @@ public class PowerUpManager implements Drawable, Updateable {
         PowerUp.PowerUpType randomType = types[randomIndex];
 
         // override for testing:
-        // randomType = PowerUp.PowerUpType.FAST_RELOAD;
+        // randomType = PowerUp.PowerUpType.PERMANENT_FASTER_RELOAD;
 
         gamePowerUpsRef.add(new PowerUp(position.x, position.y, randomType, this));
     }
@@ -66,6 +66,10 @@ public class PowerUpManager implements Drawable, Updateable {
                     Utils.scaleFont(g2, 2.0f);
                     textAnimationsOnActivate[i].draw(g2);
                     Utils.scaleFont(g2, 0.5f);
+                }
+
+                if (types[i] == PowerUp.PowerUpType.PERMANENT_FASTER_RELOAD) {
+                    continue; // don't show border effect for permanent faster reload powerup
                 }
 
                 // draw a fading frame/border based on power up color
@@ -114,6 +118,9 @@ public class PowerUpManager implements Drawable, Updateable {
                 break;
             case LASER_GUN:
                 GameAudio.playVoiceLaserGun();
+                break;
+            case PERMANENT_FASTER_RELOAD:
+                GameAudio.playVoicePermanentFastReload();
                 break;
 
             default:

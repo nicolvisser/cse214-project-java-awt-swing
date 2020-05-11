@@ -11,7 +11,7 @@ public class PowerUp extends DefaultCritter {
     // private static final int vmax = GlobalSettings.vmax;
 
     enum PowerUpType {
-        ENERGY_REGEN, HEALTH_REGEN, LASER_GUN, FAST_RELOAD;
+        ENERGY_REGEN, HEALTH_REGEN, LASER_GUN, FAST_RELOAD, PERMANENT_FASTER_RELOAD;
     }
 
     enum PowerUpState {
@@ -60,6 +60,12 @@ public class PowerUp extends DefaultCritter {
                 textOnActivation = "FAST RELOAD!";
                 color = Color.YELLOW;
                 break;
+            case PERMANENT_FASTER_RELOAD:
+                filename = "resources/images/powerUpYellow";
+                textOnActivation = "PERMANENT FASTER RELOAD!";
+                remainingLifetime_ms = 2000; // effect permanent thus lifetime can be short before removed from canvas
+                color = Color.YELLOW;
+                break;
         }
 
         animatedPowerUpSprite = new AnimatedImage(filename, "png", 6, AnimatedImage.AnimationType.LOOP, 2);
@@ -78,7 +84,11 @@ public class PowerUp extends DefaultCritter {
                 shooter.activeWeapon = Shooter.ActiveWeapon.LASER_GUN;
                 break;
             case FAST_RELOAD:
-                shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME / 8;
+                shooter.currentReloadTime = shooter.normalReloadTime / 8;
+                break;
+            case PERMANENT_FASTER_RELOAD:
+                shooter.normalReloadTime = shooter.normalReloadTime * 90 / 100; // 95 % of previous value
+                shooter.currentReloadTime = shooter.normalReloadTime;
                 break;
         }
     }
@@ -97,7 +107,10 @@ public class PowerUp extends DefaultCritter {
                 shooter.activeWeapon = Shooter.ActiveWeapon.MISSILE_GUN;
                 break;
             case FAST_RELOAD:
-                shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME;
+                shooter.currentReloadTime = shooter.normalReloadTime;
+                break;
+            case PERMANENT_FASTER_RELOAD:
+                // permanent thus don't do anything on removal
                 break;
         }
 

@@ -71,8 +71,9 @@ public class Shooter extends DefaultCritter {
     boolean isRotatingLeft = false;
     boolean isRotatingRight = false;
 
-    static final int DEFAULT_RELOAD_TIME = 300; // ms
-    int currentReloadTime = DEFAULT_RELOAD_TIME;
+    public int normalReloadTime = 300; // made public and non-static so that permanant-faster-reload
+                                       // PowerUp can change the default value and decrease it over time
+    int currentReloadTime = normalReloadTime;
     private int reloadTimer = currentReloadTime; // ready to shoot from start
 
     public ArrayList<Missile> missiles = new ArrayList<>();

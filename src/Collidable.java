@@ -4,6 +4,8 @@ import java.util.ConcurrentModificationException;
 
 import geom.BoundingShape;
 
+// Idea for collididable interface originated here: https://www.coppeliarobotics.com/helpFiles/en/collidableObjects.htm
+// See readme for more details about our Collidabe Interface
 public interface Collidable {
 
     public BoundingShape getCollisionShape();

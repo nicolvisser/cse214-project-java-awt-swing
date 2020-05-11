@@ -15,6 +15,8 @@ public interface Disposable {
 
     // remove reference if no longer needed so object can be garbage collected
     public static void handleDisposing(ArrayList<? extends Disposable> group) {
+        // Source on removing objects from array list:
+        // https://www.java67.com/2018/12/how-to-remove-objects-or-elements-while-iterating-Arraylist-java.html
         Iterator<? extends Disposable> critterIterator = group.iterator();
         while (critterIterator.hasNext()) {
             Disposable critter = critterIterator.next();

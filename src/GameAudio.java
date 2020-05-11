@@ -1,3 +1,5 @@
+// This class is a stripp
+
 import java.io.File;
 import java.io.IOException;
 
@@ -40,27 +42,23 @@ public class GameAudio {
     }
 
     public static void playSoundMenuChange() {
-        play("resources/audio/menuChange.wav");
+        play("resources/audio/menuChange.wav", 60);
     }
 
     public static void playSoundMenuSelect() {
-        play("resources/audio/menuSelect.wav");
+        play("resources/audio/menuSelect.wav", 60);
     }
 
     public static void playSoundExplosion() {
-        play("resources/audio/explosion.wav");
-    }
-
-    public static void playSoundExplosionDistant() {
-        play("resources/audio/NenadSimic - Muffled Distant Explosion (1).wav");
+        play("resources/audio/explosion.wav", 30);
     }
 
     public static void playSoundMissileFire() {
-        play("resources/audio/pulse.wav", GameSettings.volumeSounds * 3 / 2);
+        play("resources/audio/pulse.wav", 40);
     }
 
     public static void playSoundBuzz() {
-        play("resources/audio/buzz.wav");
+        play("resources/audio/buzz.wav", 50);
     }
 
     public static void playSoundShieldActivate() {
@@ -114,7 +112,7 @@ public class GameAudio {
     // ===============================================================================================
 
     public static synchronized void play(final String filename) {
-        play(filename, GameSettings.volumeSounds);
+        play(filename, 100);
     }
 
     public static synchronized void play(final String filename, int volume) {
@@ -164,7 +162,7 @@ public class GameAudio {
     // =================== BACKGROUND MUSIC =====================================
 
     private static Clip backgroundMusic;
-    private static int backgroundMusicVolume = 40;
+    private static int backgroundMusicVolume = GameSettings.volumeMusic;
     private static long backgroundMusicPausedPlayBackPosition;
 
     private static synchronized void fadeOutBackgroundMusicThenStartNewTrack(String filename) {
@@ -175,14 +173,14 @@ public class GameAudio {
                         FloatControl volumeControl = (FloatControl) backgroundMusic
                                 .getControl(FloatControl.Type.MASTER_GAIN);
                         setVolumeViaControl(volumeControl, backgroundMusicVolume--);
-                        Thread.sleep(50);
+                        Thread.sleep(30);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
                 backgroundMusic.stop();
                 backgroundMusic.close();
-                backgroundMusicVolume = 40;
+                backgroundMusicVolume = GameSettings.volumeMusic;
                 loopMusic(filename);
             }
         }).start();

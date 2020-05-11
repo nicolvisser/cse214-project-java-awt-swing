@@ -16,6 +16,7 @@ public class ScoreKeeper implements Drawable {
     private int vw; // view width
     private int vh; // view height
 
+    // source on using queues: https://www.geeksforgeeks.org/queue-interface-java/
     private Queue<TextAnimation> animations = new LinkedList<>();
 
     ScoreKeeper(int w, int h) {

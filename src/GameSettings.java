@@ -20,7 +20,6 @@ public class GameSettings {
     static int vmin = Math.min(vw, vh); // viewport min dimension
     static int vmax = Math.max(vw, vh);; // viewport max dimension
 
-    static int volumeSounds = 15; // TODO Remove and set each sound's volume manually
     static int volumeMusic = 100;
 
     static boolean DEBUG = false; // enable visual debugging mode or not

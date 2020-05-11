@@ -1,58 +1,5 @@
 # Computer Science E214 (2020) Project: Cosmic Conquistadors
 
-NOTE:
-
-The project will eventually be exported in a structure suitable for command line compiling and running. At the moment the structure is tailored to development in VS Code.
-
-Thus, **if you want to test in on the command line now**. You need to rearrange the folders into this structure:
-
-```
-src/
-	geom/
-		BoundingShape.java
-		...
-	resources/
-		audio/
-			ambientmain_0.wav
-			...
-		images/
-			blueExplosion00000.png
-			...
-		highscores.txt
-		...
-	AnimatedImage.java
-	Bunker.java
-	...
-```
-
-## NB TO DO's:
-
-### Code:
-
-- Shield stuff:
-  - include in tutorial
-  - make enemies shoot more often so that you need to use shield more often
-  - shield collision radius
-- Update updateable spelling to updatable... :/
-- Enemy visual damage based on hitpoints
-- Different enemy types --- quick fix ???
-
-### Documentation:
-
-- Write Class inheritance section
-- Complete additional work section
-- Complete sources section
-  - Get media sources from old repository and Google Chrome bookmarks
-- Add table of contents
-
-### Admin:
-
-- export and zip files
-- peer rating
-- submission
-
-
-
 <img src="screenshots/readme-screenshot.png" width="100%" >
 
 ## Group Members
@@ -488,21 +435,23 @@ The class `GameAudio` is a trimmed down version of the booksite's `StdAudio` lib
 
 #### Audio (see `src/resources/audio`)
 
-| Filename                                                     | Source                                                     |
-| ------------------------------------------------------------ | ---------------------------------------------------------- |
-| `Energy-Regeneration.wav` `HealthRegerneration.wav` `Fast-Reload.wav` `Laser-Gun.wav` | https://notevibes.com/cabinet.php                          |
-| `ambientmain_0.wav`                                          | https://opengameart.org/content/tragic-ambient-main-menu   |
-| `buzz.wav`                                                   | https://opengameart.org/content/electric-buzz              |
-| `explosion.wav`                                              |                                                            |
-| `Death Is Just Another Path.wav`                             | https://opengameart.org/content/death-is-just-another-path |
-| `menuChange.wav`                                             |                                                            |
-| `menuSelect.wav`                                             |                                                            |
-| `pulse.wav`                                                  |                                                            |
-| `shieldDown.wav` `shieldUp.wav`                              | https://opengameart.org/content/space-ship-shield-sounds   |
+For the following files we download the audio clips from sources with free-to-use licences such as opengameart.org. If the files were not already in a `16bit, 44100Hz, mono` WAV format. We did so with the help of the following tool: https://audio.online-convert.com/convert-to-wav
 
+| Filename                         | Source                                                       |
+| -------------------------------- | ------------------------------------------------------------ |
+| `ambientmain_0.wav`              | https://opengameart.org/content/tragic-ambient-main-menu     |
+| `buzz.wav`                       | https://opengameart.org/content/electric-buzz                |
+| `explosion.wav`                  | https://www.freesoundeffects.com/free-sounds/explosion-10070/ |
+| `Death Is Just Another Path.wav` | https://opengameart.org/content/death-is-just-another-path   |
+| `menuChange.wav`menuSelect.wav`` | https://opengameart.org/content/interface-sounds-starter-pack |
+| `pulse.wav`                      |                                                              |
+| `shieldDown.wav` `shieldUp.wav`  | https://opengameart.org/content/space-ship-shield-sounds     |
 
+Fo the following sounds we used a free online text-to-speech converter whose output is free to use for personal use.
 
-
+| Filename                                                     | Source                            |
+| ------------------------------------------------------------ | --------------------------------- |
+| `Energy-Regeneration.wav` `HealthRegerneration.wav` `Fast-Reload.wav` `Laser-Gun.wav` | https://notevibes.com/cabinet.php |
 
 #### Code Ideas and Help:
 

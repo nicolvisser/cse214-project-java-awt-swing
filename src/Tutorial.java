@@ -27,7 +27,7 @@ public class Tutorial extends DisplayComponent {
 
     int tutorialStage = 0;
 
-    boolean stage1Complete, stage2Complete, stage3Complete;
+    boolean objective1Complete, objective2Complete, objective3Complete;
 
     Rectangle moveTarget = new Rectangle(vw / 4, shooter.position.y, shooter.width * 2, shooter.height * 2);
 
@@ -48,10 +48,10 @@ public class Tutorial extends DisplayComponent {
         for (Enemy enemy : enemies)
             enemy.update(dt);
 
-        if (!stage1Complete)
-            stage1Complete = moveTarget.contains(shooter.getCollisionShape());
-        stage2Complete = Double.isFinite(getLengthOfAImLine());
-        stage3Complete = enemies.size() <= 0;
+        if (!objective1Complete)
+            objective1Complete = moveTarget.contains(shooter.getCollisionShape());
+        objective2Complete = Double.isFinite(getLengthOfAImLine());
+        objective3Complete = enemies.size() <= 0;
 
         Collidable.checkAndHandleCollisions(shooter.missiles, enemies);
         Disposable.handleDisposing(shooter.missiles);
@@ -81,8 +81,8 @@ public class Tutorial extends DisplayComponent {
         g2.setColor(Color.gray);
         Utils.drawCenteredText(g2, vw / 2, vh * 25 / 100, "You can change the controls under Settings in Main Menu", 1);
 
-        if (!stage3Complete) {
-            if (!stage1Complete) {
+        if (!objective3Complete) {
+            if (!objective1Complete) {
                 g2.setColor(Color.RED);
                 Utils.drawCenteredText(g2, vw / 2, vh * 20 / 100,
                         "Move the Shooter into the box by using the movement keys", 2);
@@ -93,7 +93,7 @@ public class Tutorial extends DisplayComponent {
                 for (Enemy enemy : enemies)
                     enemy.draw(g2);
 
-                if (!stage2Complete) {
+                if (!objective2Complete) {
                     g2.setColor(Color.ORANGE);
                     Utils.drawCenteredText(g2, vw / 2, vh * 20 / 100, "Aim at the enemy using the aim keys", 2);
                     drawKey(g2, vw * 45 / 100, vh * 30 / 100, keyDescriptions[2]);

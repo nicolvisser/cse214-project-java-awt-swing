@@ -10,7 +10,18 @@
 | #2   | Michael Knight | 23263962       |
 | #3   | Nicol Visser   | 16986431       |
 
-## Execution Details
+## Table of contents:
+
+1. Execution Details
+2. Interface Inheritance
+3. Class Inheritance
+4. Additional Work
+5. External Libraries
+6. Standard Library
+7. Class Structure Diagrams
+8. External Sources
+
+## 1. Execution Details
 
 The main class is `MainGame.java` and is located under the `./src/` directory.
 
@@ -36,7 +47,7 @@ The main class is `MainGame.java` and is located under the `./src/` directory.
 
 It is recommended to run the game in fullscreen mode. This might not be possible on your device since we could not do extensive testing on different devices during lockdown. In that case, run in windowed mode. It will also be useful if you can run the game in windowed mode at different window sizes to see the game's support for different aspect ratios.
 
-#### 1. Run in Fullscreen Exclusive Mode (*recommended*):
+#### Run in Fullscreen Exclusive Mode (*recommended*):
 
 Execute the main class `MainGame` and add the argument `-f` or `-fullscreen`.
 
@@ -44,7 +55,7 @@ Execute the main class `MainGame` and add the argument `-f` or `-fullscreen`.
 > java MainGame -f
 ```
 
-#### 2. Run in Windowed Mode:
+#### Run in Windowed Mode:
 
 To run at default 800x800 window, simply execute the main class without any arguments.
 
@@ -60,7 +71,7 @@ E.g. to run in a 1600x1000 pixel window:
 > java MainGame 1600 1000
 ```
 
-##### * Visual Debugging Mode:
+### Visual Debugging Mode:
 
 Visual debugging mode shows the shapes used for collision. **This is helpful to understand how collision detection works and to find bugs.**
 
@@ -72,7 +83,7 @@ E.g. to run in fullscreen with visual debugging <u>on</u>:
 > java MainGame -f -d
 ```
 
-## Interface Inheritance
+## 2. Interface Inheritance
 
 ### Interfaces in the `geom` package:
 
@@ -227,9 +238,7 @@ Shakeable is a functional interface that can be used together with **lambda expr
 
 Idea gained from https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html
 
-
-
-## Class Inheritance
+## 3. Class Inheritance
 
 ### Swing Objects
 
@@ -254,6 +263,26 @@ Finally the `GameOverScreen`  derives from the `HighScoreScreen` where the user 
 With reference to **FIGURE 3**, we have `DefaultCritter` as a parent class and then `Enemy`, `Shooter`, `Missile` and `PowerUp` as child classes that inherit some basic functionality.
 
 ### Example of Polymorphism in our Code
+
+Polymorphism is used extensively throughout out code, but here are some examples:
+
+##### `LookAt` method
+
+The `lookAt(...)` method is defined in `DefaultCritter`  and takes a `DefaultCritter ` as an argument. If you call it it will allow the `DefaultCritter` to orient itself such that it is pointing toward the other`DefaultCritter`.
+
+```java
+public void lookAt(DefaultCritter other) {
+		orientation = other.positionRelativeTo(this).getBearing();
+}
+```
+
+Since `Enemy` and `Shooter` are both subclasses of `DefaultCritter`. we can simply call
+
+```
+enemy.lookAt(shooter)
+```
+
+without there being a `lookAt(Shooter shooter)` defined in enemy class.
 
 ##### Active `DisplayComponent`:
 
@@ -308,7 +337,42 @@ if (!activeDisplayComponent.hasFocus()) {
 }
 ```
 
-## Class Structure Diagrams
+## 4. Additional Work
+
+- Customizable controls for both players. See `ControlsScreen` class.
+- Custom `geom` package which is an API for basic geometries.
+- Implementation of `Collidable` interface with its helper methods so that objects can have the collision detection and handling in conveniet methods that nicely groups code with similar purpose throughout the game.
+- Minimum bounding boxes around enemies and blocks to speed up collision detection. Run game in visual debugging mode to see how minimum bounding boxes are recalculated when you destroy enemies or bunker blocks.
+- Various menu screens and functionality to switch between them. See `InvadersPanel` class.
+- Laser Gun shows effective use of ray casting to detect enemy in the shooters line of sight. Also note how the laser pointer has obstacles through which it cannot shoot.
+- Tutorial that helps player get to know the controls. Also shows how careful programming lead to components being reuseable in a different environment with different objectives.
+
+- Starfield background with parallax effect depending on shooter velocity.
+- Save, view and reset high scores. Swop active keylisteners to listen for text input while entering name.
+- Note on extra lives: We already have powerups for health as well as hitpoints for shooter. This made extra lives feel redundant. These alternatives especially with their visuals are at least as complicated as implementing extra lives.
+- Full screen exclusive mode and active rendering for very fast graphics performance.
+- Two tracks, one for menus and one for gameplay. Menu music fades out before game music starts. Music pauses on pause screen. Etc.
+- Screen shake animation when a shooter takes damage. This makes use of a functional interface and a lambda expression to pass a method from one class to another. (slightly experimental but fun)
+- Key bindings for the quit key (Q). So we didn't have to add it to every key listener object.
+- Disposable interface and static method to help with removing items from array lists so they can be garbage collected.
+- Animated images (sprites). You can see them when enemy, shooter or missile explodes.
+- Text animation effect. You can see then every new level or whenever you gain points (`ScoreKeeper`)
+- Volume control added for programmer to change volume of sound without editing sound file.
+
+## 5. External Libraries
+
+Besides `stdlib`, only built-in libraries were used.
+
+## 6. Standard Library
+
+The `In` and `Out` classes in the workspace are used from the booksite's standard library, https://introcs.cs.princeton.edu/java/stdlib/. This was to simplify the process of reading and writing to text files due to some time constraints.
+
+The class `GameAudio` is a trimmed down version of the booksite's `StdAudio` library. We only took that which was necessary out of `StdAudio`. This made us understand the code and allowed us to write customizations such as:
+
+- volume control of sound
+- looping background music that can fade out and play a different track
+
+## 7. Class Structure Diagrams
 
 **FIGURE 1** shows the class and interface inheritance of objects in the `geom` package. These objects form an important base for the 2D programming in other classes.
 
@@ -332,109 +396,7 @@ The following diagram, **FIGURE 4**, should give a rough idea relationships that
 
 ![img](file:///Users/nicolvisser/Workspace/cse214-project-java-awt-swing/screenshots/relationships-game-objects.png?lastModify=1589145090)
 
-
-
-## Summary of Additional Work
-
-
-
-
-
-
-
-
-
-
-
-#### From recommendations in Marking sheet
-
-##### Improved graphics
-
-- Starfield background with parallax effect depending on shooter velocity.
-- Various menu screens and functionality to switch between them.
-
-##### Add sounds
-
-- Volume control for programmer to change volume of sound without editing sound file.
-
-##### Add music
-
-- Two tracks, one for menus and one for gameplay. Menu music fades out befor game music starts.
-
-##### Leaderboard/high score screen
-
-- Save, view and reset high scores. Swop active keylisteners to listen for text input while entering name.
-
-##### Progressively harder levels
-
-##### Extra lives
-
-- Powerups for health as well as hitpoints made extra lives feel redundant. These alternatives especially with their visuals are at least as complicated as extra lives.
-
-##### Additional shooter
-
-- Competitive mode where two shooters can see who get the most points
-
-##### Enemies counterattack
-
-##### Bunkers Power-ups (1 or 2 ticks)
-
-##### Hit-points
-
-##### Different weapons
-
-Laser Gun or Regular Missiles. Missiles fired at bunkers burst and remove bunkers in a certain radius.
-
-##### Different enemy types
-
-- 
-
-#### Other:
-
-##### Customizable controls for both players
-
-Custom geometry API
-
-##### Custom `geom` package that serves as API for 2D geometry. Includes many methods for checking intersection and containment between different shapes.
-
-##### Better colission detection
-
-- Effective use of shapes (circles, rays, rectangles) instead of just a point and distance
-- Use of minimum bounding boxes to reduce amount of checks
-
-##### Animated text that fade away
-
-
-
-##### Fullscreen exclusive mode
-
-##### Allowing various window sizes by dynamically positioning in viewport.
-
-##### Tutorial
-
-- Helps player get to know the controls
-- Shows how careful programming lead to components being reuseable in a different environment with different objectives.
-
-**Screen shake animation**
-
-
-
-
-
-
-
-
-
-## External Libraries
-
-The `In` and `Out` classes are used from the booksite's standard library, https://introcs.cs.princeton.edu/java/stdlib/. This was to simplify the process of reading and writing to text files due to some time constraints.
-
-The class `GameAudio` is a trimmed down version of the booksite's `StdAudio` library. With customizations such as:
-
-- volume control of sound
-- looping background music that can fade out and play a different track
-
-## External Sources
+## 8. External Sources
 
 #### Images (see `src/resources/images`)
 
@@ -465,7 +427,9 @@ Fo the following sounds we used a free online text-to-speech converter whose out
 | ------------------------------------------------------------ | --------------------------------- |
 | `Energy-Regeneration.wav` `HealthRegerneration.wav` `Fast-Reload.wav` `Laser-Gun.wav` | https://notevibes.com/cabinet.php |
 
-#### Code Ideas and Help:
+#### Code Ideas and Help found Online
+
+These are also documented throughout the code in comments:
 
 - Fullscreen exclusive mode
   - https://docs.oracle.com/javase/tutorial/extra/fullscreen/index.html

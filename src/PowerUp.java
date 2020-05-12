@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+
 import geom.Vector2D;
 
 public class PowerUp extends DefaultCritter {
@@ -24,7 +25,7 @@ public class PowerUp extends DefaultCritter {
     PowerUpType type;
     PowerUpState state = PowerUpState.ALIVE;
 
-    long remainingLifetime_ms = DEFAULT_LIFETIME_MS;
+    double remainingLifetime_ms = DEFAULT_LIFETIME_MS;
     Color color;
     String textOnActivation = "";
 
@@ -64,12 +65,13 @@ public class PowerUp extends DefaultCritter {
                 filename = "resources/images/powerUpYellow";
                 textOnActivation = "PERMANENT FAST RELOAD";
                 color = Color.YELLOW;
+                remainingLifetime_ms = Double.POSITIVE_INFINITY;
                 break;
             case HEALTH_BOOST:
                 filename = "resources/images/powerUpRed";
                 textOnActivation = "HEALTH_BOOST";
                 color = Color.RED;
-                remainingLifetime_ms = Integer.MAX_VALUE;
+                remainingLifetime_ms = Double.POSITIVE_INFINITY;
                 break;
         }
 
@@ -121,7 +123,6 @@ public class PowerUp extends DefaultCritter {
             case PERMANENT_FAST_RELOAD:
                 for(int i = 2; i <= 8; i++){
                     shooter.currentReloadTime = Shooter.DEFAULT_RELOAD_TIME / i;
-                    remainingLifetime_ms = Integer.MAX_VALUE;
                 }
                 break;
             case HEALTH_BOOST:

@@ -129,11 +129,17 @@ public class PowerUpManager implements Drawable, Updateable {
         for (int i = 0; i < numTypes; i++) {
             if (types[i] == powerUp.type) {
 
-                if (activePowerUps[i] == null) {
+                if ((activePowerUps[i] == null)) {
                     // IF NONE OF SAME TYPE ALREADY IN EFFECT:
                     // add new effect to shooter
                     powerUp.addEffectTo(owner);
-                } else {
+                }
+                else if((types[i] == PowerUp.PowerUpType.PERMANENT_FAST_RELOAD) || (types[i] == PowerUp.PowerUpType.HEALTH_BOOST)){
+                    //if permanent boosts are in affect
+                    //add these effects to shooter again
+                    powerUp.addEffectTo(owner);
+                }
+                 else{ 
                     // IF SAME TYPE ALREADY IN EFFECT:
                     // ready old power up for disposal
                     activePowerUps[i].state = PowerUp.PowerUpState.DEAD;
